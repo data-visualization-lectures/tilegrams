@@ -1,45 +1,29 @@
-# Making a Tilegram
+# タイルグラムの作成
 
-A “tilegram” is a map made of tiles
-where regions are sized proportionally to a dataset.
-The name is short for a tiled
-[cartogram](https://en.wikipedia.org/wiki/Cartogram).
-Tilegrams can represent demographic data more truthfully than conventional,
-geographic maps, while still retaining a familiar appearance.
+「タイルグラム」とは、データセットに比例した大きさの領域をタイル状に並べた地図のことです。
+その名は、タイル状の[カートグラム](https://en.wikipedia.org/wiki/Cartogram)の略称として付けました。
 
-This free, open-source tool enables news designers and developers
-to browse existing tilegrams or make their own for use in interactive
-and print publications.
+タイルグラムは、従来の地理的な地図に比べて、馴染みのある外観を保ちながら、人口統計データをより正確に表現することができます。
 
-Even with computer automation, tilegrams can be time-consuming to produce,
-because, to be effective, they require a human eye to verify that geographic
-contours will be recognizable and meaningful to a general readership. For this
-reason, you're encouraged to begin with existing tilegrams before authoring
-your own.
+このフリーでオープンソースのツールは、ニュースデザイナーや開発者が、既存のタイルグラムを閲覧したり、独自のタイルグラムを作成して、インタラクティブなウェブ向けや紙面向けに作ることができます。
 
-You can read more about the project in our announcement
-[blog post](http://pitchinteractive.com/latest/tilegrams-more-human-maps/).
+タイルグラムは、コンピュータで自動化されていても、作成には時間がかかります。というのも、タイルグラムを効果的に使うためには、地理的な輪郭が一般の読者に認識され、意味があるかどうかを人間の目で確認する必要があるからです。そのため、自分のタイルグラムを作る前に、既存のタイルグラムから始めることをお勧めします。
 
-This manual proceeds from the most basic to the most advanced usage case.
+このプロジェクトについては、私たちの[ブログ記事](http://pitchinteractive.com/latest/tilegrams-more-human-maps/)での発表もご覧ください。
 
-## Exporting existing tilegrams
+このマニュアルは、最も基本的な使用方法から最も高度な使用方法までを説明しています。
 
-On load, you will see a ready-made tilegram, as selected in the
-**Load existing** menu. Try selecting other options to browse around.
+## 既存のタイルグラムのエクスポート
 
-If you are satisfied with the tilegram as it appears, go right ahead and
-**Export**—as **TopoJSON** or **SVG**—using the buttons at the lower left.
+読み込み時には、**Load existing** メニューで選択されている、既製のタイルグラムが表示されます。他のオプションも選択してみてください。
 
-Designers will be able to import the SVG into their software of choice
-(e.g. Illustrator) and developers will be able to pull the TopoJSON into
-web applications. In both cases, the data is identified with the US
-[FIPS](https://en.wikipedia.org/wiki/Federal_Information_Processing_Standards)
-code.
+表示されたタイルグラムに問題がなければ、左下のボタンを使って **TopoJSON** または **SVG** として **—エクスポート** します。
 
-## Editing tilegrams
+デザイナーはSVGを好みのソフトウェア（例：Illustrator）に取り込むことができ、開発者はTopoJSONをウェブアプリケーションに取り込むことができます。いずれの場合も、データは米国の[FIPS](https://en.wikipedia.org/wiki/Federal_Information_Processing_Standards)コードで識別されます。
 
-Suppose you've loaded a tilegram, but want to reshape a region. Maybe Florida
-looks too heavy, or Missouri is streched too thin.
+## タイルグラムの編集
+
+例えば、タイルグラムを読み込んだ後、ある地域の形を変えたいとします。例えば、フロリダが重すぎたり、ミズーリが細すぎたりします。
 
 Click step **2**: **Refine your tilegram**.
 
