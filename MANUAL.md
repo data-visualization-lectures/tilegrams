@@ -17,7 +17,7 @@
 
 読み込み時には、**Load existing** メニューで選択されている、既製のタイルグラムが表示されます。他のオプションも選択してみてください。
 
-表示されたタイルグラムに問題がなければ、左下のボタンを使って **TopoJSON** または **SVG** として **—エクスポート** します。
+表示されたタイルグラムに問題がなければ、左下のボタンを使って **TopoJSON** または **SVG** として **エクスポート** します。
 
 デザイナーはSVGを好みのソフトウェア（例：Illustrator）に取り込むことができ、開発者はTopoJSONをウェブアプリケーションに取り込むことができます。いずれの場合も、データは米国の[FIPS](https://en.wikipedia.org/wiki/Federal_Information_Processing_Standards)コードで識別されます。
 
@@ -29,7 +29,7 @@ Click step **2**: **Refine your tilegram**.
 
 ### Moving tiles around
 
-Click and drag any tile to move it around.
+タイルをクリック＆ドラッグして移動させることができます。
 
 To move many tiles around, click and drag a
 rectangular marquee around them, and then drag them around.
@@ -40,7 +40,7 @@ any tile in it to select them all—then drag them around.
 You can also hover over a region in the **State Tiles**
 sidebar area to see that region's tiles highlighted on the map.
 
-### Ensuring statistical accuracy
+### 統計精度の確保
 
 Under **State Tiles**, you'll see a list of each state with a number and a
 hexagon.
@@ -63,7 +63,7 @@ To remove a tile from the map, click it, and hit 'Delete' on your keyboard.
 To add a tile to the map, click the hexagon from the left sidebar and drag it
 onto the map.
 
-## Generating new tilegrams
+## 新しいタイルグラムの生成
 
 If you've made it this far, you are ready to produce your own tilegram.
 
@@ -92,22 +92,21 @@ that the _deltas_ under **State Tiles** update dynamically. Please remember
 to take note of them and ensure that they all read `0` to make responsible
 tilegrams.
 
-## Using exported tilegrams
+##  エクスポートされたタイルグラムの利用
 
 ### In D3
 
-You can export either SVG or TopoJSON for use in [D3](https://d3js.org/).
+[D3](https://d3js.org/)で使用するために、SVGまたはTopoJSONのいずれかをエクスポートすることができます。
+以下の例では、D3 v4を使用し、このホストされたバージョンに対してテストしています。
 
-The following examples use D3 v4 and were tested against this hosted version:
 
 ```html
 <script type="text/javascript" src="https://d3js.org/d3.v4.min.js"></script>
 ```
 
-#### Rendering tilegram SVG in D3
+#### タイルグラムSVGをD3でレンダリングする
 
-The simplest D3 integration may just be to write the SVG to the DOM and then
-add handlers for interactivity:
+最もシンプルなD3の統合は、SVGをDOMに書き出してから インタラクティビティのためのハンドラーを追加することです。
 
 ```javascript
 var WIDTH = 800
@@ -133,24 +132,20 @@ d3.text('tiles.svg', (e, data) => {
 })
 ```
 
-#### Rendering tilegram TopoJSON in D3
+#### タイルグラムTopoJSONをD3でレンダリングする
 
-When displaying tilegrams TopoJSON in D3, it's important not to use a geographic
-projection, as the TopoJSON coordinates do not refer to latitude/longitude,
-but to dimensionless Euclidean space.
+D3でタイルグラムのTopoJSONを表示する際には、TopoJSONの座標が緯度・経度を参照していないため、地理的な投影法を使用しないことが重要です。
+というのも、TopoJSONの座標は緯度・経度ではなく、無次元のユークリッド空間を参照しているからです。
 
-It is currently also necessary to flip the map vertically. (This is
-because the exported tilegram coordinates assume that the origin (`0, 0`) is in
-the lower-left corner, whereas projection-less rendering will assume that it's
-in the upper-left.) Note the `transform` below.
+また、現在は地図を縦に反転させる必要があります。これは エクスポートされたタイルグラムの座標は、原点(`0, 0`)が左下隅にあると仮定しているのに対し、プロジェクションレス・レンダリングでは左上にあると仮定しているからです。下の `transform` に注目してください。
 
-First, be sure to import `topojson` as well:
+まず、`topojson`を必ずインポートしてください：
 
 ```html
 <script type="text/javascript" src="http://d3js.org/topojson.v1.min.js"></script>
 ```
 
-Then:
+それから：
 
 ```javascript
 var WIDTH = 1400
@@ -181,7 +176,7 @@ d3.json('tiles.topo.json', function showData(error, tilegram) {
 })
 ```
 
-To draw a border around each state:
+各州の周りにボーダーを描く：
 
 ```javascript
 // Build list of state codes
@@ -213,11 +208,8 @@ g.selectAll('path.border')
   .attr('stroke-width', 4)
 ```
 
-## Sharing tilegrams
+## タイルグラムをシェアしよう
 
-If you use, enjoy, or can't stand this tool, we'd love to hear from you at
-[@pitchinc](http://twitter.com/pitchinc) or
-[info@pitchinteractive.com](mailto:info@pitchinteractive.com).
-We hope to include more example tilegrams in the application.
-
-Happy tilegramming!
+使ってみて、楽しめたり、使いづらいことがあれば、[@pitchinc](http://twitter.com/pitchinc) もしくは [info@pitchinteractive.com](mailto:info@pitchinteractive.com)まで、ぜひ聞かせてください！
+今後は、より多くのタイルグラム例をアプリケーションに掲載していきたいと考えています。
+ハッピー・タイルグラム！

@@ -98,7 +98,7 @@ function selectGeography(geography) {
 
 function confirmNavigation(e) {
   // most browsers won't let you display custom text but have something like this anyway
-  const message = 'Are you sure you want to leave this page? You will lose any unsaved work.'
+  const message = '本当にこのページから離脱しますか？セーブされていない作業がすべて失われます。'
   e.returnValue = message
   return message
 }
