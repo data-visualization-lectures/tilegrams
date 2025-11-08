@@ -1,72 +1,107 @@
-var path = require('path')
-var webpack = require('webpack')
+const path = require('path');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
-  entry: {
-    javascript: './index.js',
-    html: './index.html',
-    html2: './us-congressional-districts-2018.html'
-  },
+  context: __dirname,
+  entry: './index.js',
   output: {
+    path: path.resolve(__dirname, 'dist'),
     filename: 'main.js',
-    path: 'dist',
+    publicPath: '/'
   },
   devServer: {
-    disableHostCheck: true,
+    contentBase: __dirname,
+    host: '0.0.0.0',
+    port: 8080,
+    historyApiFallback: true,
+    stats: 'minimal'
   },
   module: {
-    preLoaders: [
-      {
-        test: /\.(js|jsx)$/,
-        loaders: ["eslint-loader"],
-        exclude: /node_modules/
-      }
-    ],
     loaders: [
       {
-        test: /\.js$/,
+        test: /\.jsx?$/,
         exclude: /node_modules/,
-        loader: 'babel',
+        loader: 'babel-loader',
         query: {
-          presets: ['es2015', 'react'],
+          cacheDirectory: true,
+          presets: ['es2015', 'react']
         }
       },
       {
         test: /\.html$/,
-        loader: "file?name=[name].[ext]"
+        loader: 'file',
+        query: {
+          name: '[name].[ext]'
+        }
       },
       {
         test: /\.json$/,
-        loaders: ['json'],
-      },
-      {
-        type: 'javascript/auto',
-        test: /tilegrams\/us-individual-states-congressional-districts\/[^.]*\.json$/,
-        loader: 'file-loader?name=tilegrams/us-individual-states-congressional-districts/[name].[ext]'
+        loader: 'json-loader'
       },
       {
         test: /\.csv$/,
-        loaders: ['raw'],
+        loader: 'raw-loader'
       },
       {
         test: /\.scss$/,
-        loaders: ["style", "css", "sass"]
+        loaders: [
+          'style-loader',
+          'css-loader',
+          'sass-loader'
+        ]
       },
-      {test: /\.svg(\?v=\d+\.\d+\.\d+)?$/, loader: 'file-loader?mimetype=image/svg+xml&name=[name].[ext]'},
-      {test: /\.woff(\?v=\d+\.\d+\.\d+)?$/, loader: "file-loader?mimetype=application/font-woff"},
-      {test: /\.woff2(\?v=\d+\.\d+\.\d+)?$/, loader: "file-loader?mimetype=application/font-woff"},
-      {test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/, loader: "file-loader?mimetype=application/octet-stream"},
-      {test: /\.eot(\?v=\d+\.\d+\.\d+)?$/, loader: "file-loader"},
-      {test: /\.png(\?v=\d+\.\d+\.\d+)?$/, loader: "file-loader?name=[name].[ext]"}
-    ],
+      {
+        test: /\.(woff|woff2)(\?v=\d+\.\d+\.\d+)?$/,
+        loader: 'url-loader',
+        query: {
+          limit: 10000,
+          mimetype: 'application/font-woff',
+          name: '[name].[ext]'
+        }
+      },
+      {
+        test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,
+        loader: 'url-loader',
+        query: {
+          limit: 10000,
+          mimetype: 'application/octet-stream',
+          name: '[name].[ext]'
+        }
+      },
+      {
+        test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
+        loader: 'file-loader',
+        query: {
+          name: '[name].[ext]'
+        }
+      },
+      {
+        test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
+        loader: 'url-loader',
+        query: {
+          limit: 10000,
+          mimetype: 'image/svg+xml',
+          name: '[name].[ext]'
+        }
+      },
+      {
+        test: /\.png$/,
+        loader: 'file-loader',
+        query: {
+          name: '[name].[ext]'
+        }
+      }
+    ]
   },
   plugins: [
     new CopyWebpackPlugin([
       {
-        from: './tilegrams/us-individual-states-congressional-districts/**',
-        to: './'
+        from: 'tilegrams/us-individual-states-congressional-districts',
+        to: 'tilegrams/us-individual-states-congressional-districts'
       }
     ])
-  ]
-}
+  ],
+  resolve: {
+    extensions: ['', '.js', '.jsx', '.json']
+  }
+};
