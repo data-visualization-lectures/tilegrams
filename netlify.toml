@@ -1,0 +1,12 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "16.20.2"
+
+# When running `netlify dev`, use the webpack development server.
+[dev]
+  command = "npm start"
+  port = 8080
+  targetPort = 8080
