@@ -98,6 +98,10 @@ module.exports = {
       {
         from: 'tilegrams/us-individual-states-congressional-districts',
         to: 'tilegrams/us-individual-states-congressional-districts'
+      },
+      {
+        from: 'index.html',
+        to: 'index.html'
       }
     ])
   ],
