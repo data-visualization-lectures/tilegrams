@@ -96,7 +96,7 @@ export default class ImportControls extends React.Component {
       <fieldset>
         <span className='import-metric'>
           <span className='gray'>* </span>
-          {commaNumber(this.props.metricPerTile)} per tile
+          {commaNumber(this.props.metricPerTile)} タイルあたり
         </span>
       </fieldset>
     )

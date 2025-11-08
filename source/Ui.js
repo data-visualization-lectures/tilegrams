@@ -255,7 +255,7 @@ class Ui {
         className={this._generateOpen ? 'step' : 'active step'}
         onClick={this._toggle('generate')}
       >
-        <span>Generate</span>
+        <span>生成する</span>
         <span className='arrow' />
       </div>
     )
@@ -277,7 +277,7 @@ class Ui {
         className={this._editOpen ? 'step' : 'active step'}
         onClick={this._toggle('edit')}
       >
-        <span>Refine </span>
+        <span>洗練させる</span>
         {errorWarning}
         <span className='arrow' />
       </div>
@@ -319,8 +319,7 @@ class Ui {
     if (selectedTilegram && selectedTilegram.includes('India')) {
       congressionalDistrictModal = (
         <div className='congressionalDistrictModal india'>
-          This data visualisation is a cartographic representation of a
-          traditional map of India and as such does not have 100% geographical accuracy.
+          このデータビジュアライゼーションは、インドの伝統的な地図をもとにした地図表現であり、地理的な正確性が100%保証されているわけではありません。
         </div>
       )
     }
@@ -346,8 +345,8 @@ class Ui {
               >&#215;</div>
               <h1>TILEGRAMS</h1>
               <img src={tilegramsLogo} className='tilegrams-logo' alt='Tilegrams' />
-              <h2>Create tiled maps where regions are sized proportionally to a dataset.</h2>
-              <h3>For optimal experience visit us on a laptop or desktop computer.</h3>
+              <h2>データセットに比例して地域の大きさを調整したタイル地図を作成しましょう。</h2>  
+              <h3>最適な体験のためには、ノートパソコンまたはデスクトップコンピューターでご利用ください。</h3>
             </div>
           </div>
         </div>
@@ -361,15 +360,15 @@ class Ui {
         <div className='column'>
           <div>
             <p className='intro'>
-              Create tiled maps where regions are sized proportionally to a dataset.
+              データセットに比例して地域の大きさを調整したタイル地図を作成しましょう。
               <br />
               <br />
-              For detailed information and instructions, check out the
+              詳しい情報や手順については
               <a
                 onClick={this._toggleManual}
                 target='_blank'
                 rel='noopener noreferrer'
-              > manual</a>.
+              > マニュアル</a>をご覧ください。
             </p>
             <hr />
             {generateOption}
@@ -405,11 +404,10 @@ class Ui {
           <hr />
           <div className='download'>
             <div className='step'>
-              <span>Download</span>
+              <span>ダウンロード</span>
             </div>
             <div className='instruction'>
-              {`To embed your tilegram or manipulate it further,
-                export it in one of these standard formats.`}
+              {`作成したタイルグラムを埋め込んだり、さらに編集したりするには、以下の標準的な形式のいずれかでエクスポートしてください。`}
             </div>
             <fieldset>
               <ExportButton

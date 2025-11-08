@@ -143,8 +143,8 @@ export default class HexMetrics extends React.Component {
     return (
       <div id='warning'>
         <i className='fa fa-exclamation-triangle' />
-        At this data resolution, some {this.state.objectId} will not be represented.
-        Consider a lower resolution.
+        このデータの解像度では、いくつかの {this.state.objectId} が表示されません。
+        より低い解像度を検討してください。
       </div>
     )
   }
@@ -210,7 +210,7 @@ export default class HexMetrics extends React.Component {
             onClick={this._toggleHide}
           />
           <label htmlFor='toggleNull'>
-            Only show {this.state.objectId} with surplus/deficit.
+            余剰または不足のある {this.state.objectId} のみを表示
           </label>
           {this._renderWarning(metrics.shouldWarn)}
         </div>

@@ -87,7 +87,7 @@ export default class ResolutionSlider extends React.Component {
     return (
       <div>
         <fieldset className='resolution-slider'>
-          <label htmlFor='resolutionSlider'>Resolution</label>
+          <label htmlFor='resolutionSlider'>解像度</label>
           <img src={smallHex} className='small-hex hex-img' alt='smaller hexagons' />
           <img src={bigHex} className='big-hex hex-img' alt='bigger hexagons' />
           <input
@@ -108,7 +108,7 @@ export default class ResolutionSlider extends React.Component {
             onBlur={this._triggerChangeFromText}
             onKeyUp={(event) => this._checkForEnter(event)}
           />
-          per tile
+          タイルあたり
         </fieldset>
       </div>
     )
