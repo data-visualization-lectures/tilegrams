@@ -1,112 +1,78 @@
-# タイルグラムの作成
+# タイルグラムの作り方
 
-「タイルグラム」とは、データセットに比例した大きさの領域をタイル状に並べた地図のことです。
-その名は、タイル状の[カートグラム](https://en.wikipedia.org/wiki/Cartogram)の略称として付けました。
+「タイルグラム」はタイル（六角形）で構成された地図で、各地域のサイズがデータ値に比例します。単語は tiled [cartogram](https://en.wikipedia.org/wiki/Cartogram) の略です。地理的な位置関係を保ちつつ人口などの統計をより正確に示せるのが利点です。
 
-タイルグラムは、従来の地理的な地図に比べて、馴染みのある外観を保ちながら、人口統計データをより正確に表現することができます。
+このオープンソースツールを使うと、既存のタイルグラムを閲覧したり、自分専用のタイルグラムを作ってインタラクティブ記事や紙面に利用できます。
 
-このフリーでオープンソースのツールは、ニュースデザイナーや開発者が、既存のタイルグラムを閲覧したり、独自のタイルグラムを作成して、インタラクティブなウェブ向けや紙面向けに作ることができます。
+自動処理を挟んでも、タイルグラムは「人が見てわかりやすい形」を保つ必要があるため時間がかかることがあります。まずは既存のタイルグラムをベースに編集する方法から始めると効率的です。
 
-タイルグラムは、コンピュータで自動化されていても、作成には時間がかかります。というのも、タイルグラムを効果的に使うためには、地理的な輪郭が一般の読者に認識され、意味があるかどうかを人間の目で確認する必要があるからです。そのため、自分のタイルグラムを作る前に、既存のタイルグラムから始めることをお勧めします。
+詳しい背景は [ブログ記事](http://pitchinteractive.com/latest/tilegrams-more-human-maps/) を参照してください。
 
-このプロジェクトについては、私たちの[ブログ記事](http://pitchinteractive.com/latest/tilegrams-more-human-maps/)での発表もご覧ください。
+このマニュアルは基本操作から高度な使い方へ順番に説明します。
 
-このマニュアルは、最も基本的な使用方法から最も高度な使用方法までを説明しています。
+## 既存タイルグラムのエクスポート
 
-## 既存のタイルグラムのエクスポート
+起動するとまず **Load existing** メニューで選ばれたタイルグラムが表示されます。別のオプションを試しながら内容を確認してください。
 
-読み込み時には、**Load existing** メニューで選択されている、既製のタイルグラムが表示されます。他のオプションも選択してみてください。
+表示どおりの状態で問題なければ、左下の **Export** ボタンから **TopoJSON** または **SVG** を出力できます。
 
-表示されたタイルグラムに問題がなければ、左下のボタンを使って **TopoJSON** または **SVG** として **エクスポート** します。
-
-デザイナーはSVGを好みのソフトウェア（例：Illustrator）に取り込むことができ、開発者はTopoJSONをウェブアプリケーションに取り込むことができます。いずれの場合も、データは米国の[FIPS](https://en.wikipedia.org/wiki/Federal_Information_Processing_Standards)コードで識別されます。
+SVG はデザイナーが Illustrator などへ読み込めます。TopoJSON は開発者が Web アプリへ組み込めます。どちらにも米国 [FIPS](https://en.wikipedia.org/wiki/Federal_Information_Processing_Standards) コードが付与されます。
 
 ## タイルグラムの編集
 
-例えば、タイルグラムを読み込んだ後、ある地域の形を変えたいとします。例えば、フロリダが重すぎたり、ミズーリが細すぎたりします。
+既存タイルグラムを読み込んだあと、例えばフロリダが大きすぎたりミズーリが細長すぎたりすると感じたら手動で調整できます。
 
-Click step **2**: **Refine your tilegram**.
+ステップ **2** の **Refine your tilegram** をクリックします。
 
-### Moving tiles around
+### タイルを移動する
 
-タイルをクリック＆ドラッグして移動させることができます。
+- 任意のタイルをドラッグすると移動できます。
+- 複数タイルをまとめて動かしたい場合は矩形選択で囲んでからドラッグします。
+- 特定の州だけ移動したい場合は、その州のタイルをダブルクリックして全選択し、まとめてドラッグします。
+- 右側の **State Tiles** リストの州にマウスを乗せると該当タイルが地図上でハイライトされます。
 
-To move many tiles around, click and drag a
-rectangular marquee around them, and then drag them around.
+### 数値の整合性を保つ
 
-To move just a specific region around, double-click
-any tile in it to select them all—then drag them around.
+**State Tiles** には各州の名前、数字、六角形アイコンが並びます。
 
-You can also hover over a region in the **State Tiles**
-sidebar area to see that region's tiles highlighted on the map.
+数字は現在のタイル数と、データ上「あるべき」タイル数との差（デルタ）です。正ならタイルが多すぎ、負なら足りません。警告アイコンが出ている場合は、選択した解像度で 1 タイル分のデータすら満たしていないことを意味します。
 
-### 統計精度の確保
+> なぜこうなるのか?  
+> タイルグラムは「統計的に正確」で「地図として認識できる形」を同時に満たすのが難しく、形状や隣接関係を保とうとすると誤差が生まれます。
 
-Under **State Tiles**, you'll see a list of each state with a number and a
-hexagon.
+- タイルを削除するにはタイルを選んでキーボードの Delete を押します。
+- タイルを追加するには左サイドバーの六角形をドラッグして地図上に置きます。
 
-The number indicates the _delta inaccuracy_ between the number of tiles that
-region _currently_ has on the map and how many it _should_ have, based on the
-dataset. If the delta is positive, that region has too many tiles on the map.
-If the delta is negative, it doesn't have enough tiles on the map. If there is
-a warning sign, then that region doesn't have enough data for even a single tile
-on the map at the chosen resolution.
+## 新規タイルグラムの生成
 
-(_Why does this happen?_ It is computationally very difficult to produce
-tilegrams which are accurate _and_ recognizable. As you begin to make
-cartograms, you'll appreciate the difficult trade-offs you must make between
-preserving the approximate shapes of regions and their adjacency to other
-regions.)
+ここまで理解できたら、ゼロからタイルグラムを作る準備が整っています。
 
-To remove a tile from the map, click it, and hit 'Delete' on your keyboard.
+**Generate from data** を選ぶと、通常の地図から選択したデータに合わせて領域が徐々にリサイズされていく様子が見られます。
 
-To add a tile to the map, click the hexagon from the left sidebar and drag it
-onto the map.
+**Dataset** では用意済みのデータセットを選ぶか、FIPS コード形式の **Custom CSV** を貼り付けて独自データを投入できます。
 
-## 新しいタイルグラムの生成
+解像度は次の 2 通りで調整します。
 
-If you've made it this far, you are ready to produce your own tilegram.
+1. **Resolution** スライダーをドラッグしてリアルタイムにタイル再計算を確認する方法。
+2. **Per tile** 入力欄に 1 タイルあたりの値を直接入力する、より厳密な方法。
 
-Select **Generate from data**. You will see the tilegram generated before your
-eyes, by beginning with a conventional geographic map and then progressively
-resizing its regions to conform to the selected dataset.
+例えば人口データを使う場合、`500,000` と入力すると 1 タイル ≒ 50 万人になります。各州の人口をその値で割り、最も近い整数に丸めたタイル数が割り当てられます。人口 70 万なら 1 タイル、80 万なら 2 タイル、といった具合です。
 
-Under **Dataset**, you may select one of a few prepared datasets, or input
-your own **Custom CSV**, by pasting in a dataset in the format specified,
-using US FIPS codes.
+**Dataset** と **Resolution**/**Per tile** を変えると **State Tiles** のデルタが自動更新されます。最終的にはすべてが `0` になるよう調整し、責任あるタイルグラムを作成してください。
 
-Then you may alter the resolution in two ways. The most visually gratifying is
-to click and grab the **Resolution** slider and watch as the tiles are
-re-computed in realtime. The other, more statistically accurate way is to click
-into the **Per tile** field and entire your desired value per tile.
+## エクスポートしたタイルグラムの利用
 
-For example, if you are using population to scale the regions of your tilegram,
-you might enter '500,000' so that each tile corresponds to (approximately) five
-hundred thousand people. Then, each region's number of tiles is rounded to the
-nearest multiple of that number. So, in this same example, if you have a region
-with 700,000 people, the metrics would show that you need one tile and if you
-have a region with 800,000 people it would round up to two tiles.
+### D3.js で使う場合
 
-As you adjust the **Dataset** and **Resolution**/**Per tile**, you'll notice
-that the _deltas_ under **State Tiles** update dynamically. Please remember
-to take note of them and ensure that they all read `0` to make responsible
-tilegrams.
-
-##  エクスポートされたタイルグラムの利用
-
-### In D3
-
-[D3](https://d3js.org/)で使用するために、SVGまたはTopoJSONのいずれかをエクスポートすることができます。
-以下の例では、D3 v4を使用し、このホストされたバージョンに対してテストしています。
-
+出力した SVG / TopoJSON は [D3](https://d3js.org/) で扱えます。以下は D3 v4 で検証した例です。
 
 ```html
 <script type="text/javascript" src="https://d3js.org/d3.v4.min.js"></script>
 ```
 
-#### タイルグラムSVGをD3でレンダリングする
+#### SVG を D3 で描画する
 
-最もシンプルなD3の統合は、SVGをDOMに書き出してから インタラクティビティのためのハンドラーを追加することです。
+もっとも手軽なのは、SVG をそのまま DOM に挿入し、必要ならイベントを付ける方法です。
 
 ```javascript
 var WIDTH = 800
@@ -116,7 +82,7 @@ d3.text('tiles.svg', (e, data) => {
   var svg = div.select('svg')
   var groups = svg.selectAll('g')
 
-  // Scale SVG
+  // 幅を調整
   var importedWidth = parseInt(svg.attr('width'))
   var importedHeight = parseInt(svg.attr('height'))
   var scale = WIDTH / importedWidth
@@ -125,27 +91,24 @@ d3.text('tiles.svg', (e, data) => {
     .attr('height', importedHeight * scale)
   groups.attr('transform', 'scale(' + scale + ')')
 
-  // Apply handlers
-  groups.on('click', (e) => {
+  // クリックイベントの例
+  groups.on('click', () => {
     console.log('Clicked', d3.event.target.parentNode.id)
   })
 })
 ```
 
-#### タイルグラムTopoJSONをD3でレンダリングする
+#### TopoJSON を D3 で描画する
 
-D3でタイルグラムのTopoJSONを表示する際には、TopoJSONの座標が緯度・経度を参照していないため、地理的な投影法を使用しないことが重要です。
-というのも、TopoJSONの座標は緯度・経度ではなく、無次元のユークリッド空間を参照しているからです。
+TopoJSON の座標は緯度経度ではなくユークリッド座標なので、地理投影は使用しません。さらに座標の原点が左下にある前提のため、垂直方向を反転させる必要があります（`transform` を参照）。
 
-また、現在は地図を縦に反転させる必要があります。これは エクスポートされたタイルグラムの座標は、原点(`0, 0`)が左下隅にあると仮定しているのに対し、プロジェクションレス・レンダリングでは左上にあると仮定しているからです。下の `transform` に注目してください。
-
-まず、`topojson`を必ずインポートしてください：
+`topojson` も読み込みます。
 
 ```html
 <script type="text/javascript" src="http://d3js.org/topojson.v1.min.js"></script>
 ```
 
-それから：
+描画例:
 
 ```javascript
 var WIDTH = 1400
@@ -176,10 +139,10 @@ d3.json('tiles.topo.json', function showData(error, tilegram) {
 })
 ```
 
-各州の周りにボーダーを描く：
+各州の境界線を描くには、州ごとにタイルをマージしたパスを作ります。
 
 ```javascript
-// Build list of state codes
+// 州コード一覧を作成
 var stateCodes = []
 tilegram.objects.tiles.geometries.forEach(function(geometry) {
   if (stateCodes.indexOf(geometry.properties.state) === -1) {
@@ -187,7 +150,7 @@ tilegram.objects.tiles.geometries.forEach(function(geometry) {
   }
 })
 
-// Build merged geometry for each state
+// 州ごとにジオメトリをマージ
 var stateBorders = stateCodes.map(function(code) {
   return topojson.merge(
     tilegram,
@@ -197,7 +160,7 @@ var stateBorders = stateCodes.map(function(code) {
   )
 })
 
-// Draw path
+// 描画
 g.selectAll('path.border')
   .data(stateBorders)
   .enter().append('path')
@@ -208,8 +171,8 @@ g.selectAll('path.border')
   .attr('stroke-width', 4)
 ```
 
-## タイルグラムをシェアしよう
+## タイルグラムの共有
 
-使ってみて、楽しめたり、使いづらいことがあれば、[@pitchinc](http://twitter.com/pitchinc) もしくは [info@pitchinteractive.com](mailto:info@pitchinteractive.com)まで、ぜひ聞かせてください！
-今後は、より多くのタイルグラム例をアプリケーションに掲載していきたいと考えています。
-ハッピー・タイルグラム！
+このツールを活用した、または改善案がある場合は [@pitchinc](http://twitter.com/pitchinc) もしくは [info@pitchinteractive.com](mailto:info@pitchinteractive.com) までぜひご連絡ください。今後もタイルグラムの事例をアプリに追加していく予定です。
+
+それでは楽しいタイルグラム制作を!
