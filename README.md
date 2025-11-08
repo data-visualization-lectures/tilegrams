@@ -1,12 +1,5 @@
 # Tilegrams
 
-A “tilegram” is a map made of tiles
-where regions are sized proportionally to a dataset.
-
-You can read more in
-[our blog post](http://pitchinteractive.com/latest/tilegrams-more-human-maps/)
-or the [manual](MANUAL.md).
-
 ## Development
 
 ### Setup
@@ -20,7 +13,7 @@ After cloning the repository, run:
 このプロジェクトの依存関係（特に `node-sass@4`）は古いツールチェーンを前提としているため、以下の環境でセットアップしてください。
 
 1. **Node.js 16 系**  
-   `nvm install 16.20.2 && nvm use 16.20.2` のようにして LTS v16 を選択します（Netlify でも `16.20.2` を利用）。
+   `nvm install 16.20.2 && nvm use 16.20.2` のようにして LTS v16 を選択します。
 2. **Python 2.7.18（pyenv）**  
    ```
    pyenv install 2.7.18
@@ -30,7 +23,7 @@ After cloning the repository, run:
    これにより `.python-version` が作成され、このディレクトリ内では Python 2 が自動的に有効になります。
 3. `.npmrc` で `python=/Users/yuichiyazaki/.pyenv/shims/python` を指すようにしています。ご自身の環境に合わせて絶対パスを書き換えるか、`npm config set python "$(pyenv which python)"` でユーザー設定を上書きしてください。こうすることで pyenv 管理下の Python 2.7 が `node-gyp`（= `node-sass` のビルド）に使われます。
 
-### Running
+### Running / ローカルで確認
 
 Run
 
