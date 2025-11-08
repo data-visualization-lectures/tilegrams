@@ -14,8 +14,6 @@ import EditWarningModal from './components/EditWarningModal'
 import Tooltip from './components/Tooltip'
 import googleNewsLabLogo from './images/gnl-logo.png'
 import tilegramsLogo from './images/tilegrams-logo.svg'
-import twitterLogo from './images/social-twitter.svg'
-import facebookLogo from './images/social-facebook.svg'
 import GeographySelector from './components/GeographySelector'
 import geographyResource from './resources/GeographyResource'
 
@@ -359,14 +357,6 @@ class Ui {
             <img src={tilegramsLogo} className='tilegrams-logo' alt='Tilegrams' />
             <span className='by-pitch'>by Pitch Interactive</span>
           </h1>
-          <div className='share'>
-            <a href='https://twitter.com/intent/tweet?text=Tilegrams+from+Pitch+Interactive+https%3A%2F%2Fpitchinteractiveinc.github.io%2Ftilegrams%2F'>
-              <img src={twitterLogo} alt='Twitter' />
-            </a>
-            <a href='https://www.facebook.com/sharer.php?u=https%3A%2F%2Fpitchinteractiveinc.github.io%2Ftilegrams%2F'>
-              <img src={facebookLogo} alt='Facebook' />
-            </a>
-          </div>
         </div>
         <div className='column'>
           <div>
