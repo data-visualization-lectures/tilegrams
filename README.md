@@ -1,5 +1,13 @@
 # Tilegrams
 
+
+nvm install 16.20.2 && nvm use 16.20.2
+npm i
+npm start
+
+
+---
+
 ## Development
 
 ### Setup
