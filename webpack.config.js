@@ -102,6 +102,10 @@ module.exports = {
       {
         from: 'index.html',
         to: 'index.html'
+      },
+      {
+        from: 'source/vendor',
+        to: 'vendor'
       }
     ])
   ],
