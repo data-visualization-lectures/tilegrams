@@ -12,6 +12,7 @@ select {
   font-weight: 300;
   cursor: pointer;
   padding: 3px;
+
   &:focus {
     outline: none;
   }
@@ -19,6 +20,7 @@ select {
 
 fieldset {
   padding: 10px 15px 0px 0px;
+
   label {
     display: inline-block;
     width: $sidebar-width * 0.3;
@@ -29,7 +31,9 @@ fieldset {
 code {
   font-weight: 500;
 }
-.language-javascript, .language-html {
+
+.language-javascript,
+.language-html {
   display: block;
   font-family: "Lucida Console", Monaco, monospace;
   background-color: $very-light-gray;
@@ -56,6 +60,7 @@ code {
   font-size: 1.15em;
   padding: 15px $ui-margin;
   line-height: 1.25em;
+
   .arrow {
     width: 1em;
     height: 1em;
@@ -64,6 +69,7 @@ code {
     float: right;
     transition: transform 500ms ease-in-out;
   }
+
   &.active {
     .arrow {
       transform: rotateX(180deg);
@@ -74,6 +80,7 @@ code {
 .dragging-hex {
   position: absolute;
   transform: translateX(-50%) translateY(-50%);
+
   svg polygon {
     stroke: #000;
     stroke-width: 1px;
@@ -83,9 +90,11 @@ code {
 
 #ui {
   position: absolute;
-  min-height: 100%;
+  top: 48px;
+  min-height: calc(100% - 48px);
   border-right: 2px solid $light-gray;
 }
+
 #ui .column {
   width: $sidebar-width;
   background-color: $ui-background-color;
@@ -94,51 +103,64 @@ code {
   font-size: 0.85em;
   font-weight: 400;
   padding-top: $header-height;
+
   hr {
     border: none;
     height: 1px;
     background-color: $light-gray;
     margin: 0;
   }
+
   p.intro {
     margin: $ui-margin;
     opacity: 0.8;
     line-height: 1.2em;
+
     a {
       text-decoration: none;
       margin: 0;
     }
   }
+
   label.radio-label {
     cursor: pointer;
     padding-top: 12px;
     display: block;
     width: 100%;
+
     &:hover {
       opacity: 0.6;
     }
   }
+
   .scroll-ui {
     overflow: scroll;
   }
+
   .geographySelector {
     padding: 0 $ui-margin 12px $ui-margin;
+
     select {
       background-color: $very-light-gray;
     }
   }
+
   .ui-controls {
     overflow: hidden;
+
     .ui-control-type {
       padding-bottom: 20px;
     }
+
     .import {
       padding: 0 $ui-margin 12px $ui-margin;
       border-top: 1px solid $very-light-gray;
+
       &.active {
         background-color: $very-light-gray;
         border-left: 3px solid $gray;
         padding-left: $ui-margin - 3px;
+
         label.radio-label {
           &:hover {
             opacity: 1;
@@ -146,35 +168,43 @@ code {
         }
       }
     }
+
     input.import {
       padding: 0;
     }
   }
+
   .import-metric {
     font-size: 85%;
     opacity: 0.6;
     color: $blue;
     font-weight: 500;
   }
+
   .n-errors {
     font-size: 85%;
     opacity: 0.6;
     padding-left: 3px;
   }
+
   .csv-input {
     margin-top: 15px;
+
     textarea {
       width: 100%;
       margin-top: 10px;
+
       &:focus {
         outline: none;
       }
     }
+
     .code {
       white-space: pre-line;
       max-height: 70px;
       overflow-y: scroll;
     }
+
     .submit-custom {
       margin: 5px 0;
       background-color: white;
@@ -184,38 +214,47 @@ code {
       border: 1px solid $light-gray;
       cursor: pointer;
       opacity: 0.3;
+
       &.active {
         opacity: 1;
       }
     }
   }
+
   .dataset-select {
     width: 100%;
   }
+
   .instruction {
     margin-top: 10px;
     line-height: 1.2em;
   }
+
   .resolution-slider {
     label {
       display: block;
     }
+
     .hex-img {
       width: 1.5em;
       height: 1.5em;
       display: inline-block;
     }
+
     .small-hex {
       float: left;
     }
+
     .big-hex {
       float: right;
     }
   }
+
   .resolution-slider input {
     width: 100%;
     cursor: pointer;
   }
+
   .resolution-input {
     input {
       min-width: 50%;
@@ -224,41 +263,50 @@ code {
       border-bottom: 1px solid $light-gray;
       margin: 0 5px 0 0;
       color: $blue;
+
       &:focus {
         outline: none;
         border-bottom: 1px solid $gray;
       }
     }
   }
+
   .metrics {
     padding: 0 $ui-margin;
     overflow: scroll;
+
     label {
       padding-left: 5px;
     }
   }
+
   #metrics-header {
     padding-bottom: 0.5em;
     cursor: pointer;
   }
+
   #warning {
     font-size: 0.8em;
     padding-top: 10px;
     line-height: 1.2em;
+
     i {
       padding-right: 0.5em;
     }
   }
+
   .download {
     .instruction {
       margin: 0 $ui-margin;
       line-height: 1.2em;
     }
+
     fieldset {
       display: block;
       margin-left: 15px;
       margin-bottom: $ui-margin / 2;
     }
+
     a.export {
       display: block;
       background-color: #1a1a1a;
@@ -267,6 +315,7 @@ code {
       margin: 0.5em 10px;
       color: white;
       text-align: center;
+
       img {
         width: 1.2em;
         height: 1.2em;
@@ -281,6 +330,7 @@ code {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
+
   .metrics-box {
     text-align: center;
     flex-basis: 18%;
@@ -292,26 +342,34 @@ code {
     padding: 3px 0;
     margin: 3px auto;
     box-shadow: 1px 1px 2px $very-light-gray;
+
     div {
       padding: 2px 0;
     }
+
     svg polygon {
       stroke: $light-gray;
     }
   }
+
   .metrics-box.fade {
     box-shadow: none;
+
     div:not(:first-child) {
       opacity: 0.3;
     }
   }
+
   .metrics-box.disabled {
     opacity: 0.3;
     cursor: pointer;
   }
 }
+
 .metrics.hide-null {
-  .metrics-box.fade, .metrics-box.disabled {
+
+  .metrics-box.fade,
+  .metrics-box.disabled {
     display: none;
   }
 }
