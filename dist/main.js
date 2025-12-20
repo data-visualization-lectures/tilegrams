@@ -17802,9 +17802,25 @@
 	    this._onSaveToCloud = this._onSaveToCloud.bind(this);
 	    this._openCloudLoad = this._openCloudLoad.bind(this);
 	    this._onLoadFromCloud = this._onLoadFromCloud.bind(this);
+	    this._onExportPng = this._onExportPng.bind(this);
 	  }
 
 	  _createClass(Ui, [{
+	    key: '_onExportPng',
+	    value: function _onExportPng() {
+	      var dataUrl = this._getThumbnailDataUrl();
+	      if (dataUrl) {
+	        var link = document.createElement('a');
+	        link.setAttribute('download', 'tilegram.png');
+	        link.setAttribute('href', dataUrl);
+	        document.body.appendChild(link);
+	        link.click();
+	        document.body.removeChild(link);
+	      } else {
+	        alert('画像生成に失敗しました');
+	      }
+	    }
+	  }, {
 	    key: '_closeMobile',
 	    value: function _closeMobile() {
 	      document.body.className = '';
@@ -18395,10 +18411,12 @@
 	                }
 	              }),
 	              _react2.default.createElement(_ExportButton2.default, {
-	                text: 'SVG',
-	                onClick: function onClick() {
-	                  return _this9._exportSvgCallback();
-	                }
+	                text: 'Export SVG',
+	                onClick: this._exportSvgCallback
+	              }),
+	              _react2.default.createElement(_ExportButton2.default, {
+	                text: 'Export PNG',
+	                onClick: this._onExportPng
 	              })
 	            )
 	          ),
@@ -51256,6 +51274,36 @@
 	            });
 	        }
 
+	        /*
+	        * Helper to convert Base64 DataURL to Blob
+	        */
+
+	    }, {
+	        key: '_dataURLToBlob',
+	        value: function _dataURLToBlob(dataURL) {
+	            try {
+	                var BASE64_MARKER = ';base64,';
+	                if (dataURL.indexOf(BASE64_MARKER) == -1) {
+	                    var parts = dataURL.split(',');
+	                    var contentType = parts[0].split(':')[1];
+	                    var raw = decodeURIComponent(parts[1]);
+	                    return new Blob([raw], { type: contentType });
+	                }
+	                var parts = dataURL.split(BASE64_MARKER);
+	                var contentType = parts[0].split(':')[1];
+	                var raw = window.atob(parts[1]);
+	                var rawLength = raw.length;
+	                var uInt8Array = new Uint8Array(rawLength);
+	                for (var i = 0; i < rawLength; ++i) {
+	                    uInt8Array[i] = raw.charCodeAt(i);
+	                }
+	                return new Blob([uInt8Array], { type: contentType });
+	            } catch (e) {
+	                console.error('Failed to convert DataURL to Blob', e);
+	                return null;
+	            }
+	        }
+
 	        /**
 	         * Save a new project
 	         * @param {string} name - Project name
@@ -51267,12 +51315,22 @@
 	        key: 'saveProject',
 	        value: function saveProject(name, projectData, thumbnail) {
 	            var self = this;
-	            return this._getHeaders().then(function (headers) {
+	            var sessionUser = null;
+	            var savedProject = null;
+
+	            return this._getSession().then(function (session) {
+	                if (!session) throw new Error('Please log in.');
+	                sessionUser = session.user;
+	                return {
+	                    'Authorization': 'Bearer ' + session.access_token,
+	                    'Content-Type': 'application/json'
+	                };
+	            }).then(function (headers) {
+	                // Do NOT send thumbnail in JSON body (backend doesn't support it)
 	                var body = JSON.stringify({
 	                    name: name,
 	                    app_name: APP_NAME,
-	                    data: projectData,
-	                    thumbnail: thumbnail
+	                    data: projectData
 	                });
 
 	                return fetch(API_BASE_URL + '/api/projects', {
@@ -51282,6 +51340,30 @@
 	                });
 	            }).then(function (response) {
 	                return self._handleResponse(response);
+	            }).then(function (project) {
+	                // Handle potential array response from PostgREST
+	                savedProject = Array.isArray(project) ? project[0] : project;
+	                if (!savedProject || !savedProject.id) {
+	                    throw new Error('Project ID not returned from API');
+	                }
+
+	                // Upload thumbnail directly to Storage using Supabase Client
+	                if (thumbnail && window.supabase && sessionUser) {
+	                    var blob = self._dataURLToBlob(thumbnail);
+	                    if (!blob) return Promise.resolve(null);
+
+	                    var filePath = sessionUser.id + '/' + savedProject.id + '.png';
+	                    return window.supabase.storage.from('user_projects').upload(filePath, blob, {
+	                        contentType: 'image/png',
+	                        upsert: true
+	                    });
+	                }
+	                return Promise.resolve(null);
+	            }).then(function (uploadResult) {
+	                if (uploadResult && uploadResult.error) {
+	                    console.warn('Thumbnail upload failed:', uploadResult.error);
+	                }
+	                return savedProject;
 	            });
 	        }
 
