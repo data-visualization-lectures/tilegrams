@@ -18085,14 +18085,24 @@
 	      this.render();
 	    }
 	  }, {
+	    key: '_getThumbnailDataUrl',
+	    value: function _getThumbnailDataUrl() {
+	      var canvas = document.querySelector('#canvas canvas');
+	      if (canvas) {
+	        return canvas.toDataURL('image/png');
+	      }
+	      return null;
+	    }
+	  }, {
 	    key: '_onSaveToCloud',
 	    value: function _onSaveToCloud(name) {
 	      var _this7 = this;
 
 	      var jsonStr = _ProjectExporter2.default.export(this._tiles, this._selectedDataset, _Metrics2.default.metricPerTile, this._selectedGeography);
 	      var projectData = JSON.parse(jsonStr);
+	      var thumbnail = this._getThumbnailDataUrl();
 
-	      return _CloudApi2.default.saveProject(name, projectData).then(function () {
+	      return _CloudApi2.default.saveProject(name, projectData, thumbnail).then(function () {
 	        alert('保存しました！');
 	        _this7._closeCloudModal();
 	      }).catch(function (err) {
@@ -18402,7 +18412,7 @@
 	              _react2.default.createElement(
 	                'span',
 	                null,
-	                '\u30D7\u30ED\u30B8\u30A7\u30AF\u30C8\u7BA1\u7406'
+	                '\u30ED\u30FC\u30AB\u30EB\u4FDD\u5B58'
 	              )
 	            ),
 	            _react2.default.createElement(
@@ -18417,7 +18427,7 @@
 	                    return _this9._saveProjectCallback(_this9._selectedGeography);
 	                  }
 	                },
-	                'Save Project (JSON)'
+	                'Save to Local (JSON)'
 	              ),
 	              _react2.default.createElement(
 	                'div',
@@ -18425,7 +18435,7 @@
 	                  className: 'button',
 	                  style: { position: 'relative', display: 'block' }
 	                },
-	                'Load Project (JSON)',
+	                'Load from Local (JSON)',
 	                _react2.default.createElement('input', {
 	                  type: 'file',
 	                  style: {
@@ -51250,17 +51260,19 @@
 	         * Save a new project
 	         * @param {string} name - Project name
 	         * @param {Object} projectData - Project JSON object
+	         * @param {string} thumbnail - Base64 encoded thumbnail image
 	         */
 
 	    }, {
 	        key: 'saveProject',
-	        value: function saveProject(name, projectData) {
+	        value: function saveProject(name, projectData, thumbnail) {
 	            var self = this;
 	            return this._getHeaders().then(function (headers) {
 	                var body = JSON.stringify({
 	                    name: name,
 	                    app_name: APP_NAME,
-	                    data: projectData
+	                    data: projectData,
+	                    thumbnail: thumbnail
 	                });
 
 	                return fetch(API_BASE_URL + '/api/projects', {
