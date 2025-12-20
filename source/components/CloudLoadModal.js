@@ -22,6 +22,22 @@ export default class CloudLoadModal extends React.Component {
                     projects: data,
                     isLoading: false,
                 })
+                // Fetch thumbnails for each project
+                data.forEach(project => {
+                    cloudApi.getThumbnailUrl(project.id).then(url => {
+                        if (url) {
+                            this.setState(prevState => {
+                                const newProjects = prevState.projects.map(p => {
+                                    if (p.id === project.id) {
+                                        return Object.assign({}, p, { thumbnailUrl: url })
+                                    }
+                                    return p
+                                })
+                                return { projects: newProjects }
+                            })
+                        }
+                    })
+                })
             })
             .catch(err => {
                 this.setState({
@@ -58,24 +74,35 @@ export default class CloudLoadModal extends React.Component {
             content = <div>保存されたプロジェクトはありません。</div>
         } else {
             content = (
-                <ul className='project-list'>
+                <div className='project-grid'>
                     {projects.map(project => (
-                        <li key={project.id} onClick={() => this.props.onLoad(project.id)}>
-                            <div>
+                        <div
+                            key={project.id}
+                            className='project-card'
+                            onClick={() => this.props.onLoad(project.id)}
+                        >
+                            <div className='thumbnail-container'>
+                                {project.thumbnailUrl ? (
+                                    <img src={project.thumbnailUrl} alt={project.name} />
+                                ) : (
+                                    <div className='no-thumbnail'>No Image</div>
+                                )}
+                            </div>
+                            <div className='card-footer'>
                                 <div className='project-name'>{project.name}</div>
                                 <div className='project-date'>
                                     {new Date(project.updated_at).toLocaleString()}
                                 </div>
+                                <div
+                                    className='delete-btn'
+                                    onClick={(e) => this.handleDelete(e, project.id)}
+                                >
+                                    削除
+                                </div>
                             </div>
-                            <div
-                                className='delete-btn'
-                                onClick={(e) => this.handleDelete(e, project.id)}
-                            >
-                                削除
-                            </div>
-                        </li>
+                        </div>
                     ))}
-                </ul>
+                </div>
             )
         }
 

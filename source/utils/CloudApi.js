@@ -171,6 +171,29 @@ class CloudApi {
     }
 
     /**
+   * Get signed URL for project thumbnail
+   * @param {string} projectId
+   */
+    getThumbnailUrl(projectId) {
+        var self = this
+        return this._getSession().then(function (session) {
+            if (!session || !window.supabase) return Promise.resolve(null)
+            var path = session.user.id + '/' + projectId + '.png'
+            return window.supabase.storage
+                .from('user_projects')
+                .createSignedUrl(path, 60 * 60) // 1 hour validity
+                .then(function (result) {
+                    // result: { data: { signedUrl: ... }, error: ... }
+                    if (result.error) {
+                        // console.warn('Failed to get thumbnail URL:', result.error)
+                        return null
+                    }
+                    return result.data.signedUrl
+                })
+        })
+    }
+
+    /**
      * Delete a project
      * @param {string} projectId
      */
