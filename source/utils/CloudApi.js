@@ -98,73 +98,93 @@ class CloudApi {
    * @param {Object} projectData - Project JSON object
    * @param {string} thumbnail - Base64 encoded thumbnail image
    */
+    /*
+    * Helper to generate UUID
+    */
+    _generateUUID() {
+        if (window.crypto && window.crypto.randomUUID) {
+            return window.crypto.randomUUID();
+        }
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+            var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+        });
+    }
+
+    /**
+     * Save a new project
+     * @param {string} name - Project name
+     * @param {Object} projectData - Project JSON object
+     * @param {string} thumbnail - Base64 encoded thumbnail image
+     */
     saveProject(name, projectData, thumbnail) {
         var self = this
-        var sessionUser = null
-        var savedProject = null
+
+        if (!window.supabase) {
+            return Promise.reject(new Error('Supabase client not initialized'))
+        }
 
         return this._getSession()
             .then(function (session) {
                 if (!session) throw new Error('Please log in.')
-                sessionUser = session.user
-                return {
-                    'Authorization': 'Bearer ' + session.access_token,
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(function (headers) {
-                // Do NOT send thumbnail in JSON body (backend doesn't support it)
-                var body = JSON.stringify({
-                    name: name,
-                    app_name: APP_NAME,
-                    data: projectData,
-                })
+                var user = session.user
+                var projectId = self._generateUUID()
 
-                return fetch(API_BASE_URL + '/api/projects', {
-                    method: 'POST',
-                    headers: headers,
-                    body: body,
-                })
-            })
-            .then(function (response) {
-                return self._handleResponse(response)
-            })
-            .then(function (data) {
-                // API returns { project: {...} }
-                savedProject = data.project
-                if (!savedProject || !savedProject.id) {
-                    throw new Error('Project ID not returned from API')
-                }
+                var jsonPath = user.id + '/' + projectId + '.json'
+                var thumbPath = user.id + '/' + projectId + '.png'
 
-                // Continue to thumbnail upload without fallback
-                return savedProject
-            })
-            .then(function (project) {
-                savedProject = project
-                if (!savedProject || !savedProject.id) {
-                    throw new Error('Project saved but failed to retrieve ID for thumbnail upload.')
-                }
+                var uploads = []
 
-                // Step 4: Upload thumbnail
-                if (thumbnail && window.supabase && sessionUser) {
-                    var blob = self._dataURLToBlob(thumbnail)
-                    if (!blob) return Promise.resolve(null)
-
-                    var filePath = sessionUser.id + '/' + savedProject.id + '.png'
-                    return window.supabase.storage
+                // 1. Upload JSON
+                var jsonBlob = new Blob([JSON.stringify(projectData)], { type: 'application/json' })
+                uploads.push(
+                    window.supabase.storage
                         .from('user_projects')
-                        .upload(filePath, blob, {
-                            contentType: 'image/png',
+                        .upload(jsonPath, jsonBlob, {
+                            contentType: 'application/json',
                             upsert: true
                         })
+                )
+
+                // 2. Upload Thumbnail
+                if (thumbnail) {
+                    var thumbBlob = self._dataURLToBlob(thumbnail)
+                    if (thumbBlob) {
+                        uploads.push(
+                            window.supabase.storage
+                                .from('user_projects')
+                                .upload(thumbPath, thumbBlob, {
+                                    contentType: 'image/png',
+                                    upsert: true
+                                })
+                        )
+                    }
                 }
-                return Promise.resolve(null)
-            })
-            .then(function (uploadResult) {
-                if (uploadResult && uploadResult.error) {
-                    console.warn('Thumbnail upload failed:', uploadResult.error)
-                }
-                return savedProject
+
+                return Promise.all(uploads).then(function (results) {
+                    // Check for upload errors
+                    results.forEach(function (res) {
+                        if (res.error) throw res.error
+                    })
+
+                    // 3. Insert into DB
+                    return window.supabase
+                        .from('projects')
+                        .insert({
+                            id: projectId,
+                            user_id: user.id,
+                            name: name,
+                            app_name: APP_NAME,
+                            storage_path: jsonPath,
+                            thumbnail_path: thumbnail ? thumbPath : null,
+                            // created_at and updated_at are handled by default or trigger
+                        })
+                        .select() // data returned
+                }).then(function (res) {
+                    if (res.error) throw res.error
+                    // res.data is array
+                    return res.data[0]
+                })
             })
     }
 
