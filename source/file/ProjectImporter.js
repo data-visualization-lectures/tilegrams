@@ -7,7 +7,9 @@ class ProjectImporter {
     import(jsonContent) {
         let projectData
         try {
-            projectData = JSON.parse(jsonContent)
+            projectData = typeof jsonContent === 'string'
+                ? JSON.parse(jsonContent)
+                : jsonContent
         } catch (e) {
             throw new Error('Invalid JSON format')
         }
