@@ -86,11 +86,11 @@ class CloudApi {
     }
 
     /**
-     * Save a new project
-     * @param {string} name - Project name
-     * @param {Object} projectData - Project JSON object
-     * @param {string} thumbnail - Base64 encoded thumbnail image
-     */
+   * Save a new project
+   * @param {string} name - Project name
+   * @param {Object} projectData - Project JSON object
+   * @param {string} thumbnail - Base64 encoded thumbnail image
+   */
     saveProject(name, projectData, thumbnail) {
         var self = this
         var sessionUser = null
@@ -120,16 +120,41 @@ class CloudApi {
                 })
             })
             .then(function (response) {
+                // Log raw response for debugging (handled in _handleResponse but good to know)
                 return self._handleResponse(response)
             })
             .then(function (project) {
-                // Handle potential array response from PostgREST
-                savedProject = Array.isArray(project) ? project[0] : project
-                if (!savedProject || !savedProject.id) {
-                    throw new Error('Project ID not returned from API')
+                // Step 3: Identify Project ID
+                // PostgREST typically returns array on INSERT, but it might return null/empty if API definition is weird.
+                // Try to find ID from response.
+                var candidate = Array.isArray(project) ? project[0] : project
+                if (candidate && candidate.id) {
+                    return candidate
                 }
 
-                // Upload thumbnail directly to Storage using Supabase Client
+                // Fallback: If ID missing, fetch latest project list to find the one we just created
+                // console.warn('Project ID not returned. Fetching list to find created project...')
+                return self.listProjects().then(function (projects) {
+                    if (!projects || projects.length === 0) return null
+                    // Find projects with same name, sort by created_at desc (if available) or assume list order
+                    var matches = projects.filter(function (p) { return p.name === name })
+                    if (matches.length > 0) {
+                        // Sort by created_at desc just to be sure (newest first)
+                        matches.sort(function (a, b) {
+                            return new Date(b.created_at) - new Date(a.created_at)
+                        })
+                        return matches[0]
+                    }
+                    return null
+                })
+            })
+            .then(function (project) {
+                savedProject = project
+                if (!savedProject || !savedProject.id) {
+                    throw new Error('Project saved but failed to retrieve ID for thumbnail upload.')
+                }
+
+                // Step 4: Upload thumbnail
                 if (thumbnail && window.supabase && sessionUser) {
                     var blob = self._dataURLToBlob(thumbnail)
                     if (!blob) return Promise.resolve(null)
