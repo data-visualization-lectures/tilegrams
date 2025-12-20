@@ -8,8 +8,10 @@ import datasetResource from './source/resources/DatasetResource'
 import geographyResource from './source/resources/GeographyResource'
 import tilegramResource from './source/resources/TilegramResource'
 import gridGeometry from './source/geometry/GridGeometry'
-import {startDownload, isDevEnvironment} from './source/utils'
-import {updateCanvasSize} from './source/constants'
+import projectExporter from './source/file/ProjectExporter'
+import projectImporter from './source/file/ProjectImporter'
+import { startDownload, isDevEnvironment } from './source/utils'
+import { updateCanvasSize } from './source/constants'
 
 import logo from './source/images/logo.png' // eslint-disable-line no-unused-vars
 
@@ -59,13 +61,31 @@ function updateUi() {
 function loadTopoJson(topoJson) {
   cancelAnimationFrame(cartogramComputeRafId)
   importing = true
-  const {tiles, dataset, metricPerTile, geography} = importer.fromTopoJson(topoJson)
+  const { tiles, dataset, metricPerTile, geography } = importer.fromTopoJson(topoJson)
   ui.setGeography(geography)
   ui.setSelectedDataset(dataset)
   metrics.metricPerTile = metricPerTile
   canvas.setGeoCodeToName(geographyResource.getGeoCodeHash(geography))
   canvas.importTiles(tiles)
   updateUi()
+  updateUi()
+}
+
+function loadProject(projectJson) {
+  cancelAnimationFrame(cartogramComputeRafId)
+  importing = true
+  try {
+    const { tiles, dataset, metricPerTile, geography } = projectImporter.import(projectJson)
+    ui.setGeography(geography)
+    ui.setSelectedDataset(dataset)
+    metrics.metricPerTile = metricPerTile
+    canvas.setGeoCodeToName(geographyResource.getGeoCodeHash(geography))
+    canvas.importTiles(tiles)
+    updateUi()
+  } catch (e) {
+    console.error(e)
+    alert('Failed to load project file.')
+  }
 }
 
 function selectGeography(geography) {
@@ -154,6 +174,21 @@ function init() {
   })
   ui.setImportCallback(loadTopoJson)
   ui.setGeographySelectCallback(selectGeography)
+  ui.setSaveProjectCallback(geography => {
+    const json = projectExporter.export(
+      canvas.getGrid().getTiles(),
+      ui.getSelectedDataset(),
+      metrics.metricPerTile,
+      geography
+    )
+    startDownload({
+      filename: 'tilegram-project.json',
+      mimeType: 'application/json',
+      content: json,
+    })
+  })
+  ui.setLoadProjectCallback(loadProject)
+
 
   selectGeography(defaultGeography)
 

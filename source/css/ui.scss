@@ -323,6 +323,39 @@ code {
       }
     }
   }
+
+  .project-management {
+    .instruction {
+      margin: 0 $ui-margin;
+      line-height: 1.2em;
+    }
+
+    fieldset {
+      display: block;
+      margin-left: 15px;
+      margin-bottom: $ui-margin / 2;
+    }
+
+    .button {
+      display: block;
+      background-color: #1a1a1a;
+      border-radius: 2px;
+      padding: 0.5em 0.75em;
+      margin: 0.5em 10px;
+      color: white;
+      text-align: center;
+      cursor: pointer;
+      border: none;
+      width: calc(100% - 20px);
+      font-family: inherit;
+      font-size: 100%;
+      text-decoration: none;
+
+      &:hover {
+        opacity: 0.8;
+      }
+    }
+  }
 }
 
 .metrics-wrapper {

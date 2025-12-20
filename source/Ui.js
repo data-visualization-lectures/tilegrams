@@ -5,8 +5,8 @@ import ReactMarkdown from 'react-markdown'
 import manual from 'raw!../MANUAL.md'
 
 import metrics from './Metrics'
-import {createElement} from './utils'
-import {nTileDomain} from './constants'
+import { createElement } from './utils'
+import { nTileDomain } from './constants'
 import TileGenerationUiControls from './components/TileGenerationUiControls'
 import HexMetrics from './components/HexMetrics'
 import ExportButton from './components/ExportButton'
@@ -156,6 +156,25 @@ class Ui {
     }
   }
 
+  setSaveProjectCallback(callback) {
+    this._saveProjectCallback = (geography) => {
+      callback(geography)
+    }
+  }
+
+  setLoadProjectCallback(callback) {
+    this._loadProjectCallback = (event) => {
+      const file = event.target.files[0]
+      if (!file) return
+      const reader = new FileReader()
+      reader.onload = readEvent => {
+        callback(readEvent.target.result)
+      }
+      reader.readAsText(file)
+      event.target.value = ''
+    }
+  }
+
   _checkForEdits(event) {
     if (this._checkForUnsavedChanges()) {
       event.preventDefault()
@@ -179,7 +198,7 @@ class Ui {
   }
 
   _init() {
-    this._container = createElement({id: 'ui'})
+    this._container = createElement({ id: 'ui' })
   }
 
   _startOver() {
@@ -345,7 +364,7 @@ class Ui {
               >&#215;</div>
               <h1>TILEGRAMS</h1>
               <img src={tilegramsLogo} className='tilegrams-logo' alt='Tilegrams' />
-              <h2>データセットに比例して地域の大きさを調整したタイル地図を作成しましょう。</h2>  
+              <h2>データセットに比例して地域の大きさを調整したタイル地図を作成しましょう。</h2>
               <h3>最適な体験のためには、ノートパソコンまたはデスクトップコンピューターでご利用ください。</h3>
             </div>
           </div>
@@ -374,7 +393,7 @@ class Ui {
             {generateOption}
             <div
               className={this._editing ? 'deselected' : ''}
-              style={{height: uiControlsHeight, overflow: 'hidden'}}
+              style={{ height: uiControlsHeight, overflow: 'hidden' }}
               onMouseDown={this._checkForEdits}
             >
               <GeographySelector
@@ -388,7 +407,7 @@ class Ui {
           </div>
           <div
             className={this._editing ? '' : 'deselected'}
-            style={{height: metricsHeight, overflow: 'hidden'}}
+            style={{ height: metricsHeight, overflow: 'hidden' }}
           >
             <HexMetrics
               metricPerTile={metrics.metricPerTile}
@@ -418,6 +437,40 @@ class Ui {
                 text='SVG'
                 onClick={() => this._exportSvgCallback()}
               />
+            </fieldset>
+          </div>
+          <hr />
+          <div className='project-management'>
+            <div className='step'>
+              <span>プロジェクト管理</span>
+            </div>
+            <fieldset>
+              <button
+                className='button'
+                style={{ display: 'block', marginBottom: '10px' }}
+                onClick={() => this._saveProjectCallback(this._selectedGeography)}
+              >
+                Save Project (JSON)
+              </button>
+              <div
+                className='button'
+                style={{ position: 'relative', display: 'block' }}
+              >
+                Load Project (JSON)
+                <input
+                  type='file'
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    opacity: 0,
+                    width: '100%',
+                    height: '100%',
+                    cursor: 'pointer'
+                  }}
+                  onChange={this._loadProjectCallback}
+                />
+              </div>
             </fieldset>
           </div>
         </div>
