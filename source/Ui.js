@@ -277,6 +277,14 @@ class Ui {
     this.render()
   }
 
+  _getThumbnailDataUrl() {
+    const canvas = document.querySelector('#canvas canvas')
+    if (canvas) {
+      return canvas.toDataURL('image/png')
+    }
+    return null
+  }
+
   _onSaveToCloud(name) {
     const jsonStr = projectExporter.export(
       this._tiles,
@@ -285,8 +293,9 @@ class Ui {
       this._selectedGeography
     )
     const projectData = JSON.parse(jsonStr)
+    const thumbnail = this._getThumbnailDataUrl()
 
-    return cloudApi.saveProject(name, projectData)
+    return cloudApi.saveProject(name, projectData, thumbnail)
       .then(() => {
         alert('保存しました！')
         this._closeCloudModal()
@@ -520,7 +529,7 @@ class Ui {
           <hr />
           <div className='project-management'>
             <div className='step'>
-              <span>プロジェクト管理</span>
+              <span>ローカル保存</span>
             </div>
             <fieldset>
               <button
@@ -528,13 +537,13 @@ class Ui {
                 style={{ display: 'block', marginBottom: '10px' }}
                 onClick={() => this._saveProjectCallback(this._selectedGeography)}
               >
-                Save Project (JSON)
+                Save to Local (JSON)
               </button>
               <div
                 className='button'
                 style={{ position: 'relative', display: 'block' }}
               >
-                Load Project (JSON)
+                Load from Local (JSON)
                 <input
                   type='file'
                   style={{

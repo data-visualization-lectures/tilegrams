@@ -62,8 +62,9 @@ class CloudApi {
      * Save a new project
      * @param {string} name - Project name
      * @param {Object} projectData - Project JSON object
+     * @param {string} thumbnail - Base64 encoded thumbnail image
      */
-    saveProject(name, projectData) {
+    saveProject(name, projectData, thumbnail) {
         var self = this
         return this._getHeaders()
             .then(function (headers) {
@@ -71,6 +72,7 @@ class CloudApi {
                     name: name,
                     app_name: APP_NAME,
                     data: projectData,
+                    thumbnail: thumbnail,
                 })
 
                 return fetch(API_BASE_URL + '/api/projects', {
