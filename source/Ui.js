@@ -10,7 +10,6 @@ import { nTileDomain } from './constants'
 import TileGenerationUiControls from './components/TileGenerationUiControls'
 import HexMetrics from './components/HexMetrics'
 import ExportButton from './components/ExportButton'
-import ExportButton from './components/ExportButton'
 import EditWarningModal from './components/EditWarningModal'
 import CloudSaveModal from './components/CloudSaveModal'
 import CloudLoadModal from './components/CloudLoadModal'
@@ -33,8 +32,6 @@ class Ui {
     this._manualOpen = false
     this._nErrors = 0
     this._hideRefineTooltip = true
-    this._nErrors = 0
-    this._hideRefineTooltip = true
     this._mouseY = 0
     this._showCloudSave = false
     this._showCloudLoad = false
@@ -46,7 +43,6 @@ class Ui {
     this._updateNErrors = this._updateNErrors.bind(this)
     this._toggleRefineTooltip = this._toggleRefineTooltip.bind(this)
     this._closeMobile = this._closeMobile.bind(this)
-    this.selectTilegramGenerateOption = this.selectTilegramGenerateOption.bind(this)
     this.selectTilegramGenerateOption = this.selectTilegramGenerateOption.bind(this)
     this._selectedTilegramIndex = 0;
 
