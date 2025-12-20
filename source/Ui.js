@@ -51,6 +51,21 @@ class Ui {
     this._onSaveToCloud = this._onSaveToCloud.bind(this)
     this._openCloudLoad = this._openCloudLoad.bind(this)
     this._onLoadFromCloud = this._onLoadFromCloud.bind(this)
+    this._onExportPng = this._onExportPng.bind(this)
+  }
+
+  _onExportPng() {
+    const dataUrl = this._getThumbnailDataUrl()
+    if (dataUrl) {
+      const link = document.createElement('a')
+      link.setAttribute('download', 'tilegram.png')
+      link.setAttribute('href', dataUrl)
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+    } else {
+      alert('画像生成に失敗しました')
+    }
   }
 
   _closeMobile() {
@@ -521,8 +536,12 @@ class Ui {
                 onClick={() => this._exportCallback()}
               />
               <ExportButton
-                text='SVG'
-                onClick={() => this._exportSvgCallback()}
+                text='Export SVG'
+                onClick={this._exportSvgCallback}
+              />
+              <ExportButton
+                text='Export PNG'
+                onClick={this._onExportPng}
               />
             </fieldset>
           </div>
