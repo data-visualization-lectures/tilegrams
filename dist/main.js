@@ -51300,6 +51300,12 @@
 	                });
 	            }).then(function (response) {
 	                return self._handleResponse(response);
+	            }).then(function (data) {
+	                // API returns { projects: [...] }
+	                if (data && Array.isArray(data.projects)) {
+	                    return data.projects;
+	                }
+	                return [];
 	            });
 	        }
 
@@ -51368,34 +51374,16 @@
 	                    body: body
 	                });
 	            }).then(function (response) {
-	                // Log raw response for debugging (handled in _handleResponse but good to know)
 	                return self._handleResponse(response);
-	            }).then(function (project) {
-	                // Step 3: Identify Project ID
-	                // PostgREST typically returns array on INSERT, but it might return null/empty if API definition is weird.
-	                // Try to find ID from response.
-	                var candidate = Array.isArray(project) ? project[0] : project;
-	                if (candidate && candidate.id) {
-	                    return candidate;
+	            }).then(function (data) {
+	                // API returns { project: {...} }
+	                savedProject = data.project;
+	                if (!savedProject || !savedProject.id) {
+	                    throw new Error('Project ID not returned from API');
 	                }
 
-	                // Fallback: If ID missing, fetch latest project list to find the one we just created
-	                // console.warn('Project ID not returned. Fetching list to find created project...')
-	                return self.listProjects().then(function (projects) {
-	                    if (!projects || projects.length === 0) return null;
-	                    // Find projects with same name, sort by created_at desc (if available) or assume list order
-	                    var matches = projects.filter(function (p) {
-	                        return p.name === name;
-	                    });
-	                    if (matches.length > 0) {
-	                        // Sort by created_at desc just to be sure (newest first)
-	                        matches.sort(function (a, b) {
-	                            return new Date(b.created_at) - new Date(a.created_at);
-	                        });
-	                        return matches[0];
-	                    }
-	                    return null;
-	                });
+	                // Continue to thumbnail upload without fallback
+	                return savedProject;
 	            }).then(function (project) {
 	                savedProject = project;
 	                if (!savedProject || !savedProject.id) {
