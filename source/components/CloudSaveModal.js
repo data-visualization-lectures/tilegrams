@@ -3,8 +3,16 @@ import React from 'react'
 export default class CloudSaveModal extends React.Component {
     constructor(props) {
         super(props)
+        const now = new Date()
+        const year = now.getFullYear()
+        const month = String(now.getMonth() + 1).padStart(2, '0')
+        const day = String(now.getDate()).padStart(2, '0')
+        const hours = String(now.getHours()).padStart(2, '0')
+        const minutes = String(now.getMinutes()).padStart(2, '0')
+        const defaultName = `${year}-${month}-${day} ${hours}:${minutes}`
+
         this.state = {
-            name: '',
+            name: defaultName,
             isSaving: false,
         }
         this.handleChange = this.handleChange.bind(this)
