@@ -547,37 +547,39 @@ class Ui {
           </div>
           <hr />
           <div className='project-management'>
-            <div className='step'>
-              <span>ローカル保存</span>
-            </div>
-            <fieldset>
-              <button
-                className='button'
-                style={{ display: 'block', marginBottom: '10px' }}
-                onClick={() => this._saveProjectCallback(this._selectedGeography)}
-              >
-                Save to Local (JSON)
-              </button>
-              <div
-                className='button'
-                style={{ position: 'relative', display: 'block' }}
-              >
-                Load from Local (JSON)
-                <input
-                  type='file'
-                  style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    opacity: 0,
-                    width: '100%',
-                    height: '100%',
-                    cursor: 'pointer'
-                  }}
-                  onChange={this._loadProjectCallback}
-                />
+            <div style={{ display: 'none' }}>
+              <div className='step'>
+                <span>ローカル保存</span>
               </div>
-            </fieldset>
+              <fieldset>
+                <button
+                  className='button'
+                  style={{ display: 'block', marginBottom: '10px' }}
+                  onClick={() => this._saveProjectCallback(this._selectedGeography)}
+                >
+                  Save to Local (JSON)
+                </button>
+                <div
+                  className='button'
+                  style={{ position: 'relative', display: 'block' }}
+                >
+                  Load from Local (JSON)
+                  <input
+                    type='file'
+                    style={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      opacity: 0,
+                      width: '100%',
+                      height: '100%',
+                      cursor: 'pointer'
+                    }}
+                    onChange={this._loadProjectCallback}
+                  />
+                </div>
+              </fieldset>
+            </div>
 
             <div className='step'>
               <span>クラウド (Beta)</span>

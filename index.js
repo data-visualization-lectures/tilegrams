@@ -10,8 +10,10 @@ import tilegramResource from './source/resources/TilegramResource'
 import gridGeometry from './source/geometry/GridGeometry'
 import projectExporter from './source/file/ProjectExporter'
 import projectImporter from './source/file/ProjectImporter'
-import { startDownload, isDevEnvironment } from './source/utils'
+
+import { startDownload, isDevEnvironment, getQueryParam } from './source/utils'
 import { updateCanvasSize } from './source/constants'
+import CloudApi from './source/utils/CloudApi'
 
 import logo from './source/images/logo.png' // eslint-disable-line no-unused-vars
 
@@ -214,3 +216,31 @@ document.addEventListener('keydown', event => {
 })
 
 init()
+
+// Cloud Project Loading
+const projectId = getQueryParam('project_id')
+if (projectId) {
+  // Wait for Supabase to be ready and authenticated
+  const checkAuth = setInterval(() => {
+    if (window.supabase) {
+      clearInterval(checkAuth)
+      window.supabase.auth.getSession().then(({ data: { session } }) => {
+        if (session) {
+          console.log('Loading cloud project:', projectId)
+          CloudApi.loadProject(projectId)
+            .then(projectJson => {
+              loadProject(projectJson)
+              // URLをクリーンにする (optional)
+              // window.history.replaceState({}, document.title, window.location.pathname)
+            })
+            .catch(err => {
+              console.error('Cloud load failed', err)
+              alert('Failed to load cloud project.')
+            })
+        } else {
+          console.log('Waiting for login...')
+        }
+      })
+    }
+  }, 500)
+}

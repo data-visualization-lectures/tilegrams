@@ -193,17 +193,46 @@ class CloudApi {
      * @param {string} projectId
      */
     loadProject(projectId) {
-        var self = this
-        return this._getHeaders()
-            .then(function (headers) {
-                return fetch(API_BASE_URL + '/api/projects/' + projectId, {
-                    method: 'GET',
-                    headers: headers,
+        if (!window.supabase) return Promise.reject(new Error('Supabase client missing'))
+
+        return this._getSession().then(function (session) {
+            if (!session) throw new Error('Please log in.')
+
+            // 1. Get Metadata to find storage_path
+            return window.supabase
+                .from('projects')
+                .select('*')
+                .eq('id', projectId)
+                .single()
+                .then(function (res) {
+                    if (res.error) throw res.error
+                    return res.data
                 })
-            })
-            .then(function (response) {
-                return self._handleResponse(response)
-            })
+                // 2. Download JSON from Storage
+                .then(function (projectMeta) {
+                    if (!projectMeta.storage_path) throw new Error('Project file path not found.')
+                    return window.supabase.storage
+                        .from('user_projects')
+                        .download(projectMeta.storage_path)
+                })
+                // 3. Read and Parse JSON
+                .then(function (res) {
+                    if (res.error) throw res.error
+                    // res.data is a Blob
+                    return new Promise(function (resolve, reject) {
+                        var reader = new FileReader()
+                        reader.onload = function () {
+                            try {
+                                resolve(JSON.parse(reader.result))
+                            } catch (e) {
+                                reject(e)
+                            }
+                        }
+                        reader.onerror = reject
+                        reader.readAsText(res.data)
+                    })
+                })
+        })
     }
 
     /**

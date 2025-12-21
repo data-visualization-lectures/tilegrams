@@ -30,7 +30,7 @@ function createElement(options) {
   return div
 }
 
-function startDownload({filename, content, mimeType}) {
+function startDownload({ filename, content, mimeType }) {
   const link = document.createElement('a')
   document.body.appendChild(link)
   link.setAttribute('href', `data:${mimeType},${content}`)
@@ -82,6 +82,12 @@ function isDevEnvironment() {
   return _isDevEnvironment
 }
 
+function getQueryParam(name) {
+  if (typeof window === 'undefined') return null
+  const urlParams = new URLSearchParams(window.location.search)
+  return urlParams.get(name)
+}
+
 module.exports = {
   fipsColor,
   createElement,
@@ -90,4 +96,5 @@ module.exports = {
   checkWithinBounds,
   hashFromData,
   isDevEnvironment,
+  getQueryParam,
 }
