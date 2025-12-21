@@ -619,17 +619,6 @@ class Ui {
           >
             <img src={googleNewsLabLogo} className='gnl-logo' alt='Google News Lab' />
           </a>
-          <span className='source'>|
-            View
-            <a
-              href='https://github.com/PitchInteractiveInc/tilegrams'
-              target='_blank'
-              rel='noopener noreferrer'
-            >
-              source
-            </a>
-            on GitHub
-          </span>
         </h2>
         <Tooltip
           hidden={this._hideRefineTooltip}
