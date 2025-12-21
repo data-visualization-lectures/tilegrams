@@ -14,6 +14,7 @@ import EditWarningModal from './components/EditWarningModal'
 import CloudSaveModal from './components/CloudSaveModal'
 import CloudLoadModal from './components/CloudLoadModal'
 import Tooltip from './components/Tooltip'
+import Toast from './components/Toast'
 import googleNewsLabLogo from './images/gnl-logo.png'
 import tilegramsLogo from './images/tilegrams-logo.svg'
 import GeographySelector from './components/GeographySelector'
@@ -35,6 +36,9 @@ class Ui {
     this._mouseY = 0
     this._showCloudSave = false
     this._showCloudLoad = false
+    this._toastMessage = ''
+    this._toastVisible = false
+    this._toastType = 'info'
 
     this._startOver = this._startOver.bind(this)
     this._resumeEditing = this._resumeEditing.bind(this)
@@ -64,8 +68,19 @@ class Ui {
       link.click()
       document.body.removeChild(link)
     } else {
-      alert('画像生成に失敗しました')
+      this._showToast('画像生成に失敗しました', 'error')
     }
+  }
+
+  _showToast(message, type = 'info') {
+    this._toastMessage = message
+    this._toastType = type
+    this._toastVisible = true
+    this.render()
+    setTimeout(() => {
+      this._toastVisible = false
+      this.render()
+    }, 3000)
   }
 
   _closeMobile() {
@@ -312,11 +327,11 @@ class Ui {
 
     return cloudApi.saveProject(name, projectData, thumbnail)
       .then(() => {
-        alert('保存しました！')
+        this._showToast('保存しました！', 'success')
         this._closeCloudModal()
       })
       .catch(err => {
-        alert('保存に失敗しました: ' + err.message)
+        this._showToast('保存に失敗しました: ' + err.message, 'error')
         throw err // Re-throw to let modal know it failed
       })
   }
@@ -329,7 +344,7 @@ class Ui {
         this._closeCloudModal()
       })
       .catch(err => {
-        alert('読み込みに失敗しました: ' + err.message)
+        this._showToast('読み込みに失敗しました: ' + err.message, 'error')
       })
   }
 
@@ -624,6 +639,11 @@ class Ui {
           hidden={this._hideRefineTooltip}
           text='Some areas require additional manual adjustment to be statistically accurate.'
           yPos={this._mouseY}
+        />
+        <Toast
+          message={this._toastMessage}
+          visible={this._toastVisible}
+          type={this._toastType}
         />
       </div>,
       this._container

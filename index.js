@@ -19,6 +19,7 @@ import logo from './source/images/logo.png' // eslint-disable-line no-unused-var
 
 require('./source/css/main.scss')
 require('font-awesome/scss/font-awesome.scss')
+require('./source/css/toast.scss')
 
 let cartogramComputeRafId
 
