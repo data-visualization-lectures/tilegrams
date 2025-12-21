@@ -18438,7 +18438,7 @@
 	            _react2.default.createElement(
 	              'div',
 	              { className: 'instruction' },
-	              '\u4F5C\u6210\u3057\u305F\u30BF\u30A4\u30EB\u30B0\u30E9\u30E0\u3092\u57CB\u3081\u8FBC\u3093\u3060\u308A\u3001\u3055\u3089\u306B\u7DE8\u96C6\u3057\u305F\u308A\u3059\u308B\u306B\u306F\u3001\u4EE5\u4E0B\u306E\u6A19\u6E96\u7684\u306A\u5F62\u5F0F\u306E\u3044\u305A\u308C\u304B\u3067\u30A8\u30AF\u30B9\u30DD\u30FC\u30C8\u3057\u3066\u304F\u3060\u3055\u3044\u3002'
+	              '\u4F5C\u6210\u3057\u305F\u30BF\u30A4\u30EB\u30B0\u30E9\u30E0\u3092\u6D3B\u7528\u3059\u308B\u306B\u306F\u3001\u4EE5\u4E0B\u306E\u6A19\u6E96\u7684\u306A\u5F62\u5F0F\u306E\u3044\u305A\u308C\u304B\u3067\u30C0\u30A6\u30F3\u30ED\u30FC\u30C9\u3057\u3066\u3054\u5229\u7528\u304F\u3060\u3055\u3044\u3002'
 	            ),
 	            _react2.default.createElement(
 	              'fieldset',
@@ -18518,7 +18518,7 @@
 	              _react2.default.createElement(
 	                'span',
 	                null,
-	                '\u30AF\u30E9\u30A6\u30C9 (Beta)'
+	                '\u30B5\u30FC\u30D0\u3078\u4FDD\u5B58'
 	              )
 	            ),
 	            _react2.default.createElement(
@@ -18531,7 +18531,7 @@
 	                  style: { display: 'block', marginBottom: '10px' },
 	                  onClick: this._openCloudSave
 	                },
-	                'Save to Cloud'
+	                '\u30B5\u30FC\u30D0\u3078\u4FDD\u5B58'
 	              ),
 	              _react2.default.createElement(
 	                'button',
@@ -18540,7 +18540,7 @@
 	                  style: { display: 'block' },
 	                  onClick: this._openCloudLoad
 	                },
-	                'Load from Cloud'
+	                '\u30B5\u30FC\u30D0\u304B\u3089\u306E\u8AAD\u8FBC'
 	              )
 	            )
 	          )
@@ -18567,21 +18567,6 @@
 	              rel: 'noopener noreferrer'
 	            },
 	            _react2.default.createElement('img', { src: _gnlLogo2.default, className: 'gnl-logo', alt: 'Google News Lab' })
-	          ),
-	          _react2.default.createElement(
-	            'span',
-	            { className: 'source' },
-	            '| View',
-	            _react2.default.createElement(
-	              'a',
-	              {
-	                href: 'https://github.com/PitchInteractiveInc/tilegrams',
-	                target: '_blank',
-	                rel: 'noopener noreferrer'
-	              },
-	              'source'
-	            ),
-	            'on GitHub'
 	          )
 	        ),
 	        _react2.default.createElement(_Tooltip2.default, {
