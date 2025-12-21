@@ -100,6 +100,10 @@
 
 	var _constants = __webpack_require__(22);
 
+	var _CloudApi = __webpack_require__(332);
+
+	var _CloudApi2 = _interopRequireDefault(_CloudApi);
+
 	var _logo = __webpack_require__(368);
 
 	var _logo2 = _interopRequireDefault(_logo);
@@ -327,6 +331,34 @@
 	});
 
 	init();
+
+	// Cloud Project Loading
+	var projectId = (0, _utils.getQueryParam)('project_id');
+	if (projectId) {
+	  // Wait for Supabase to be ready and authenticated
+	  var checkAuth = setInterval(function () {
+	    if (window.supabase) {
+	      clearInterval(checkAuth);
+	      window.supabase.auth.getSession().then(function (_ref) {
+	        var session = _ref.data.session;
+
+	        if (session) {
+	          console.log('Loading cloud project:', projectId);
+	          _CloudApi2.default.loadProject(projectId).then(function (projectJson) {
+	            loadProject(projectJson);
+	            // URLをクリーンにする (optional)
+	            // window.history.replaceState({}, document.title, window.location.pathname)
+	          }).catch(function (err) {
+	            console.error('Cloud load failed', err);
+	            alert('Failed to load cloud project.');
+	          });
+	        } else {
+	          console.log('Waiting for login...');
+	        }
+	      });
+	    }
+	  }, 500);
+	}
 
 /***/ }),
 /* 1 */
@@ -3939,6 +3971,12 @@
 	  return _isDevEnvironment;
 	}
 
+	function getQueryParam(name) {
+	  if (typeof window === 'undefined') return null;
+	  var urlParams = new URLSearchParams(window.location.search);
+	  return urlParams.get(name);
+	}
+
 	module.exports = {
 	  fipsColor: fipsColor,
 	  createElement: createElement,
@@ -3946,7 +3984,8 @@
 	  updateBounds: updateBounds,
 	  checkWithinBounds: checkWithinBounds,
 	  hashFromData: hashFromData,
-	  isDevEnvironment: isDevEnvironment
+	  isDevEnvironment: isDevEnvironment,
+	  getQueryParam: getQueryParam
 	};
 
 /***/ }),
@@ -18426,47 +18465,51 @@
 	            { className: 'project-management' },
 	            _react2.default.createElement(
 	              'div',
-	              { className: 'step' },
-	              _react2.default.createElement(
-	                'span',
-	                null,
-	                '\u30ED\u30FC\u30AB\u30EB\u4FDD\u5B58'
-	              )
-	            ),
-	            _react2.default.createElement(
-	              'fieldset',
-	              null,
-	              _react2.default.createElement(
-	                'button',
-	                {
-	                  className: 'button',
-	                  style: { display: 'block', marginBottom: '10px' },
-	                  onClick: function onClick() {
-	                    return _this9._saveProjectCallback(_this9._selectedGeography);
-	                  }
-	                },
-	                'Save to Local (JSON)'
-	              ),
+	              { style: { display: 'none' } },
 	              _react2.default.createElement(
 	                'div',
-	                {
-	                  className: 'button',
-	                  style: { position: 'relative', display: 'block' }
-	                },
-	                'Load from Local (JSON)',
-	                _react2.default.createElement('input', {
-	                  type: 'file',
-	                  style: {
-	                    position: 'absolute',
-	                    top: 0,
-	                    left: 0,
-	                    opacity: 0,
-	                    width: '100%',
-	                    height: '100%',
-	                    cursor: 'pointer'
+	                { className: 'step' },
+	                _react2.default.createElement(
+	                  'span',
+	                  null,
+	                  '\u30ED\u30FC\u30AB\u30EB\u4FDD\u5B58'
+	                )
+	              ),
+	              _react2.default.createElement(
+	                'fieldset',
+	                null,
+	                _react2.default.createElement(
+	                  'button',
+	                  {
+	                    className: 'button',
+	                    style: { display: 'block', marginBottom: '10px' },
+	                    onClick: function onClick() {
+	                      return _this9._saveProjectCallback(_this9._selectedGeography);
+	                    }
 	                  },
-	                  onChange: this._loadProjectCallback
-	                })
+	                  'Save to Local (JSON)'
+	                ),
+	                _react2.default.createElement(
+	                  'div',
+	                  {
+	                    className: 'button',
+	                    style: { position: 'relative', display: 'block' }
+	                  },
+	                  'Load from Local (JSON)',
+	                  _react2.default.createElement('input', {
+	                    type: 'file',
+	                    style: {
+	                      position: 'absolute',
+	                      top: 0,
+	                      left: 0,
+	                      opacity: 0,
+	                      width: '100%',
+	                      height: '100%',
+	                      cursor: 'pointer'
+	                    },
+	                    onChange: this._loadProjectCallback
+	                  })
+	                )
 	              )
 	            ),
 	            _react2.default.createElement(
@@ -51438,14 +51481,38 @@
 	    }, {
 	        key: 'loadProject',
 	        value: function loadProject(projectId) {
-	            var self = this;
-	            return this._getHeaders().then(function (headers) {
-	                return fetch(API_BASE_URL + '/api/projects/' + projectId, {
-	                    method: 'GET',
-	                    headers: headers
+	            if (!window.supabase) return Promise.reject(new Error('Supabase client missing'));
+
+	            return this._getSession().then(function (session) {
+	                if (!session) throw new Error('Please log in.');
+
+	                // 1. Get Metadata to find storage_path
+	                return window.supabase.from('projects').select('*').eq('id', projectId).single().then(function (res) {
+	                    if (res.error) throw res.error;
+	                    return res.data;
+	                })
+	                // 2. Download JSON from Storage
+	                .then(function (projectMeta) {
+	                    if (!projectMeta.storage_path) throw new Error('Project file path not found.');
+	                    return window.supabase.storage.from('user_projects').download(projectMeta.storage_path);
+	                })
+	                // 3. Read and Parse JSON
+	                .then(function (res) {
+	                    if (res.error) throw res.error;
+	                    // res.data is a Blob
+	                    return new Promise(function (resolve, reject) {
+	                        var reader = new FileReader();
+	                        reader.onload = function () {
+	                            try {
+	                                resolve(JSON.parse(reader.result));
+	                            } catch (e) {
+	                                reject(e);
+	                            }
+	                        };
+	                        reader.onerror = reject;
+	                        reader.readAsText(res.data);
+	                    });
 	                });
-	            }).then(function (response) {
-	                return self._handleResponse(response);
 	            });
 	        }
 
