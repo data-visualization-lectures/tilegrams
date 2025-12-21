@@ -528,7 +528,7 @@ class Ui {
               <span>ダウンロード</span>
             </div>
             <div className='instruction'>
-              {`作成したタイルグラムを埋め込んだり、さらに編集したりするには、以下の標準的な形式のいずれかでエクスポートしてください。`}
+              {`作成したタイルグラムを活用するには、以下の標準的な形式のいずれかでダウンロードしてご利用ください。`}
             </div>
             <fieldset>
               <ExportButton
@@ -582,7 +582,7 @@ class Ui {
             </div>
 
             <div className='step'>
-              <span>クラウド (Beta)</span>
+              <span>サーバへ保存</span>
             </div>
             <fieldset>
               <button
@@ -590,14 +590,14 @@ class Ui {
                 style={{ display: 'block', marginBottom: '10px' }}
                 onClick={this._openCloudSave}
               >
-                Save to Cloud
+                サーバへ保存
               </button>
               <button
                 className='button'
                 style={{ display: 'block' }}
                 onClick={this._openCloudLoad}
               >
-                Load from Cloud
+                サーバからの読込
               </button>
             </fieldset>
           </div>
