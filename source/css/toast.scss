@@ -1,0 +1,32 @@
+.toast {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background-color: #333;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 4px;
+  opacity: 0;
+  transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+  z-index: 10000;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  font-size: 14px;
+
+  &.visible {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
+
+  &.success {
+    background-color: #4CAF50;
+  }
+
+  &.error {
+    background-color: #F44336;
+  }
+
+  &.info {
+    background-color: #2196F3;
+  }
+}

@@ -1,0 +1,171 @@
+.modal-edit-warning {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 99999;
+  background-color: rgba(0, 0, 0, 0.3);
+  border: 1px solid $gray;
+
+  .warning-text {
+    position: relative;
+    max-width: 400px;
+    left: 50%;
+    top: 50%;
+    color: #1a1a1a;
+    padding: $ui-margin $ui-margin $ui-margin / 2 $ui-margin;
+    font-size: 1em;
+    transform: translateX(-50%) translateY(-50%);
+    background-color: $ui-background-color;
+    line-height: 1.2em;
+
+    a {
+      padding: 0.3em;
+      margin-top: 0.6em;
+      background-color: black;
+      color: white;
+      border-radius: 2px;
+      min-width: 40%;
+      text-align: center;
+    }
+  }
+}
+
+.modal-cloud {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 99999;
+  background-color: rgba(0, 0, 0, 0.3);
+
+  .modal-content {
+    position: relative;
+    max-width: 500px;
+    left: 50%;
+    top: 50%;
+    color: #1a1a1a;
+    padding: 20px;
+    font-size: 1em;
+    transform: translateX(-50%) translateY(-50%);
+    background-color: #f7f7f7;
+    line-height: 1.2em;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    max-height: 80vh;
+    overflow-y: auto;
+
+    h3 {
+      margin-top: 0;
+      margin-bottom: 1em;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 1em;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .project-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      max-height: 400px;
+      overflow-y: auto;
+      border: 1px solid #e0e0e0;
+      padding: 10px;
+    }
+
+    .project-card {
+      width: 130px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background: #fff;
+      cursor: pointer;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+
+      &:hover {
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      }
+
+      .thumbnail-container {
+        height: 100px;
+        background-color: #eee;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        border-bottom: 1px solid #eee;
+
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+
+        .no-thumbnail {
+          color: #999;
+          font-size: 0.8em;
+        }
+      }
+
+      .card-footer {
+        padding: 5px;
+        font-size: 0.8em;
+
+        .project-name {
+          font-weight: bold;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .project-date {
+          font-size: 0.8em;
+          color: #666;
+          margin-bottom: 5px;
+        }
+
+        .delete-btn {
+          color: red;
+          text-align: right;
+          cursor: pointer;
+
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+      }
+    }
+
+    .buttons {
+      margin-top: 1.5em;
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+
+      button {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.9em;
+
+        &.cancel {
+          background-color: #ddd;
+          color: #333;
+        }
+
+        &.save {
+          background-color: #1a1a1a;
+          color: white;
+        }
+      }
+    }
+  }
+}
