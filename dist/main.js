@@ -18195,8 +18195,8 @@
 	      var _this9 = this;
 
 	      _CloudApi2.default.loadProject(projectId).then(function (data) {
-	        // data.data is the JSON object of the project
-	        _this9._loadProjectCallback(data.data); // Assuming wrapper in index.js handles data
+	        // API returns the project JSON directly as the response body
+	        _this9._loadProjectCallback(data);
 	        _this9._closeCloudModal();
 	      }).catch(function (err) {
 	        _this9._showToast('読み込みに失敗しました: ' + err.message, 'error');
