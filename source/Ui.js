@@ -341,13 +341,17 @@ class Ui {
   }
 
   _onLoadFromCloud(projectId) {
+    console.log('_onLoadFromCloud called with projectId:', projectId)
     cloudApi.loadProject(projectId)
       .then(data => {
+        console.log('cloudApi.loadProject returned:', typeof data, data)
+        console.log('About to call _loadProjectFromCloudCallback')
         // API returns the project JSON directly as the response body
         this._loadProjectFromCloudCallback(data)
         this._closeCloudModal()
       })
       .catch(err => {
+        console.error('Cloud load error:', err)
         this._showToast('読み込みに失敗しました: ' + err.message, 'error')
       })
   }

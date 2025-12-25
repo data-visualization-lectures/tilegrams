@@ -75,10 +75,13 @@ function loadTopoJson(topoJson) {
 }
 
 function loadProject(projectJson) {
+  console.log('loadProject called with:', typeof projectJson, projectJson)
   cancelAnimationFrame(cartogramComputeRafId)
   importing = true
   try {
+    console.log('About to call projectImporter.import with:', projectJson)
     const { tiles, dataset, metricPerTile, geography } = projectImporter.import(projectJson)
+    console.log('Import successful, geography:', geography)
     ui.setGeography(geography)
     ui.setSelectedDataset(dataset)
     metrics.metricPerTile = metricPerTile
@@ -86,7 +89,7 @@ function loadProject(projectJson) {
     canvas.importTiles(tiles)
     updateUi()
   } catch (e) {
-    console.error(e)
+    console.error('loadProject error:', e)
     alert('Failed to load project file.')
   }
 }
