@@ -46,6 +46,8 @@
 
 	'use strict';
 
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
 	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
 	var _mobileDetect = __webpack_require__(1);
@@ -177,15 +179,19 @@
 	}
 
 	function loadProject(projectJson) {
+	  console.log('loadProject called with:', typeof projectJson === 'undefined' ? 'undefined' : _typeof(projectJson), projectJson);
 	  cancelAnimationFrame(cartogramComputeRafId);
 	  importing = true;
 	  try {
+	    console.log('About to call projectImporter.import with:', projectJson);
+
 	    var _projectImporter$impo = _ProjectImporter2.default.import(projectJson),
 	        tiles = _projectImporter$impo.tiles,
 	        dataset = _projectImporter$impo.dataset,
 	        metricPerTile = _projectImporter$impo.metricPerTile,
 	        geography = _projectImporter$impo.geography;
 
+	    console.log('Import successful, geography:', geography);
 	    _Ui2.default.setGeography(geography);
 	    _Ui2.default.setSelectedDataset(dataset);
 	    _Metrics2.default.metricPerTile = metricPerTile;
@@ -193,7 +199,7 @@
 	    _Canvas2.default.importTiles(tiles);
 	    updateUi();
 	  } catch (e) {
-	    console.error(e);
+	    console.error('loadProject error:', e);
 	    alert('Failed to load project file.');
 	  }
 	}
@@ -307,6 +313,7 @@
 	    });
 	  });
 	  _Ui2.default.setLoadProjectCallback(loadProject);
+	  _Ui2.default.setLoadProjectFromCloudCallback(loadProject);
 
 	  selectGeography(defaultGeography);
 
@@ -17728,6 +17735,8 @@
 	  value: true
 	});
 
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 	var _react = __webpack_require__(99);
@@ -18058,6 +18067,11 @@
 	      };
 	    }
 	  }, {
+	    key: 'setLoadProjectFromCloudCallback',
+	    value: function setLoadProjectFromCloudCallback(callback) {
+	      this._loadProjectFromCloudCallback = callback;
+	    }
+	  }, {
 	    key: '_checkForEdits',
 	    value: function _checkForEdits(event) {
 	      if (this._checkForUnsavedChanges()) {
@@ -18194,11 +18208,15 @@
 	    value: function _onLoadFromCloud(projectId) {
 	      var _this9 = this;
 
+	      console.log('_onLoadFromCloud called with projectId:', projectId);
 	      _CloudApi2.default.loadProject(projectId).then(function (data) {
+	        console.log('cloudApi.loadProject returned:', typeof data === 'undefined' ? 'undefined' : _typeof(data), data);
+	        console.log('About to call _loadProjectFromCloudCallback');
 	        // API returns the project JSON directly as the response body
-	        _this9._loadProjectCallback(data);
+	        _this9._loadProjectFromCloudCallback(data);
 	        _this9._closeCloudModal();
 	      }).catch(function (err) {
+	        console.error('Cloud load error:', err);
 	        _this9._showToast('読み込みに失敗しました: ' + err.message, 'error');
 	      });
 	    }
