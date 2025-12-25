@@ -191,6 +191,7 @@ function init() {
     })
   })
   ui.setLoadProjectCallback(loadProject)
+  ui.setLoadProjectFromCloudCallback(loadProject)
 
 
   selectGeography(defaultGeography)

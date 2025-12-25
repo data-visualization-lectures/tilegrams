@@ -217,6 +217,10 @@ class Ui {
     }
   }
 
+  setLoadProjectFromCloudCallback(callback) {
+    this._loadProjectFromCloudCallback = callback
+  }
+
   _checkForEdits(event) {
     if (this._checkForUnsavedChanges()) {
       event.preventDefault()
@@ -340,7 +344,7 @@ class Ui {
     cloudApi.loadProject(projectId)
       .then(data => {
         // API returns the project JSON directly as the response body
-        this._loadProjectCallback(data)
+        this._loadProjectFromCloudCallback(data)
         this._closeCloudModal()
       })
       .catch(err => {
