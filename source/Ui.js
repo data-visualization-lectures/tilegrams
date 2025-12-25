@@ -339,8 +339,8 @@ class Ui {
   _onLoadFromCloud(projectId) {
     cloudApi.loadProject(projectId)
       .then(data => {
-        // data.data is the JSON object of the project
-        this._loadProjectCallback(data.data) // Assuming wrapper in index.js handles data
+        // API returns the project JSON directly as the response body
+        this._loadProjectCallback(data)
         this._closeCloudModal()
       })
       .catch(err => {
