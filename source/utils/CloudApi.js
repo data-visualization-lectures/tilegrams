@@ -4,8 +4,8 @@ const APP_NAME = 'tilegrams'
 
 class CloudApi {
     _getSession() {
-        if (!window.supabase) return Promise.resolve(null)
-        return window.supabase.auth.getSession()
+        if (!window.datavizSupabase) return Promise.resolve(null)
+        return window.datavizSupabase.auth.getSession()
             .then(function (result) {
                 return result.data.session
             })

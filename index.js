@@ -227,9 +227,9 @@ const projectId = getQueryParam('project_id')
 if (projectId) {
   // Wait for Supabase to be ready and authenticated
   const checkAuth = setInterval(() => {
-    if (window.supabase) {
+    if (window.datavizSupabase) {
       clearInterval(checkAuth)
-      window.supabase.auth.getSession().then(({ data: { session } }) => {
+      window.datavizSupabase.auth.getSession().then(({ data: { session } }) => {
         if (session) {
           console.log('Loading cloud project:', projectId)
           CloudApi.loadProject(projectId)

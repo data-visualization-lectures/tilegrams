@@ -1,4 +1,4 @@
-import {geoPath} from 'd3-geo'
+import { geoPath } from 'd3-geo'
 import inside from 'point-in-polygon';
 import area from 'area-polygon'
 import topogramImport from 'topogram'
@@ -6,8 +6,8 @@ import topogramImport from 'topogram'
 import Graphic from './Graphic'
 import geographyResource from '../resources/GeographyResource'
 import exporter from '../file/Exporter'
-import {fipsColor, updateBounds, checkWithinBounds} from '../utils'
-import {canvasDimensions} from '../constants'
+import { fipsColor, updateBounds, checkWithinBounds } from '../utils'
+import { canvasDimensions } from '../constants'
 
 const topogram = topogramImport()
 
@@ -28,8 +28,14 @@ export default class MapGraphic extends Graphic {
   /** Apply topogram on topoJson using data in properties */
   computeCartogram(dataset) {
     topogram.value(feature => {
-      const v = dataset.data.find(datum => datum[0] === feature.id)[1]
-      return v
+      const v = dataset.data.find(datum => {
+        return datum[0] === feature.id
+      })
+      if (!v) {
+        console.warn(`No data found for feature.id: ${feature.id}`)
+        return 0
+      }
+      return v[1]
     })
     this._iterationCount = 0
     this._iterationDuration = 0
@@ -116,7 +122,7 @@ export default class MapGraphic extends Graphic {
       const paths = feature.geometry.coordinates
         .filter(path => area(hasMultiplePaths ? path[0] : path) > MIN_PATH_AREA)
         .map(path => [hasMultiplePaths ? path[0] : path])
-      return {bounds, paths}
+      return { bounds, paths }
     })
   }
 
