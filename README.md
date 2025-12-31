@@ -2,8 +2,15 @@
 
 
 nvm install 16.20.2 && nvm use 16.20.2
-npm i
+
+<!-- npm i -->
+npm install --legacy-peer-deps
+
 npm start
+npm start -- --port 8081
+
+http://localhost:8081/?auth_debug
+
 npm run build
 
 ---
@@ -63,3 +70,19 @@ Then access `http://localhost:8080/`.
   nvm use 16.20.2
   npm rebuild node-sass
   ```
+
+
+## ベースマップの追加の仕方
+
+### 指定している箇所
+
+/Users/yuichiyazaki/Documents/GitHubRepository/_app_fork/tilegrams/source/resources/GeographyResource.js
+
+### 地形ファイル置き場
+
+#### TopoJSONファイル
+./maps/japan/japan.topo.json
+
+#### 地域名データ (IDと名前の対応表) 
+フォルダを作成
+./data/japan/japan-names.json
