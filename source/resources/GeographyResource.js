@@ -1,4 +1,4 @@
-import {geoAlbersUsa, geoMercator} from 'd3-geo'
+import { geoAlbersUsa, geoMercator } from 'd3-geo'
 
 import usTopoJson from '../../maps/us/us-110m.topo.json'
 // import ukConstituencyTopoJson from '../../maps/uk/constituency.topo.json'
@@ -11,6 +11,8 @@ import brazilTopoJson from '../../maps/brazil/brazil.topo.json'
 import irelandTopoJson from '../../maps/ireland/Irish_Constituencies.topo.json'
 import ukRegionsTopojson from '../../maps/uk/uk_countries_and_england_regions.topo.json'
 import indiaTopojson from '../../maps/india/india.topo.json'
+import japanTopoJson from '../../maps/japan/japan.topo.json'
+import tokyoTopoJson from '../../maps/japan/tokyo.topo.json'
 
 import MapResource from './MapResource'
 import fipsHash from '../../data/us/fips-to-state.json'
@@ -24,6 +26,8 @@ import brazilHash from '../../data/brazil/brazil-names.json'
 import irelandHash from '../../data/ireland/constituency_names.json'
 import ukRegionsHash from '../../data/uk/uk_region_names.json';
 import indiaHash from '../../data/india/india_names.json';
+import japanHash from '../../data/japan/japan-names.json';
+import tokyoHash from '../../data/japan/tokyo-names.json';
 
 const usProjection = (canvasDimensions) => {
   return geoAlbersUsa()
@@ -104,6 +108,26 @@ const indiaProjection = (canvasDimensions) => {
     ])
 }
 
+const japanProjection = (canvasDimensions) => {
+  return geoMercator()
+    .center([137, 38])
+    .scale(canvasDimensions.height * 3.5)
+    .translate([
+      canvasDimensions.width * 0.5,
+      canvasDimensions.height * 0.5,
+    ])
+}
+
+const tokyoProjection = (canvasDimensions) => {
+  return geoMercator()
+    .center([139.75, 35.7])
+    .scale(canvasDimensions.height * 40)
+    .translate([
+      canvasDimensions.width * 0.5,
+      canvasDimensions.height * 0.5,
+    ])
+}
+
 class GeographyResource {
   constructor() {
     this._geographies = [
@@ -172,6 +196,18 @@ class GeographyResource {
         mapResource: new MapResource(indiaTopojson, 'india'),
         geoCodeToName: indiaHash,
         projection: indiaProjection,
+      },
+      {
+        label: 'Japan',
+        mapResource: new MapResource(japanTopoJson, 'japan'),
+        geoCodeToName: japanHash,
+        projection: japanProjection,
+      },
+      {
+        label: 'Tokyo',
+        mapResource: new MapResource(tokyoTopoJson, 'tokyo'),
+        geoCodeToName: tokyoHash,
+        projection: tokyoProjection,
       },
     ]
   }
