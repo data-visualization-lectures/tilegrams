@@ -1,5 +1,5 @@
 
-const API_BASE_URL = 'https://api.dataviz.jp'
+const API_BASE_URL = window.datavizApiUrl || 'https://api.dataviz.jp'
 const APP_NAME = 'tilegrams'
 
 class CloudApi {
