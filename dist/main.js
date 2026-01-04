@@ -51380,7 +51380,7 @@
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-	var API_BASE_URL = 'https://api.dataviz.jp';
+	var API_BASE_URL = window.datavizApiUrl || 'https://api.dataviz.jp';
 	var APP_NAME = 'tilegrams';
 
 	var CloudApi = function () {
