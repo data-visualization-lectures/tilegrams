@@ -368,6 +368,61 @@
 	  }, 500);
 	}
 
+	// Configure Tool Header
+	customElements.whenDefined('dataviz-tool-header').then(function () {
+	  var header = document.querySelector('dataviz-tool-header');
+	  if (header) {
+	    header.setConfig({
+	      logo: {
+	        type: 'text',
+	        text: 'Tilegrams',
+	        textClass: 'font-bold text-lg text-white'
+	      },
+	      buttons: [{
+	        label: 'プロジェクトの保存',
+	        action: function action() {
+	          var geography = _Ui2.default.getGeography();
+	          _CloudApi2.default.saveProject(_ProjectExporter2.default.export(_Canvas2.default.getGrid().getTiles(), _Ui2.default.getSelectedDataset(), _Metrics2.default.metricPerTile, geography)).then(function () {
+	            if (header.showMessage) {
+	              header.showMessage('プロジェクトを保存しました', 'success');
+	            }
+	          }).catch(function (err) {
+	            console.error('Save failed:', err);
+	            if (header.showMessage) {
+	              header.showMessage('保存に失敗しました', 'error');
+	            }
+	          });
+	        },
+	        align: 'right'
+	      }, {
+	        label: 'プロジェクトの読込',
+	        action: function action() {
+	          _CloudApi2.default.openProjectPicker().then(function (projectJson) {
+	            if (projectJson) {
+	              loadProject(projectJson);
+	              if (header.showMessage) {
+	                header.showMessage('プロジェクトを読み込みました', 'success');
+	              }
+	            }
+	          }).catch(function (err) {
+	            console.error('Load failed:', err);
+	            if (header.showMessage) {
+	              header.showMessage('読み込みに失敗しました', 'error');
+	            }
+	          });
+	        },
+	        align: 'right'
+	      }, {
+	        label: 'ヘルプ',
+	        action: function action() {
+	          window.open('https://dataviz.jp/p/tilegrams/', '_blank');
+	        },
+	        align: 'right'
+	      }]
+	    });
+	  }
+	});
+
 /***/ }),
 /* 1 */
 /***/ (function(module, exports, __webpack_require__) {
@@ -18618,33 +18673,37 @@
 	            ),
 	            _react2.default.createElement(
 	              'div',
-	              { className: 'step' },
+	              { style: { display: 'none' } },
 	              _react2.default.createElement(
-	                'span',
-	                null,
-	                '\u30B5\u30FC\u30D0\u3078\u4FDD\u5B58'
-	              )
-	            ),
-	            _react2.default.createElement(
-	              'fieldset',
-	              null,
-	              _react2.default.createElement(
-	                'button',
-	                {
-	                  className: 'button',
-	                  style: { display: 'block', marginBottom: '10px' },
-	                  onClick: this._openCloudSave
-	                },
-	                '\u30B5\u30FC\u30D0\u3078\u4FDD\u5B58'
+	                'div',
+	                { className: 'step' },
+	                _react2.default.createElement(
+	                  'span',
+	                  null,
+	                  '\u30B5\u30FC\u30D0\u3078\u4FDD\u5B58'
+	                )
 	              ),
 	              _react2.default.createElement(
-	                'button',
-	                {
-	                  className: 'button',
-	                  style: { display: 'block' },
-	                  onClick: this._openCloudLoad
-	                },
-	                '\u30B5\u30FC\u30D0\u304B\u3089\u306E\u8AAD\u8FBC'
+	                'fieldset',
+	                null,
+	                _react2.default.createElement(
+	                  'button',
+	                  {
+	                    className: 'button',
+	                    style: { display: 'block', marginBottom: '10px' },
+	                    onClick: this._openCloudSave
+	                  },
+	                  '\u30B5\u30FC\u30D0\u3078\u4FDD\u5B58'
+	                ),
+	                _react2.default.createElement(
+	                  'button',
+	                  {
+	                    className: 'button',
+	                    style: { display: 'block' },
+	                    onClick: this._openCloudLoad
+	                  },
+	                  '\u30B5\u30FC\u30D0\u304B\u3089\u306E\u8AAD\u8FBC'
+	                )
 	              )
 	            )
 	          )
