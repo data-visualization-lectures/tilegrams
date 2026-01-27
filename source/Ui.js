@@ -604,25 +604,27 @@ class Ui {
               </fieldset>
             </div>
 
-            <div className='step'>
-              <span>サーバへ保存</span>
+            <div style={{ display: 'none' }}>
+              <div className='step'>
+                <span>サーバへ保存</span>
+              </div>
+              <fieldset>
+                <button
+                  className='button'
+                  style={{ display: 'block', marginBottom: '10px' }}
+                  onClick={this._openCloudSave}
+                >
+                  サーバへ保存
+                </button>
+                <button
+                  className='button'
+                  style={{ display: 'block' }}
+                  onClick={this._openCloudLoad}
+                >
+                  サーバからの読込
+                </button>
+              </fieldset>
             </div>
-            <fieldset>
-              <button
-                className='button'
-                style={{ display: 'block', marginBottom: '10px' }}
-                onClick={this._openCloudSave}
-              >
-                サーバへ保存
-              </button>
-              <button
-                className='button'
-                style={{ display: 'block' }}
-                onClick={this._openCloudLoad}
-              >
-                サーバからの読込
-              </button>
-            </fieldset>
           </div>
         </div>
         <h2 className='credits'>
