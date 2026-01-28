@@ -14,9 +14,9 @@ import brazilPopulation2018 from '../../data/brazil/brazil-populations.csv'
 import irelandVotes from '../../data/ireland/constituency_values.csv'
 import ukRegionConstituencyCounts from '../../data/uk/uk_region_constituency_counts.csv'
 import indiaContituencyCounts from '../../data/india/india_constituency_counts.csv';
-import japanPrefecturesVariables from '../../data/japan/prefectures.csv';
-import japanPopulationCsv from '../../data/japan/population.csv';
-import tokyoWardsVariables from '../../data/japan/tokyo-wards.csv';
+// import japanPrefecturesVariables from '../../data/japan/prefectures.csv';
+// import japanPopulationCsv from '../../data/japan/population.csv';
+// import tokyoWardsVariables from '../../data/japan/tokyo-wards.csv';
 
 class DatasetResource {
   constructor() {
@@ -109,24 +109,24 @@ class DatasetResource {
         geography: 'India',
         defaultResolution: 1,
       },
-      {
-        label: 'Japan Prefectures 1-to-1',
-        data: this.parseCsv(japanPrefecturesVariables, 'Japan'),
-        geography: 'Japan',
-        defaultResolution: 1,
-      },
-      {
-        label: 'Japan Population',
-        data: this.parseCsv(japanPopulationCsv, 'Japan'),
-        geography: 'Japan',
-        defaultResolution: 500000,
-      },
-      {
-        label: 'Tokyo Wards 1-to-1',
-        data: this.parseCsv(tokyoWardsVariables, 'Tokyo'),
-        geography: 'Tokyo',
-        defaultResolution: 1,
-      },
+      // {
+      //   label: 'Japan Prefectures 1-to-1',
+      //   data: this.parseCsv(japanPrefecturesVariables, 'Japan'),
+      //   geography: 'Japan',
+      //   defaultResolution: 1,
+      // },
+      // {
+      //   label: 'Japan Population',
+      //   data: this.parseCsv(japanPopulationCsv, 'Japan'),
+      //   geography: 'Japan',
+      //   defaultResolution: 500000,
+      // },
+      // {
+      //   label: 'Tokyo Wards 1-to-1',
+      //   data: this.parseCsv(tokyoWardsVariables, 'Tokyo'),
+      //   geography: 'Tokyo',
+      //   defaultResolution: 1,
+      // },
     ]
 
     this._selectedDatasetIndex = 2

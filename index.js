@@ -252,66 +252,120 @@ if (projectId) {
 
 // Configure Tool Header
 customElements.whenDefined('dataviz-tool-header').then(() => {
-  const header = document.querySelector('dataviz-tool-header')
-  if (header) {
-    header.setConfig({
-      logo: {
-        type: 'text',
-        text: 'Tilegrams',
-        textClass: 'font-bold text-lg text-white'
-      },
-      buttons: [
-        {
-          label: 'プロジェクトの保存',
-          action: () => {
-            const geography = ui.getGeography()
-            CloudApi.saveProject(
-              projectExporter.export(
-                canvas.getGrid().getTiles(),
-                ui.getSelectedDataset(),
-                metrics.metricPerTile,
-                geography
-              )
-            ).then(() => {
-              if (header.showMessage) {
-                header.showMessage('プロジェクトを保存しました', 'success')
-              }
-            }).catch(err => {
-              console.error('Save failed:', err)
-              if (header.showMessage) {
-                header.showMessage('保存に失敗しました', 'error')
-              }
-            })
-          },
-          align: 'right'
+  const configureHeader = () => {
+    const header = document.querySelector('dataviz-tool-header')
+    if (header) {
+      header.setConfig({
+        logo: {
+          type: 'text',
+          text: 'Tilegrams',
+          textClass: 'font-bold text-lg text-white'
         },
-        {
-          label: 'プロジェクトの読込',
-          action: () => {
-            CloudApi.openProjectPicker().then(projectJson => {
-              if (projectJson) {
-                loadProject(projectJson)
+        buttons: [
+          {
+            label: 'プロジェクトの保存',
+            action: () => {
+              const geography = ui.getGeography()
+              CloudApi.saveProject(
+                projectExporter.export(
+                  canvas.getGrid().getTiles(),
+                  ui.getSelectedDataset(),
+                  metrics.metricPerTile,
+                  geography
+                )
+              ).then(() => {
                 if (header.showMessage) {
-                  header.showMessage('プロジェクトを読み込みました', 'success')
+                  header.showMessage('プロジェクトを保存しました', 'success')
+                }
+              }).catch(err => {
+                console.error('Save failed:', err)
+                if (header.showMessage) {
+                  header.showMessage('保存に失敗しました', 'error')
+                }
+              })
+            },
+            align: 'right'
+          },
+          {
+            label: 'プロジェクトの読込',
+            action: () => {
+              CloudApi.openProjectPicker().then(projectJson => {
+                if (projectJson) {
+                  loadProject(projectJson)
+                  if (header.showMessage) {
+                    header.showMessage('プロジェクトを読み込みました', 'success')
+                  }
+                }
+              }).catch(err => {
+                console.error('Load failed:', err)
+                if (header.showMessage) {
+                  header.showMessage('読み込みに失敗しました', 'error')
+                }
+              })
+            },
+            align: 'right'
+          },
+          {
+            label: 'エクスポート',
+            align: 'right',
+            type: 'dropdown',
+            items: [
+              {
+                label: 'TopoJSON',
+                action: () => {
+                  const geography = ui.getGeography()
+                  const json = exporter.toTopoJson(
+                    canvas.getGrid().getTiles(),
+                    ui.getSelectedDataset(),
+                    metrics.metricPerTile,
+                    geography
+                  )
+                  startDownload({
+                    filename: 'tiles.topo.json',
+                    mimeType: 'text/plain',
+                    content: JSON.stringify(json),
+                  })
+                }
+              },
+              {
+                label: 'SVG',
+                action: () => {
+                  const geography = ui.getGeography()
+                  const svg = exporter.toSvg(
+                    canvas.getGrid().getTiles(),
+                    geography
+                  )
+                  startDownload({
+                    filename: 'tiles.svg',
+                    mimeType: 'image/svg+xml',
+                    content: svg,
+                  })
+                }
+              },
+              {
+                label: 'PNG',
+                action: () => {
+                  ui._onExportPng()
                 }
               }
-            }).catch(err => {
-              console.error('Load failed:', err)
-              if (header.showMessage) {
-                header.showMessage('読み込みに失敗しました', 'error')
-              }
-            })
-          },
-          align: 'right'
-        },
-        {
-          label: 'ヘルプ',
-          action: () => {
-            window.open('https://dataviz.jp/p/tilegrams/', '_blank')
-          },
-          align: 'right'
-        }
-      ]
-    })
+            ]
+          }
+
+        ]
+      })
+      return true
+    }
+    return false
+  }
+
+  if (!configureHeader()) {
+    const headerCheckInterval = setInterval(() => {
+      if (configureHeader()) {
+        clearInterval(headerCheckInterval)
+      }
+    }, 100)
+
+    // Safety timeout after 10 seconds
+    setTimeout(() => clearInterval(headerCheckInterval), 10000)
   }
 })

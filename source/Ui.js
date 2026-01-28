@@ -119,6 +119,10 @@ class Ui {
     this._selectedGeography = geography
   }
 
+  getGeography() {
+    return this._selectedGeography
+  }
+
   selectTilegramGenerateOption(tilegramGenerateOption) {
     this._generateOption = tilegramGenerateOption
     this.render()
@@ -494,13 +498,7 @@ class Ui {
             </div>
           </div>
         </div>
-        <div className='header'>
-          <h1 className='title'>
-            TILEGRAMS
-            <img src={tilegramsLogo} className='tilegrams-logo' alt='Tilegrams' />
-            <span className='by-pitch'>by Pitch Interactive</span>
-          </h1>
-        </div>
+
         <div className='column'>
           <div>
             <p className='intro'>
@@ -546,7 +544,7 @@ class Ui {
             />
           </div>
           <hr />
-          <div className='download'>
+          <div className='download' style={{ display: 'none' }}>
             <div className='step'>
               <span>ダウンロード</span>
             </div>
@@ -569,10 +567,10 @@ class Ui {
             </fieldset>
           </div>
           <hr />
-          <div className='project-management'>
-            <div style={{ display: 'none' }}>
+          <div className='project-management' style={{ display: 'none' }}>
+            <div>
               <div className='step'>
-                <span>ローカル保存</span>
+                <span>プロジェクト</span>
               </div>
               <fieldset>
                 <button
@@ -580,13 +578,13 @@ class Ui {
                   style={{ display: 'block', marginBottom: '10px' }}
                   onClick={() => this._saveProjectCallback(this._selectedGeography)}
                 >
-                  Save to Local (JSON)
+                  プロジェクトの保存
                 </button>
                 <div
                   className='button'
                   style={{ position: 'relative', display: 'block' }}
                 >
-                  Load from Local (JSON)
+                  プロジェクトの読込
                   <input
                     type='file'
                     style={{

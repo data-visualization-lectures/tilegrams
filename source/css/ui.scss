@@ -90,8 +90,8 @@ code {
 
 #ui {
   position: absolute;
-  top: 48px;
-  min-height: calc(100% - 48px);
+  top: 96px;
+  min-height: calc(100% - 96px);
   border-right: 2px solid $light-gray;
 }
 
@@ -102,7 +102,7 @@ code {
   overflow-y: auto;
   font-size: 0.85em;
   font-weight: 400;
-  padding-top: $header-height;
+
 
   hr {
     border: none;
