@@ -304,9 +304,17 @@ class Ui {
     this.render()
   }
 
+  openCloudSave() {
+    this._openCloudSave()
+  }
+
   _openCloudLoad() {
     this._showCloudLoad = true
     this.render()
+  }
+
+  openCloudLoad() {
+    this._openCloudLoad()
   }
 
   _closeCloudModal() {

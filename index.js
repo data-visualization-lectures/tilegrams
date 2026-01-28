@@ -265,43 +265,14 @@ customElements.whenDefined('dataviz-tool-header').then(() => {
           {
             label: 'プロジェクトの保存',
             action: () => {
-              const geography = ui.getGeography()
-              CloudApi.saveProject(
-                projectExporter.export(
-                  canvas.getGrid().getTiles(),
-                  ui.getSelectedDataset(),
-                  metrics.metricPerTile,
-                  geography
-                )
-              ).then(() => {
-                if (header.showMessage) {
-                  header.showMessage('プロジェクトを保存しました', 'success')
-                }
-              }).catch(err => {
-                console.error('Save failed:', err)
-                if (header.showMessage) {
-                  header.showMessage('保存に失敗しました', 'error')
-                }
-              })
+              ui.openCloudSave()
             },
             align: 'right'
           },
           {
             label: 'プロジェクトの読込',
             action: () => {
-              CloudApi.openProjectPicker().then(projectJson => {
-                if (projectJson) {
-                  loadProject(projectJson)
-                  if (header.showMessage) {
-                    header.showMessage('プロジェクトを読み込みました', 'success')
-                  }
-                }
-              }).catch(err => {
-                console.error('Load failed:', err)
-                if (header.showMessage) {
-                  header.showMessage('読み込みに失敗しました', 'error')
-                }
-              })
+              ui.openCloudLoad()
             },
             align: 'right'
           },
