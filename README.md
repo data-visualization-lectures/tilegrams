@@ -44,7 +44,9 @@ Run
 
     npm start
 
-Then access `http://localhost:8080/`.
+http://localhost:8080/
+http://localhost:8080/?auth_debug
+
 
 ### Deploying / デプロイ
 
