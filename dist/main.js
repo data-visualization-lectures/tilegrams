@@ -382,35 +382,13 @@
 	        buttons: [{
 	          label: 'プロジェクトの保存',
 	          action: function action() {
-	            var geography = _Ui2.default.getGeography();
-	            _CloudApi2.default.saveProject(_ProjectExporter2.default.export(_Canvas2.default.getGrid().getTiles(), _Ui2.default.getSelectedDataset(), _Metrics2.default.metricPerTile, geography)).then(function () {
-	              if (header.showMessage) {
-	                header.showMessage('プロジェクトを保存しました', 'success');
-	              }
-	            }).catch(function (err) {
-	              console.error('Save failed:', err);
-	              if (header.showMessage) {
-	                header.showMessage('保存に失敗しました', 'error');
-	              }
-	            });
+	            _Ui2.default.openCloudSave();
 	          },
 	          align: 'right'
 	        }, {
 	          label: 'プロジェクトの読込',
 	          action: function action() {
-	            _CloudApi2.default.openProjectPicker().then(function (projectJson) {
-	              if (projectJson) {
-	                loadProject(projectJson);
-	                if (header.showMessage) {
-	                  header.showMessage('プロジェクトを読み込みました', 'success');
-	                }
-	              }
-	            }).catch(function (err) {
-	              console.error('Load failed:', err);
-	              if (header.showMessage) {
-	                header.showMessage('読み込みに失敗しました', 'error');
-	              }
-	            });
+	            _Ui2.default.openCloudLoad();
 	          },
 	          align: 'right'
 	        }, {
@@ -18330,10 +18308,20 @@
 	      this.render();
 	    }
 	  }, {
+	    key: 'openCloudSave',
+	    value: function openCloudSave() {
+	      this._openCloudSave();
+	    }
+	  }, {
 	    key: '_openCloudLoad',
 	    value: function _openCloudLoad() {
 	      this._showCloudLoad = true;
 	      this.render();
+	    }
+	  }, {
+	    key: 'openCloudLoad',
+	    value: function openCloudLoad() {
+	      this._openCloudLoad();
 	    }
 	  }, {
 	    key: '_closeCloudModal',
