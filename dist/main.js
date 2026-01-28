@@ -133,6 +133,10 @@
 
 	function selectDataset(geography, index, customCsv) {
 	  var dataset = index !== null ? _DatasetResource2.default.getDataset(geography, index) : _DatasetResource2.default.buildDatasetFromCustomCsv(geography, customCsv);
+	  if (!dataset) {
+	    console.error('selectDataset: Dataset not found for', geography);
+	    return;
+	  }
 	  importing = false;
 	  _Ui2.default.setSelectedDataset(dataset);
 	  _Canvas2.default.computeCartogram(dataset);
@@ -215,6 +219,7 @@
 	  * on first load.
 	  */
 	  importing = false;
+	  console.log('selectGeography called with:', geography);
 	  var datasets = _DatasetResource2.default.getDatasetsByGeography(geography);
 	  var tilegrams = _TilegramResource2.default.getTilegramsByGeography(geography);
 	  var geoCodeToName = _GeographyResource2.default.getGeoCodeHash(geography);
@@ -14196,16 +14201,6 @@
 	      mapResource: new _MapResource2.default(_indiaTopo2.default, 'india'),
 	      geoCodeToName: _india_names2.default,
 	      projection: indiaProjection
-	    }, {
-	      label: 'Japan',
-	      mapResource: new _MapResource2.default(_japanTopo2.default, 'japan'),
-	      geoCodeToName: _japanNames2.default,
-	      projection: japanProjection
-	    }, {
-	      label: 'Tokyo',
-	      mapResource: new _MapResource2.default(_tokyoTopo2.default, 'tokyo'),
-	      geoCodeToName: _tokyoNames2.default,
-	      projection: tokyoProjection
 	    }];
 	  }
 
@@ -51816,7 +51811,7 @@
 	      null,
 	      _react2.default.createElement(
 	        'select',
-	        { onChange: selectGeography },
+	        { onChange: selectGeography, value: props.selectedGeography },
 	        options
 	      )
 	    )
