@@ -38,6 +38,10 @@ function selectDataset(geography, index, customCsv) {
   const dataset = index !== null ?
     datasetResource.getDataset(geography, index) :
     datasetResource.buildDatasetFromCustomCsv(geography, customCsv)
+  if (!dataset) {
+    console.error('selectDataset: Dataset not found for', geography)
+    return
+  }
   importing = false
   ui.setSelectedDataset(dataset)
   canvas.computeCartogram(dataset)
@@ -105,6 +109,7 @@ function selectGeography(geography) {
   * on first load.
   */
   importing = false
+  console.log('selectGeography called with:', geography)
   const datasets = datasetResource.getDatasetsByGeography(geography)
   const tilegrams = tilegramResource.getTilegramsByGeography(geography)
   const geoCodeToName = geographyResource.getGeoCodeHash(geography)

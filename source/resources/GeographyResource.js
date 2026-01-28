@@ -197,18 +197,18 @@ class GeographyResource {
         geoCodeToName: indiaHash,
         projection: indiaProjection,
       },
-      {
-        label: 'Japan',
-        mapResource: new MapResource(japanTopoJson, 'japan'),
-        geoCodeToName: japanHash,
-        projection: japanProjection,
-      },
-      {
-        label: 'Tokyo',
-        mapResource: new MapResource(tokyoTopoJson, 'tokyo'),
-        geoCodeToName: tokyoHash,
-        projection: tokyoProjection,
-      },
+      // {
+      //   label: 'Japan',
+      //   mapResource: new MapResource(japanTopoJson, 'japan'),
+      //   geoCodeToName: japanHash,
+      //   projection: japanProjection,
+      // },
+      // {
+      //   label: 'Tokyo',
+      //   mapResource: new MapResource(tokyoTopoJson, 'tokyo'),
+      //   geoCodeToName: tokyoHash,
+      //   projection: tokyoProjection,
+      // },
     ]
   }
 
