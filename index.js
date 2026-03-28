@@ -13,7 +13,6 @@ import projectImporter from './source/file/ProjectImporter'
 
 import { startDownload, isDevEnvironment, getQueryParam } from './source/utils'
 import { updateCanvasSize } from './source/constants'
-import CloudApi from './source/utils/CloudApi'
 
 import logo from './source/images/logo.png' // eslint-disable-line no-unused-vars
 
@@ -22,6 +21,9 @@ require('font-awesome/scss/font-awesome.scss')
 require('./source/css/toast.scss')
 
 let cartogramComputeRafId
+
+let currentProjectId = null
+let currentProjectName = null
 
 let importing = false
 const defaultGeography = 'United States'
@@ -199,7 +201,6 @@ function init() {
     })
   })
   ui.setLoadProjectCallback(loadProject)
-  ui.setLoadProjectFromCloudCallback(loadProject)
 
 
   selectGeography(defaultGeography)
@@ -227,39 +228,23 @@ document.addEventListener('keydown', event => {
 
 init()
 
-// Cloud Project Loading
-const projectId = getQueryParam('project_id')
-if (projectId) {
-  // Wait for Supabase to be ready and authenticated
-  const checkAuth = setInterval(() => {
-    if (window.datavizSupabase) {
-      clearInterval(checkAuth)
-      window.datavizSupabase.auth.getSession().then(({ data: { session } }) => {
-        if (session) {
-          console.log('Loading cloud project:', projectId)
-          CloudApi.loadProject(projectId)
-            .then(projectJson => {
-              loadProject(projectJson)
-              // URLをクリーンにする (optional)
-              // window.history.replaceState({}, document.title, window.location.pathname)
-            })
-            .catch(err => {
-              console.error('Cloud load failed', err)
-              alert('Failed to load cloud project.')
-            })
-        } else {
-          console.log('Waiting for login...')
-        }
-      })
-    }
-  }, 500)
-}
-
 // Configure Tool Header
 customElements.whenDefined('dataviz-tool-header').then(() => {
   const configureHeader = () => {
     const header = document.querySelector('dataviz-tool-header')
     if (header) {
+      // Configure project management
+      header.setProjectConfig({
+        appName: 'tilegrams',
+        onProjectLoad: (projectData) => {
+          loadProject(projectData)
+        },
+        onProjectSave: (meta) => {
+          currentProjectId = meta.id
+          currentProjectName = meta.name
+        },
+      })
+
       header.setConfig({
         logo: {
           type: 'text',
@@ -270,14 +255,29 @@ customElements.whenDefined('dataviz-tool-header').then(() => {
           {
             label: 'プロジェクトの保存',
             action: () => {
-              ui.openCloudSave()
+              const geography = ui.getGeography()
+              const jsonStr = projectExporter.export(
+                canvas.getGrid().getTiles(),
+                ui.getSelectedDataset(),
+                metrics.metricPerTile,
+                geography
+              )
+              const projectData = JSON.parse(jsonStr)
+              const canvasEl = document.querySelector('#canvas canvas')
+              const thumbnailDataUri = canvasEl ? canvasEl.toDataURL('image/png') : null
+              header.showSaveModal({
+                name: currentProjectName,
+                data: projectData,
+                thumbnailDataUri: thumbnailDataUri,
+                existingProjectId: currentProjectId,
+              })
             },
             align: 'right'
           },
           {
             label: 'プロジェクトの読込',
             action: () => {
-              ui.openCloudLoad()
+              header.showLoadModal()
             },
             align: 'right'
           },
@@ -329,6 +329,19 @@ customElements.whenDefined('dataviz-tool-header').then(() => {
 
         ]
       })
+
+      // Handle URL query parameter for auto-loading project
+      const projectId = getQueryParam('project_id')
+      if (projectId) {
+        header.loadProject(projectId)
+          .then(projectData => {
+            loadProject(projectData)
+          })
+          .catch(err => {
+            console.error('Cloud load failed', err)
+          })
+      }
+
       return true
     }
     return false

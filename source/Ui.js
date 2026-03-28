@@ -11,8 +11,6 @@ import TileGenerationUiControls from './components/TileGenerationUiControls'
 import HexMetrics from './components/HexMetrics'
 import ExportButton from './components/ExportButton'
 import EditWarningModal from './components/EditWarningModal'
-import CloudSaveModal from './components/CloudSaveModal'
-import CloudLoadModal from './components/CloudLoadModal'
 import Tooltip from './components/Tooltip'
 import Toast from './components/Toast'
 import googleNewsLabLogo from './images/gnl-logo.png'
@@ -20,7 +18,6 @@ import tilegramsLogo from './images/tilegrams-logo.svg'
 import GeographySelector from './components/GeographySelector'
 import geographyResource from './resources/GeographyResource'
 import projectExporter from './file/ProjectExporter'
-import cloudApi from './utils/CloudApi'
 
 class Ui {
   constructor() {
@@ -34,8 +31,6 @@ class Ui {
     this._nErrors = 0
     this._hideRefineTooltip = true
     this._mouseY = 0
-    this._showCloudSave = false
-    this._showCloudLoad = false
     this._toastMessage = ''
     this._toastVisible = false
     this._toastType = 'info'
@@ -50,11 +45,6 @@ class Ui {
     this.selectTilegramGenerateOption = this.selectTilegramGenerateOption.bind(this)
     this._selectedTilegramIndex = 0;
 
-    this._openCloudSave = this._openCloudSave.bind(this)
-    this._closeCloudModal = this._closeCloudModal.bind(this)
-    this._onSaveToCloud = this._onSaveToCloud.bind(this)
-    this._openCloudLoad = this._openCloudLoad.bind(this)
-    this._onLoadFromCloud = this._onLoadFromCloud.bind(this)
     this._onExportPng = this._onExportPng.bind(this)
   }
 
@@ -221,10 +211,6 @@ class Ui {
     }
   }
 
-  setLoadProjectFromCloudCallback(callback) {
-    this._loadProjectFromCloudCallback = callback
-  }
-
   _checkForEdits(event) {
     if (this._checkForUnsavedChanges()) {
       event.preventDefault()
@@ -299,75 +285,6 @@ class Ui {
     this.render()
   }
 
-  _openCloudSave() {
-    this._showCloudSave = true
-    this.render()
-  }
-
-  openCloudSave() {
-    this._openCloudSave()
-  }
-
-  _openCloudLoad() {
-    this._showCloudLoad = true
-    this.render()
-  }
-
-  openCloudLoad() {
-    this._openCloudLoad()
-  }
-
-  _closeCloudModal() {
-    this._showCloudSave = false
-    this._showCloudLoad = false
-    this.render()
-  }
-
-  _getThumbnailDataUrl() {
-    const canvas = document.querySelector('#canvas canvas')
-    if (canvas) {
-      return canvas.toDataURL('image/png')
-    }
-    return null
-  }
-
-  _onSaveToCloud(name) {
-    const jsonStr = projectExporter.export(
-      this._tiles,
-      this._selectedDataset,
-      metrics.metricPerTile,
-      this._selectedGeography
-    )
-    const projectData = JSON.parse(jsonStr)
-    const thumbnail = this._getThumbnailDataUrl()
-
-    return cloudApi.saveProject(name, projectData, thumbnail)
-      .then(() => {
-        this._showToast('保存しました！', 'success')
-        this._closeCloudModal()
-      })
-      .catch(err => {
-        this._showToast('保存に失敗しました: ' + err.message, 'error')
-        throw err // Re-throw to let modal know it failed
-      })
-  }
-
-  _onLoadFromCloud(projectId) {
-    console.log('_onLoadFromCloud called with projectId:', projectId)
-    cloudApi.loadProject(projectId)
-      .then(data => {
-        console.log('cloudApi.loadProject returned:', typeof data, data)
-        console.log('About to call _loadProjectFromCloudCallback')
-        // API returns the project JSON directly as the response body
-        this._loadProjectFromCloudCallback(data)
-        this._closeCloudModal()
-      })
-      .catch(err => {
-        console.error('Cloud load error:', err)
-        this._showToast('読み込みに失敗しました: ' + err.message, 'error')
-      })
-  }
-
   render() {
     const tileGenerationControls = (
       <TileGenerationUiControls
@@ -433,23 +350,6 @@ class Ui {
     const metricsHeight = this._editOpen ? 'auto' : '0px'
     const manualClass = this._manualOpen ? 'manual' : 'manual hidden'
 
-    let cloudModal = null
-    if (this._showCloudSave) {
-      cloudModal = (
-        <CloudSaveModal
-          onSave={this._onSaveToCloud}
-          onCancel={this._closeCloudModal}
-        />
-      )
-    } else if (this._showCloudLoad) {
-      cloudModal = (
-        <CloudLoadModal
-          onLoad={this._onLoadFromCloud}
-          onCancel={this._closeCloudModal}
-        />
-      )
-    }
-
     const selectedTilegram = this._tilegramLabels[this._selectedTilegramIndex]
     let congressionalDistrictModal = null
     if (
@@ -481,7 +381,6 @@ class Ui {
     ReactDOM.render(
       <div>
         {modal}
-        {cloudModal}
         {congressionalDistrictModal}
         <div className={manualClass}>
           <div
@@ -552,86 +451,6 @@ class Ui {
             />
           </div>
           <hr />
-          <div className='download' style={{ display: 'none' }}>
-            <div className='step'>
-              <span>ダウンロード</span>
-            </div>
-            <div className='instruction'>
-              {`作成したタイルグラムを活用するには、以下の標準的な形式のいずれかでダウンロードしてご利用ください。`}
-            </div>
-            <fieldset>
-              <ExportButton
-                text='TopoJSON'
-                onClick={() => this._exportCallback()}
-              />
-              <ExportButton
-                text='Export SVG'
-                onClick={this._exportSvgCallback}
-              />
-              <ExportButton
-                text='Export PNG'
-                onClick={this._onExportPng}
-              />
-            </fieldset>
-          </div>
-          <hr />
-          <div className='project-management' style={{ display: 'none' }}>
-            <div>
-              <div className='step'>
-                <span>プロジェクト</span>
-              </div>
-              <fieldset>
-                <button
-                  className='button'
-                  style={{ display: 'block', marginBottom: '10px' }}
-                  onClick={() => this._saveProjectCallback(this._selectedGeography)}
-                >
-                  プロジェクトの保存
-                </button>
-                <div
-                  className='button'
-                  style={{ position: 'relative', display: 'block' }}
-                >
-                  プロジェクトの読込
-                  <input
-                    type='file'
-                    style={{
-                      position: 'absolute',
-                      top: 0,
-                      left: 0,
-                      opacity: 0,
-                      width: '100%',
-                      height: '100%',
-                      cursor: 'pointer'
-                    }}
-                    onChange={this._loadProjectCallback}
-                  />
-                </div>
-              </fieldset>
-            </div>
-
-            <div style={{ display: 'none' }}>
-              <div className='step'>
-                <span>サーバへ保存</span>
-              </div>
-              <fieldset>
-                <button
-                  className='button'
-                  style={{ display: 'block', marginBottom: '10px' }}
-                  onClick={this._openCloudSave}
-                >
-                  サーバへ保存
-                </button>
-                <button
-                  className='button'
-                  style={{ display: 'block' }}
-                  onClick={this._openCloudLoad}
-                >
-                  サーバからの読込
-                </button>
-              </fieldset>
-            </div>
-          </div>
         </div>
         <h2 className='credits'>
           A project by
