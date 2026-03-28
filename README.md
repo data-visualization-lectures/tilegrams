@@ -50,12 +50,36 @@ http://localhost:8080/?auth_debug
 
 ### Deploying / デプロイ
 
-本プロジェクトでは、まずローカルでビルドを行い、出力された静的ファイルをNetlifyに配置する方式を推奨しています。
+本プロジェクトでは、ローカルでビルドしたファイル（`dist/`）を Git にコミットして GitHub に push することで、Netlify が自動的にデプロイします。
 
-1. 依存関係をインストール済みであることを確認したら、`npm run build` を実行します。生成物は `dist/` に書き出されます。
-2. `netlify.toml` では、ビルドコマンド（`npm run build`）、公開ディレクトリ（`dist/`）、Node.jsバージョン（`16.20.2`）、`netlify dev` で利用するローカル開発サーバー（`npm start`）を指定しています。NetlifyのCI/CDを利用する場合は、この設定に従って自動的に同じビルドが走ります。
-3. 「ローカルでビルド → Netlifyへ静的ファイルをアップロード」という運用では、ビルド後に `netlify deploy --prod --dir=dist` を実行して `dist/` 以下を本番にデプロイします。プレビュー用であれば `--prod` を外して同コマンドを実行してください。
-4. Netlify Devで開発環境を再現したい場合は `netlify dev` を実行すると、内部で `npm start`（webpack dev server, port 8080）が立ち上がり、実際のホスティング環境と同様の挙動を確認できます。
+#### デプロイ手順
+
+1. ソースコードを修正したら、通常通りコミットします：
+   ```bash
+   git add index.js source/Ui.js  # など、変更ファイルを add
+   git commit -m "変更内容"
+   ```
+
+2. ローカルでビルドします：
+   ```bash
+   npm run build
+   ```
+   生成物は `dist/` に書き出されます。
+
+3. ビルド出力を add してコミットします：
+   ```bash
+   git add -f dist/  # .gitignore に dist が記載されているため -f フラグが必要
+   git commit -m "ビルド出力を更新"
+   ```
+
+4. GitHub に push します：
+   ```bash
+   git push origin master
+   ```
+
+5. push されると、Netlify が自動的に検知してビルド＆デプロイします。
+
+**補足：** 古い Node.js バージョン（16系）や Python 2.7 の依存関係がある関係上、CI/CD による自動ビルドではなく、ローカルでビルドしたファイルを直接コミットする運用になっています。Netlify はこのコミットを検知して本番環境にデプロイします。
 
 ### Troubleshooting / トラブルシューティング
 
