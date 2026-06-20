@@ -18,7 +18,7 @@ import {
   showProcessingToast,
   installHeaderProcessingToasts,
 } from './source/utils'
-import { updateCanvasSize } from './source/constants'
+import {updateCanvasSize} from './source/constants'
 
 import logo from './source/images/logo.png' // eslint-disable-line no-unused-vars
 
@@ -76,7 +76,7 @@ function updateUi() {
 function loadTopoJson(topoJson) {
   cancelAnimationFrame(cartogramComputeRafId)
   importing = true
-  const { tiles, dataset, metricPerTile, geography } = importer.fromTopoJson(topoJson)
+  const {tiles, dataset, metricPerTile, geography} = importer.fromTopoJson(topoJson)
   ui.setGeography(geography)
   ui.setSelectedDataset(dataset)
   metrics.metricPerTile = metricPerTile
@@ -92,7 +92,7 @@ function loadProject(projectJson) {
   importing = true
   try {
     console.log('About to call projectImporter.import with:', projectJson)
-    const { tiles, dataset, metricPerTile, geography } = projectImporter.import(projectJson)
+    const {tiles, dataset, metricPerTile, geography} = projectImporter.import(projectJson)
     console.log('Import successful, geography:', geography)
     ui.setGeography(geography)
     ui.setSelectedDataset(dataset)
@@ -142,6 +142,76 @@ function confirmNavigation(e) {
   return message
 }
 
+function getCurrentTiles() {
+  return canvas.getGrid().getTiles()
+}
+
+function buildTopoJson(geography) {
+  return exporter.toTopoJson(
+    getCurrentTiles(),
+    ui.getSelectedDataset(),
+    metrics.metricPerTile,
+    geography
+  )
+}
+
+function buildSvg(geography) {
+  return exporter.toSvg(
+    getCurrentTiles(),
+    geography
+  )
+}
+
+function buildProjectJson(geography) {
+  return projectExporter.export(
+    getCurrentTiles(),
+    ui.getSelectedDataset(),
+    metrics.metricPerTile,
+    geography
+  )
+}
+
+function exportTopoJson(geography) {
+  startDownload({
+    filename: 'tiles.topo.json',
+    mimeType: 'text/plain',
+    content: JSON.stringify(buildTopoJson(geography)),
+  })
+}
+
+function exportSvg(geography) {
+  startDownload({
+    filename: 'tiles.svg',
+    mimeType: 'image/svg+xml',
+    content: buildSvg(geography),
+  })
+}
+
+function exportProjectJson(geography) {
+  startDownload({
+    filename: 'tilegram-project.json',
+    mimeType: 'application/json',
+    content: buildProjectJson(geography),
+  })
+}
+
+function getCanvasThumbnailDataUri() {
+  const canvasEl = document.querySelector('#canvas canvas')
+  return canvasEl ? canvasEl.toDataURL('image/png') : null
+}
+
+function showSaveProjectModal(header) {
+  showProcessingToast('保存準備中です')
+  const geography = ui.getGeography()
+  const projectData = JSON.parse(buildProjectJson(geography))
+  header.showSaveModal({
+    name: currentProjectName,
+    data: projectData,
+    thumbnailDataUri: getCanvasThumbnailDataUri(),
+    existingProjectId: currentProjectId,
+  })
+}
+
 function init() {
   // wire up callbacks
   canvas.getGrid().onChange(() => updateUi())
@@ -168,46 +238,17 @@ function init() {
   ui.setUnsavedChangesCallback(() => canvas.getGrid().checkForEdits())
   ui.setResetUnsavedChangesCallback(() => canvas.getGrid().resetEdits())
   ui.setExportCallback(geography => {
-    const json = exporter.toTopoJson(
-      canvas.getGrid().getTiles(),
-      ui.getSelectedDataset(),
-      metrics.metricPerTile,
-      geography
-    )
-    startDownload({
-      filename: 'tiles.topo.json',
-      mimeType: 'text/plain',
-      content: JSON.stringify(json),
-    })
+    exportTopoJson(geography)
   })
   ui.setExportSvgCallback(geography => {
-    const svg = exporter.toSvg(
-      canvas.getGrid().getTiles(),
-      geography
-    )
-    startDownload({
-      filename: 'tiles.svg',
-      mimeType: 'image/svg+xml',
-      content: svg,
-    })
+    exportSvg(geography)
   })
   ui.setImportCallback(loadTopoJson)
   ui.setGeographySelectCallback(selectGeography)
   ui.setSaveProjectCallback(geography => {
-    const json = projectExporter.export(
-      canvas.getGrid().getTiles(),
-      ui.getSelectedDataset(),
-      metrics.metricPerTile,
-      geography
-    )
-    startDownload({
-      filename: 'tilegram-project.json',
-      mimeType: 'application/json',
-      content: json,
-    })
+    exportProjectJson(geography)
   })
   ui.setLoadProjectCallback(loadProject)
-
 
   selectGeography(defaultGeography)
 
@@ -256,38 +297,22 @@ customElements.whenDefined('dataviz-tool-header').then(() => {
         logo: {
           type: 'text',
           text: 'Tilegrams',
-          textClass: 'font-bold text-lg text-white'
+          textClass: 'font-bold text-lg text-white',
         },
         buttons: [
           {
             label: 'プロジェクトの保存',
             action: () => {
-              showProcessingToast('保存準備中です')
-              const geography = ui.getGeography()
-              const jsonStr = projectExporter.export(
-                canvas.getGrid().getTiles(),
-                ui.getSelectedDataset(),
-                metrics.metricPerTile,
-                geography
-              )
-              const projectData = JSON.parse(jsonStr)
-              const canvasEl = document.querySelector('#canvas canvas')
-              const thumbnailDataUri = canvasEl ? canvasEl.toDataURL('image/png') : null
-              header.showSaveModal({
-                name: currentProjectName,
-                data: projectData,
-                thumbnailDataUri: thumbnailDataUri,
-                existingProjectId: currentProjectId,
-              })
+              showSaveProjectModal(header)
             },
-            align: 'right'
+            align: 'right',
           },
           {
             label: 'プロジェクトの読込',
             action: () => {
               header.showLoadModal()
             },
-            align: 'right'
+            align: 'right',
           },
           {
             label: 'エクスポート',
@@ -298,47 +323,26 @@ customElements.whenDefined('dataviz-tool-header').then(() => {
                 label: 'TopoJSON',
                 action: () => {
                   showProcessingToast('書き出し中です')
-                  const geography = ui.getGeography()
-                  const json = exporter.toTopoJson(
-                    canvas.getGrid().getTiles(),
-                    ui.getSelectedDataset(),
-                    metrics.metricPerTile,
-                    geography
-                  )
-                  startDownload({
-                    filename: 'tiles.topo.json',
-                    mimeType: 'text/plain',
-                    content: JSON.stringify(json),
-                  })
-                }
+                  exportTopoJson(ui.getGeography())
+                },
               },
               {
                 label: 'SVG',
                 action: () => {
                   showProcessingToast('書き出し中です')
-                  const geography = ui.getGeography()
-                  const svg = exporter.toSvg(
-                    canvas.getGrid().getTiles(),
-                    geography
-                  )
-                  startDownload({
-                    filename: 'tiles.svg',
-                    mimeType: 'image/svg+xml',
-                    content: svg,
-                  })
-                }
+                  exportSvg(ui.getGeography())
+                },
               },
               {
                 label: 'PNG',
                 action: () => {
                   showProcessingToast('書き出し中です')
                   ui.exportPng()
-                }
-              }
-            ]
-          }
-
-        ]
+                },
+              },
+            ],
+          },
+        ],
       })
 
       // Handle URL query parameter for auto-loading project
