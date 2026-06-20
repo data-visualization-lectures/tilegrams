@@ -5,7 +5,7 @@ import ReactMarkdown from 'react-markdown'
 import manual from 'raw!../MANUAL.md'
 
 import metrics from './Metrics'
-import { createElement } from './utils'
+import {createElement, showProcessingToast} from './utils'
 import { nTileDomain } from './constants'
 import TileGenerationUiControls from './components/TileGenerationUiControls'
 import HexMetrics from './components/HexMetrics'
@@ -17,7 +17,6 @@ import googleNewsLabLogo from './images/gnl-logo.png'
 import tilegramsLogo from './images/tilegrams-logo.svg'
 import GeographySelector from './components/GeographySelector'
 import geographyResource from './resources/GeographyResource'
-import projectExporter from './file/ProjectExporter'
 
 class Ui {
   constructor() {
@@ -202,6 +201,7 @@ class Ui {
     this._loadProjectCallback = (event) => {
       const file = event.target.files[0]
       if (!file) return
+      showProcessingToast('ファイルを読み込み中です')
       const reader = new FileReader()
       reader.onload = readEvent => {
         callback(readEvent.target.result)

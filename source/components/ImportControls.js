@@ -1,6 +1,7 @@
 import React from 'react'
 import commaNumber from 'comma-number'
 import {OBJECT_ID} from '../file/Exporter'
+import {showProcessingToast} from '../utils'
 
 const CUSTOM_LABEL = 'Upload custom tilegram'
 
@@ -30,6 +31,8 @@ export default class ImportControls extends React.Component {
 
   _onFileUpload(event) {
     const file = event.target.files[0]
+    if (!file) return
+    showProcessingToast('ファイルを読み込み中です')
     const reader = new FileReader()
     reader.onload = readEvent => {
       let topoJson

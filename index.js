@@ -11,7 +11,13 @@ import gridGeometry from './source/geometry/GridGeometry'
 import projectExporter from './source/file/ProjectExporter'
 import projectImporter from './source/file/ProjectImporter'
 
-import { startDownload, isDevEnvironment, getQueryParam } from './source/utils'
+import {
+  startDownload,
+  isDevEnvironment,
+  getQueryParam,
+  showProcessingToast,
+  installHeaderProcessingToasts,
+} from './source/utils'
 import { updateCanvasSize } from './source/constants'
 
 import logo from './source/images/logo.png' // eslint-disable-line no-unused-vars
@@ -233,6 +239,7 @@ customElements.whenDefined('dataviz-tool-header').then(() => {
   const configureHeader = () => {
     const header = document.querySelector('dataviz-tool-header')
     if (header) {
+      installHeaderProcessingToasts(header)
       // Configure project management
       header.setProjectConfig({
         appName: 'tilegrams',
@@ -255,6 +262,7 @@ customElements.whenDefined('dataviz-tool-header').then(() => {
           {
             label: 'プロジェクトの保存',
             action: () => {
+              showProcessingToast('保存準備中です')
               const geography = ui.getGeography()
               const jsonStr = projectExporter.export(
                 canvas.getGrid().getTiles(),
@@ -289,6 +297,7 @@ customElements.whenDefined('dataviz-tool-header').then(() => {
               {
                 label: 'TopoJSON',
                 action: () => {
+                  showProcessingToast('書き出し中です')
                   const geography = ui.getGeography()
                   const json = exporter.toTopoJson(
                     canvas.getGrid().getTiles(),
@@ -306,6 +315,7 @@ customElements.whenDefined('dataviz-tool-header').then(() => {
               {
                 label: 'SVG',
                 action: () => {
+                  showProcessingToast('書き出し中です')
                   const geography = ui.getGeography()
                   const svg = exporter.toSvg(
                     canvas.getGrid().getTiles(),
@@ -321,6 +331,7 @@ customElements.whenDefined('dataviz-tool-header').then(() => {
               {
                 label: 'PNG',
                 action: () => {
+                  showProcessingToast('書き出し中です')
                   ui._onExportPng()
                 }
               }
