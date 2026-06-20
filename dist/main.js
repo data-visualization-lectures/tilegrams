@@ -247,6 +247,63 @@
 	  return message;
 	}
 
+	function getCurrentTiles() {
+	  return _Canvas2.default.getGrid().getTiles();
+	}
+
+	function buildTopoJson(geography) {
+	  return _Exporter2.default.toTopoJson(getCurrentTiles(), _Ui2.default.getSelectedDataset(), _Metrics2.default.metricPerTile, geography);
+	}
+
+	function buildSvg(geography) {
+	  return _Exporter2.default.toSvg(getCurrentTiles(), geography);
+	}
+
+	function buildProjectJson(geography) {
+	  return _ProjectExporter2.default.export(getCurrentTiles(), _Ui2.default.getSelectedDataset(), _Metrics2.default.metricPerTile, geography);
+	}
+
+	function exportTopoJson(geography) {
+	  (0, _utils.startDownload)({
+	    filename: 'tiles.topo.json',
+	    mimeType: 'text/plain',
+	    content: JSON.stringify(buildTopoJson(geography))
+	  });
+	}
+
+	function exportSvg(geography) {
+	  (0, _utils.startDownload)({
+	    filename: 'tiles.svg',
+	    mimeType: 'image/svg+xml',
+	    content: buildSvg(geography)
+	  });
+	}
+
+	function exportProjectJson(geography) {
+	  (0, _utils.startDownload)({
+	    filename: 'tilegram-project.json',
+	    mimeType: 'application/json',
+	    content: buildProjectJson(geography)
+	  });
+	}
+
+	function getCanvasThumbnailDataUri() {
+	  var canvasEl = document.querySelector('#canvas canvas');
+	  return canvasEl ? canvasEl.toDataURL('image/png') : null;
+	}
+
+	function showSaveProjectModal(header) {
+	  (0, _utils.showProcessingToast)('保存準備中です');
+	  var geography = _Ui2.default.getGeography();
+	  var projectData = JSON.parse(buildProjectJson(geography));
+	  header.showSaveModal({
+	    name: currentProjectName,
+	    data: projectData,
+	    thumbnailDataUri: getCanvasThumbnailDataUri(),
+	    existingProjectId: currentProjectId
+	  });
+	}
+
 	function init() {
 	  // wire up callbacks
 	  _Canvas2.default.getGrid().onChange(function () {
@@ -291,30 +348,15 @@
 	    return _Canvas2.default.getGrid().resetEdits();
 	  });
 	  _Ui2.default.setExportCallback(function (geography) {
-	    var json = _Exporter2.default.toTopoJson(_Canvas2.default.getGrid().getTiles(), _Ui2.default.getSelectedDataset(), _Metrics2.default.metricPerTile, geography);
-	    (0, _utils.startDownload)({
-	      filename: 'tiles.topo.json',
-	      mimeType: 'text/plain',
-	      content: JSON.stringify(json)
-	    });
+	    exportTopoJson(geography);
 	  });
 	  _Ui2.default.setExportSvgCallback(function (geography) {
-	    var svg = _Exporter2.default.toSvg(_Canvas2.default.getGrid().getTiles(), geography);
-	    (0, _utils.startDownload)({
-	      filename: 'tiles.svg',
-	      mimeType: 'image/svg+xml',
-	      content: svg
-	    });
+	    exportSvg(geography);
 	  });
 	  _Ui2.default.setImportCallback(loadTopoJson);
 	  _Ui2.default.setGeographySelectCallback(selectGeography);
 	  _Ui2.default.setSaveProjectCallback(function (geography) {
-	    var json = _ProjectExporter2.default.export(_Canvas2.default.getGrid().getTiles(), _Ui2.default.getSelectedDataset(), _Metrics2.default.metricPerTile, geography);
-	    (0, _utils.startDownload)({
-	      filename: 'tilegram-project.json',
-	      mimeType: 'application/json',
-	      content: json
-	    });
+	    exportProjectJson(geography);
 	  });
 	  _Ui2.default.setLoadProjectCallback(loadProject);
 
@@ -370,18 +412,7 @@
 	        buttons: [{
 	          label: 'プロジェクトの保存',
 	          action: function action() {
-	            (0, _utils.showProcessingToast)('保存準備中です');
-	            var geography = _Ui2.default.getGeography();
-	            var jsonStr = _ProjectExporter2.default.export(_Canvas2.default.getGrid().getTiles(), _Ui2.default.getSelectedDataset(), _Metrics2.default.metricPerTile, geography);
-	            var projectData = JSON.parse(jsonStr);
-	            var canvasEl = document.querySelector('#canvas canvas');
-	            var thumbnailDataUri = canvasEl ? canvasEl.toDataURL('image/png') : null;
-	            header.showSaveModal({
-	              name: currentProjectName,
-	              data: projectData,
-	              thumbnailDataUri: thumbnailDataUri,
-	              existingProjectId: currentProjectId
-	            });
+	            showSaveProjectModal(header);
 	          },
 	          align: 'right'
 	        }, {
@@ -398,25 +429,13 @@
 	            label: 'TopoJSON',
 	            action: function action() {
 	              (0, _utils.showProcessingToast)('書き出し中です');
-	              var geography = _Ui2.default.getGeography();
-	              var json = _Exporter2.default.toTopoJson(_Canvas2.default.getGrid().getTiles(), _Ui2.default.getSelectedDataset(), _Metrics2.default.metricPerTile, geography);
-	              (0, _utils.startDownload)({
-	                filename: 'tiles.topo.json',
-	                mimeType: 'text/plain',
-	                content: JSON.stringify(json)
-	              });
+	              exportTopoJson(_Ui2.default.getGeography());
 	            }
 	          }, {
 	            label: 'SVG',
 	            action: function action() {
 	              (0, _utils.showProcessingToast)('書き出し中です');
-	              var geography = _Ui2.default.getGeography();
-	              var svg = _Exporter2.default.toSvg(_Canvas2.default.getGrid().getTiles(), geography);
-	              (0, _utils.startDownload)({
-	                filename: 'tiles.svg',
-	                mimeType: 'image/svg+xml',
-	                content: svg
-	              });
+	              exportSvg(_Ui2.default.getGeography());
 	            }
 	          }, {
 	            label: 'PNG',
