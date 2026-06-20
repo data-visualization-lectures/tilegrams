@@ -1,7 +1,7 @@
 /**
  * GridGeometry: manage and convert grid coordinates
  */
-import {settings, tileEdgeRange, canvasDimensions} from '../constants'
+import {settings, tileEdgeRange, canvasDimensions, devicePixelRatio} from '../constants'
 import PointyTopHexagonShape from './shapes/PointyTopHexagonShape'
 
 const TILE_OFFSET = 1

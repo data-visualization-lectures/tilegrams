@@ -6,10 +6,9 @@ import manual from 'raw!../MANUAL.md'
 
 import metrics from './Metrics'
 import {createElement, showProcessingToast} from './utils'
-import { nTileDomain } from './constants'
+import {nTileDomain} from './constants'
 import TileGenerationUiControls from './components/TileGenerationUiControls'
 import HexMetrics from './components/HexMetrics'
-import ExportButton from './components/ExportButton'
 import EditWarningModal from './components/EditWarningModal'
 import Tooltip from './components/Tooltip'
 import Toast from './components/Toast'
@@ -44,10 +43,10 @@ class Ui {
     this.selectTilegramGenerateOption = this.selectTilegramGenerateOption.bind(this)
     this._selectedTilegramIndex = 0;
 
-    this._onExportPng = this._onExportPng.bind(this)
+    this.exportPng = this.exportPng.bind(this)
   }
 
-  _onExportPng() {
+  exportPng() {
     const dataUrl = this._getThumbnailDataUrl()
     if (dataUrl) {
       const link = document.createElement('a')

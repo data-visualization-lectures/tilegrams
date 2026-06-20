@@ -332,7 +332,7 @@ customElements.whenDefined('dataviz-tool-header').then(() => {
                 label: 'PNG',
                 action: () => {
                   showProcessingToast('書き出し中です')
-                  ui._onExportPng()
+                  ui.exportPng()
                 }
               }
             ]
