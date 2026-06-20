@@ -4,6 +4,7 @@ import ui from './source/Ui'
 import metrics from './source/Metrics'
 import exporter from './source/file/Exporter'
 import importer from './source/file/Importer'
+import pngExporter from './source/file/PngExporter'
 import datasetResource from './source/resources/DatasetResource'
 import geographyResource from './source/resources/GeographyResource'
 import tilegramResource from './source/resources/TilegramResource'
@@ -196,8 +197,7 @@ function exportProjectJson(geography) {
 }
 
 function getCanvasThumbnailDataUri() {
-  const canvasEl = document.querySelector('#canvas canvas')
-  return canvasEl ? canvasEl.toDataURL('image/png') : null
+  return pngExporter.toDataUrl()
 }
 
 function showSaveProjectModal(header) {

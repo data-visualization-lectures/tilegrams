@@ -12,6 +12,7 @@ import HexMetrics from './components/HexMetrics'
 import EditWarningModal from './components/EditWarningModal'
 import Tooltip from './components/Tooltip'
 import Toast from './components/Toast'
+import pngExporter from './file/PngExporter'
 import googleNewsLabLogo from './images/gnl-logo.png'
 import tilegramsLogo from './images/tilegrams-logo.svg'
 import GeographySelector from './components/GeographySelector'
@@ -47,15 +48,7 @@ class Ui {
   }
 
   exportPng() {
-    const dataUrl = this._getThumbnailDataUrl()
-    if (dataUrl) {
-      const link = document.createElement('a')
-      link.setAttribute('download', 'tilegram.png')
-      link.setAttribute('href', dataUrl)
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
-    } else {
+    if (!pngExporter.download()) {
       this._showToast('画像生成に失敗しました', 'error')
     }
   }
@@ -233,7 +226,7 @@ class Ui {
   }
 
   _init() {
-    this._container = createElement({ id: 'ui' })
+    this._container = createElement({id: 'ui'})
   }
 
   _startOver() {
@@ -422,7 +415,7 @@ class Ui {
             {generateOption}
             <div
               className={this._editing ? 'deselected' : ''}
-              style={{ height: uiControlsHeight, overflow: 'hidden' }}
+              style={{height: uiControlsHeight, overflow: 'hidden'}}
               onMouseDown={this._checkForEdits}
             >
               <GeographySelector
@@ -436,7 +429,7 @@ class Ui {
           </div>
           <div
             className={this._editing ? '' : 'deselected'}
-            style={{ height: metricsHeight, overflow: 'hidden' }}
+            style={{height: metricsHeight, overflow: 'hidden'}}
           >
             <HexMetrics
               metricPerTile={metrics.metricPerTile}
