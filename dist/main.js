@@ -14505,7 +14505,9 @@
 
 	var _server = __webpack_require__(70);
 
-	var _package = __webpack_require__(100);
+	var _version = __webpack_require__(100);
+
+	var _version2 = _interopRequireDefault(_version);
 
 	var _GridGeometry = __webpack_require__(21);
 
@@ -14610,7 +14612,7 @@
 	      });
 	      topoJson.properties = {
 	        tilegramMetricPerTile: metricPerTile,
-	        tilegramVersion: _package.version,
+	        tilegramVersion: _version2.default,
 	        tilegramTileSize: _GridGeometry2.default.getTileDimensions(),
 	        tilegramGeography: geography
 	      };
@@ -17884,7 +17886,12 @@
 /* 100 */
 /***/ (function(module, exports) {
 
-	module.exports = {"name":"tilegrams","version":"1.2.0","description":"Make hexagonally tiled cartograms","author":"Pitch Interactive, Inc.","license":"ISC","repository":{"type":"git","url":"https://github.com/data-visualization-lectures/tilegrams.git"},"main":"index.js","scripts":{"start":"webpack-dev-server --config webpack.config.js --hot --inline","build":"webpack --mode production"},"devDependencies":{"babel-core":"^6.13.2","babel-loader":"^6.2.5","babel-preset-es2015":"^6.13.2","babel-preset-react":"^6.11.1","css-loader":"^0.24.0","eslint":"^3.4.0","eslint-config-airbnb":"^10.0.1","eslint-loader":"^1.5.0","eslint-plugin-import":"^1.14.0","eslint-plugin-jsx-a11y":"^2.2.1","eslint-plugin-react":"^6.2.0","file-loader":"^0.9.0","json-loader":"^0.5.4","node-sass":"npm:sass@^1.97.1","raw-loader":"^0.5.1","react-markdown":"^2.4.2","sass":"^1.37.5","sass-loader":"^4.0.0","style-loader":"^0.13.1","url-loader":"^0.5.9","webpack":"^1.13.2","webpack-dev-server":"^1.15.0"},"dependencies":{"area-polygon":"^1.0.1","comma-number":"^1.1.0","copy-webpack-plugin":"^4.5.1","d3-array":"^1.0.1","d3-collection":"^1.0.1","d3-color":"^1.0.1","d3-dsv":"^1.0.1","d3-geo":"^1.2.4","d3-scale":"^1.0.3","dat-gui":"^0.5.0","density-clustering":"^1.3.0","font-awesome":"^4.6.3","hull.js":"^0.2.10","mobile-detect":"^1.3.5","point-in-polygon":"^1.0.1","polygon-overlap":"^1.0.5","react":"^15.3.1","react-dom":"^15.3.1","stats-js":"^1.0.0-alpha1","topogram":"https://github.com/PitchInteractiveInc/topogram.git#node-js","topojson":"^1.6.26"}}
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.default = '1.2.0';
 
 /***/ }),
 /* 101 */
@@ -52121,54 +52128,58 @@
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
-	    value: true
+	  value: true
 	});
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-	var _package = __webpack_require__(100);
+	var _version = __webpack_require__(100);
+
+	var _version2 = _interopRequireDefault(_version);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 	var ProjectExporter = function () {
-	    function ProjectExporter() {
-	        _classCallCheck(this, ProjectExporter);
+	  function ProjectExporter() {
+	    _classCallCheck(this, ProjectExporter);
+	  }
+
+	  _createClass(ProjectExporter, [{
+	    key: 'export',
+
+	    /**
+	     * Export the current state as a JSON string
+	     * @param {Array} tiles - The current tiles
+	     * @param {Array} dataset - The current dataset
+	     * @param {Number} metricPerTile - The resolution
+	     * @param {String} geography - The current geography name
+	     * @returns {String} JSON string
+	     */
+	    value: function _export(tiles, dataset, metricPerTile, geography) {
+	      var projectData = {
+	        meta: {
+	          version: _version2.default,
+	          timestamp: new Date().toISOString(),
+	          type: 'tilegrams-project'
+	        },
+	        geography: geography,
+	        metricPerTile: metricPerTile,
+	        dataset: dataset,
+	        tiles: tiles.map(function (tile) {
+	          return {
+	            id: tile.id,
+	            position: tile.position,
+	            tilegramValue: tile.tilegramValue
+	          };
+	        })
+	      };
+	      return JSON.stringify(projectData, null, 2);
 	    }
+	  }]);
 
-	    _createClass(ProjectExporter, [{
-	        key: 'export',
-
-	        /**
-	         * Export the current state as a JSON string
-	         * @param {Array} tiles - The current tiles
-	         * @param {Array} dataset - The current dataset
-	         * @param {Number} metricPerTile - The resolution
-	         * @param {String} geography - The current geography name
-	         * @returns {String} JSON string
-	         */
-	        value: function _export(tiles, dataset, metricPerTile, geography) {
-	            var projectData = {
-	                meta: {
-	                    version: _package.version,
-	                    timestamp: new Date().toISOString(),
-	                    type: 'tilegrams-project'
-	                },
-	                geography: geography,
-	                metricPerTile: metricPerTile,
-	                dataset: dataset,
-	                tiles: tiles.map(function (tile) {
-	                    return {
-	                        id: tile.id,
-	                        position: tile.position,
-	                        tilegramValue: tile.tilegramValue
-	                    };
-	                })
-	            };
-	            return JSON.stringify(projectData, null, 2);
-	        }
-	    }]);
-
-	    return ProjectExporter;
+	  return ProjectExporter;
 	}();
 
 	exports.default = new ProjectExporter();
