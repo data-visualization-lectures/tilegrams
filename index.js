@@ -5,6 +5,7 @@ import metrics from './source/Metrics'
 import exporter from './source/file/Exporter'
 import importer from './source/file/Importer'
 import pngExporter from './source/file/PngExporter'
+import installToolHeader from './source/ToolHeaderIntegration'
 import datasetResource from './source/resources/DatasetResource'
 import geographyResource from './source/resources/GeographyResource'
 import tilegramResource from './source/resources/TilegramResource'
@@ -15,9 +16,6 @@ import projectImporter from './source/file/ProjectImporter'
 import {
   startDownload,
   isDevEnvironment,
-  getQueryParam,
-  showProcessingToast,
-  installHeaderProcessingToasts,
 } from './source/utils'
 import {updateCanvasSize} from './source/constants'
 
@@ -28,9 +26,6 @@ require('font-awesome/scss/font-awesome.scss')
 require('./source/css/toast.scss')
 
 let cartogramComputeRafId
-
-let currentProjectId = null
-let currentProjectName = null
 
 let importing = false
 const defaultGeography = 'United States'
@@ -200,18 +195,6 @@ function getCanvasThumbnailDataUri() {
   return pngExporter.toDataUrl()
 }
 
-function showSaveProjectModal(header) {
-  showProcessingToast('保存準備中です')
-  const geography = ui.getGeography()
-  const projectData = JSON.parse(buildProjectJson(geography))
-  header.showSaveModal({
-    name: currentProjectName,
-    data: projectData,
-    thumbnailDataUri: getCanvasThumbnailDataUri(),
-    existingProjectId: currentProjectId,
-  })
-}
-
 function init() {
   // wire up callbacks
   canvas.getGrid().onChange(() => updateUi())
@@ -275,101 +258,12 @@ document.addEventListener('keydown', event => {
 
 init()
 
-// Configure Tool Header
-customElements.whenDefined('dataviz-tool-header').then(() => {
-  const configureHeader = () => {
-    const header = document.querySelector('dataviz-tool-header')
-    if (header) {
-      installHeaderProcessingToasts(header)
-      // Configure project management
-      header.setProjectConfig({
-        appName: 'tilegrams',
-        onProjectLoad: (projectData) => {
-          loadProject(projectData)
-        },
-        onProjectSave: (meta) => {
-          currentProjectId = meta.id
-          currentProjectName = meta.name
-        },
-      })
-
-      header.setConfig({
-        logo: {
-          type: 'text',
-          text: 'Tilegrams',
-          textClass: 'font-bold text-lg text-white',
-        },
-        buttons: [
-          {
-            label: 'プロジェクトの保存',
-            action: () => {
-              showSaveProjectModal(header)
-            },
-            align: 'right',
-          },
-          {
-            label: 'プロジェクトの読込',
-            action: () => {
-              header.showLoadModal()
-            },
-            align: 'right',
-          },
-          {
-            label: 'エクスポート',
-            align: 'right',
-            type: 'dropdown',
-            items: [
-              {
-                label: 'TopoJSON',
-                action: () => {
-                  showProcessingToast('書き出し中です')
-                  exportTopoJson(ui.getGeography())
-                },
-              },
-              {
-                label: 'SVG',
-                action: () => {
-                  showProcessingToast('書き出し中です')
-                  exportSvg(ui.getGeography())
-                },
-              },
-              {
-                label: 'PNG',
-                action: () => {
-                  showProcessingToast('書き出し中です')
-                  ui.exportPng()
-                },
-              },
-            ],
-          },
-        ],
-      })
-
-      // Handle URL query parameter for auto-loading project
-      const projectId = getQueryParam('project_id')
-      if (projectId) {
-        header.loadProject(projectId)
-          .then(projectData => {
-            loadProject(projectData)
-          })
-          .catch(err => {
-            console.error('Cloud load failed', err)
-          })
-      }
-
-      return true
-    }
-    return false
-  }
-
-  if (!configureHeader()) {
-    const headerCheckInterval = setInterval(() => {
-      if (configureHeader()) {
-        clearInterval(headerCheckInterval)
-      }
-    }, 100)
-
-    // Safety timeout after 10 seconds
-    setTimeout(() => clearInterval(headerCheckInterval), 10000)
-  }
+installToolHeader({
+  loadProject,
+  getGeography: () => ui.getGeography(),
+  buildProjectJson,
+  getThumbnailDataUri: getCanvasThumbnailDataUri,
+  exportTopoJson,
+  exportSvg,
+  exportPng: () => ui.exportPng(),
 })
