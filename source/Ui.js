@@ -12,6 +12,10 @@ import HexMetrics from './components/HexMetrics'
 import EditWarningModal from './components/EditWarningModal'
 import Tooltip from './components/Tooltip'
 import Toast from './components/Toast'
+import Credits from './components/Credits'
+import ManualPanel from './components/ManualPanel'
+import MobileRedirect from './components/MobileRedirect'
+import TilegramNotice from './components/TilegramNotice'
 import pngExporter from './file/PngExporter'
 import googleNewsLabLogo from './images/gnl-logo.png'
 import tilegramsLogo from './images/tilegrams-logo.svg'
@@ -340,63 +344,25 @@ class Ui {
     }
     const uiControlsHeight = this._generateOpen ? 'auto' : '0px'
     const metricsHeight = this._editOpen ? 'auto' : '0px'
-    const manualClass = this._manualOpen ? 'manual' : 'manual hidden'
 
     const selectedTilegram = this._tilegramLabels[this._selectedTilegramIndex]
-    let congressionalDistrictModal = null
-    if (
-      selectedTilegram &&
-      this._generateOption === 'import' &&
-      selectedTilegram.includes('U.S. Congressional Districts 2018')
-    ) {
-      congressionalDistrictModal = (
-        <div className='congressionalDistrictModal'>
-          Looking for each State broken out individually?
-          Don't worry,
-          <a
-            href='./us-congressional-districts-2018.html'
-            target='_blank'
-            rel='noopener noreferrer'
-          >
-            we have you covered.
-          </a>
-        </div>
-      )
-    }
-    if (selectedTilegram && selectedTilegram.includes('India')) {
-      congressionalDistrictModal = (
-        <div className='congressionalDistrictModal india'>
-          このデータビジュアライゼーションは、インドの伝統的な地図をもとにした地図表現であり、地理的な正確性が100%保証されているわけではありません。
-        </div>
-      )
-    }
     ReactDOM.render(
       <div>
         {modal}
-        {congressionalDistrictModal}
-        <div className={manualClass}>
-          <div
-            className='manual-close'
-            onClick={this._toggleManual}
-          >
-            <i className='fa fa-times' />
-          </div>
-          <ReactMarkdown source={manual} />
-        </div>
-        <div className='mobile-redirect'>
-          <div className='background'>
-            <div className='main'>
-              <div
-                className='close-mobile'
-                onClick={this._closeMobile}
-              >&#215;</div>
-              <h1>TILEGRAMS</h1>
-              <img src={tilegramsLogo} className='tilegrams-logo' alt='Tilegrams' />
-              <h2>データセットに比例して地域の大きさを調整したタイル地図を作成しましょう。</h2>
-              <h3>最適な体験のためには、ノートパソコンまたはデスクトップコンピューターでご利用ください。</h3>
-            </div>
-          </div>
-        </div>
+        <TilegramNotice
+          selectedTilegram={selectedTilegram}
+          generateOption={this._generateOption}
+        />
+        <ManualPanel
+          open={this._manualOpen}
+          onClose={this._toggleManual}
+          source={manual}
+          markdownComponent={ReactMarkdown}
+        />
+        <MobileRedirect
+          onClose={this._closeMobile}
+          tilegramsLogo={tilegramsLogo}
+        />
 
         <div className='column'>
           <div>
@@ -444,24 +410,7 @@ class Ui {
           </div>
           <hr />
         </div>
-        <h2 className='credits'>
-          A project by
-          <a
-            href='http://pitchinteractive.com/'
-            target='_blank'
-            rel='noopener noreferrer'
-          >
-            Pitch Interactive
-          </a>
-          in association with
-          <a
-            href='https://newslab.withgoogle.com/'
-            target='_blank'
-            rel='noopener noreferrer'
-          >
-            <img src={googleNewsLabLogo} className='gnl-logo' alt='Google News Lab' />
-          </a>
-        </h2>
+        <Credits googleNewsLabLogo={googleNewsLabLogo} />
         <Tooltip
           hidden={this._hideRefineTooltip}
           text='Some areas require additional manual adjustment to be statistically accurate.'
