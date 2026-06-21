@@ -1,88 +1,18 @@
 import {getQueryParam} from './utils'
+import {installHeaderProcessingToasts} from './ToolHeaderMessages'
 import {
-  installHeaderProcessingToasts,
-  showProcessingToast,
-} from './ToolHeaderMessages'
+  buildHeaderConfig,
+  buildProjectConfig,
+} from './ToolHeaderConfig'
 
 const HEADER_SELECTOR = 'dataviz-tool-header'
 
-function showSaveProjectModal(header, dependencies, projectState) {
-  showProcessingToast('保存準備中です')
-  const geography = dependencies.getGeography()
-  const projectData = JSON.parse(dependencies.buildProjectJson(geography))
-  header.showSaveModal({
-    name: projectState.name,
-    data: projectData,
-    thumbnailDataUri: dependencies.getThumbnailDataUri(),
-    existingProjectId: projectState.id,
-  })
-}
-
 function configureProjectManagement(header, dependencies, projectState) {
-  header.setProjectConfig({
-    appName: 'tilegrams',
-    onProjectLoad: (projectData) => {
-      dependencies.loadProject(projectData)
-    },
-    onProjectSave: (meta) => {
-      projectState.id = meta.id
-      projectState.name = meta.name
-    },
-  })
+  header.setProjectConfig(buildProjectConfig(dependencies, projectState))
 }
 
 function configureHeaderButtons(header, dependencies, projectState) {
-  header.setConfig({
-    logo: {
-      type: 'text',
-      text: 'Tilegrams',
-      textClass: 'font-bold text-lg text-white',
-    },
-    buttons: [
-      {
-        label: 'プロジェクトの保存',
-        action: () => {
-          showSaveProjectModal(header, dependencies, projectState)
-        },
-        align: 'right',
-      },
-      {
-        label: 'プロジェクトの読込',
-        action: () => {
-          header.showLoadModal()
-        },
-        align: 'right',
-      },
-      {
-        label: 'エクスポート',
-        align: 'right',
-        type: 'dropdown',
-        items: [
-          {
-            label: 'TopoJSON',
-            action: () => {
-              showProcessingToast('書き出し中です')
-              dependencies.exportTopoJson(dependencies.getGeography())
-            },
-          },
-          {
-            label: 'SVG',
-            action: () => {
-              showProcessingToast('書き出し中です')
-              dependencies.exportSvg(dependencies.getGeography())
-            },
-          },
-          {
-            label: 'PNG',
-            action: () => {
-              showProcessingToast('書き出し中です')
-              dependencies.exportPng()
-            },
-          },
-        ],
-      },
-    ],
-  })
+  header.setConfig(buildHeaderConfig(header, dependencies, projectState))
 }
 
 function loadProjectFromQueryParam(header, loadProject) {
