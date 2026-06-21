@@ -23,7 +23,7 @@ export default function installAppBindings() {
   ui.setDatasetSelectedCallback(selectDataset)
   ui.setTilegramSelectedCallback(selectTilegram)
   ui.setCustomDatasetCallback(selectCustomDataset)
-  ui.setHightlightCallback(id => canvas.getGrid().onHighlightGeo(id))
+  ui.setHighlightCallback(id => canvas.getGrid().onHighlightGeo(id))
   ui.setUnhighlightCallback(() => canvas.getGrid().resetHighlightedGeo())
   ui.setResolutionChangedCallback(updateResolution)
   ui.setUnsavedChangesCallback(() => canvas.getGrid().checkForEdits())

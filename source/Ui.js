@@ -18,11 +18,11 @@ import ManualPanel from './components/ManualPanel'
 import MobileRedirect from './components/MobileRedirect'
 import TilegramNotice from './components/TilegramNotice'
 import StepHeader from './components/StepHeader'
+import RefineErrorWarning from './components/RefineErrorWarning'
 import pngExporter from './file/PngExporter'
 import googleNewsLabLogo from './images/gnl-logo.png'
 import tilegramsLogo from './images/tilegrams-logo.svg'
 import GeographySelector from './components/GeographySelector'
-import geographyResource from './resources/GeographyResource'
 
 class Ui {
   constructor() {
@@ -153,8 +153,12 @@ class Ui {
     }
   }
 
-  setHightlightCallback(callback) {
+  setHighlightCallback(callback) {
     this._highlightCallback = callback
+  }
+
+  setHightlightCallback(callback) {
+    this.setHighlightCallback(callback)
   }
 
   setUnhighlightCallback(callback) {
@@ -310,19 +314,14 @@ class Ui {
         onClick={this._toggle('generate')}
       />
     )
-    let errorWarning = null
-    if (this._nErrors > 0) {
-      const objectId = geographyResource.getMapResource(this._selectedGeography).getObjectId()
-      errorWarning = (
-        <span
-          className='n-errors'
-          onMouseOver={this._toggleRefineTooltip}
-          onMouseOut={this._toggleRefineTooltip}
-        >
-          <i className='fa fa-exclamation-triangle' /> {this._nErrors} {objectId}
-        </span>
-      )
-    }
+    const errorWarning = (
+      <RefineErrorWarning
+        geography={this._selectedGeography}
+        nErrors={this._nErrors}
+        onMouseOver={this._toggleRefineTooltip}
+        onMouseOut={this._toggleRefineTooltip}
+      />
+    )
     const editOption = (
       <StepHeader
         open={this._editOpen}
