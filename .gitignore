@@ -1,6 +1,8 @@
 node_modules
 npm-debug.log
-dist
+dist/*
+!dist/main.js
+!dist/us-congressional-districts-2018.html
 package-lock.json
 yarn.lock
 .DS_Store

@@ -100,6 +100,10 @@ module.exports = {
         to: 'tilegrams/us-individual-states-congressional-districts'
       },
       {
+        from: 'us-congressional-districts-2018.html',
+        to: 'us-congressional-districts-2018.html'
+      },
+      {
         from: 'index.html',
         to: 'index.html'
       },

@@ -13,14 +13,13 @@ export default function TilegramNotice(props) {
   ) {
     return (
       <div className='congressionalDistrictModal'>
-        Looking for each State broken out individually?
-        Don't worry,
+        州ごとに分割されたタイルグラムを探していますか？
         <a
           href='./us-congressional-districts-2018.html'
           target='_blank'
           rel='noopener noreferrer'
         >
-          we have you covered.
+          州別のデータはこちらから確認できます。
         </a>
       </div>
     )

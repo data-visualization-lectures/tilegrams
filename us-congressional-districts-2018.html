@@ -1,16 +1,16 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
   <head>
     <meta charset="utf-8">
-    <title>2018 US Congressional Districts Tilegrams</title>
+    <title>2018年 米国連邦下院選挙区タイルグラム</title>
     <meta name = "viewport" content = "initial-scale=1.0, maximum-scale=1.0, width=device-width">
-    <meta name="description" content="Tilegrams helps you create beautiful, statistically-accurate maps scaled proportionally to a dataset. This open-source tool was created through a collaboration between Pitch Interactive and Google News Lab." />
+    <meta name="description" content="Tilegramsは、データセットに比例した統計的に正確な地図表現を作成するためのオープンソースツールです。" />
     <!-- Open Graph data -->
     <meta property="og:title" content="Tilegrams" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://pitchinteractiveinc.github.io/tilegrams/us-congressional-districts-2018.html" />
     <meta property="og:image" content="http://pitchinteractive.com/latest/wp-content/uploads/2016/09/tilegrams-photo-1400-soft1.jpg" />
-    <meta property="og:description" content="Tilegrams helps you create beautiful, statistically-accurate maps scaled proportionally to a dataset. This open-source tool was created through a collaboration between Pitch Interactive and Google News Lab." />
+    <meta property="og:description" content="Tilegramsは、データセットに比例した統計的に正確な地図表現を作成するためのオープンソースツールです。" />
     <link rel="stylesheet" href="https://cdn.rawgit.com/Chalarangelo/mini.css/v3.0.0/dist/mini-default.min.css">
     <script src="https://unpkg.com/d3@5.4.0/dist/d3.min.js"></script>
     <script src="https://unpkg.com/topojson"></script>
@@ -76,15 +76,15 @@
   </head>
   <body>
     <div class='header'>
-      <a href='./'><img src='./logo.png' alt='Tilegrams by Pitch Interactive' /></a>
+      <a href='./'><img src='./logo.png' alt='Tilegrams' /></a>
     </div>
     <div class='wrapper'>
       <div class='descr'>
-        Tilegrams currently offers a tilegram map of the United States 2018 Congressional districts. These might be useful if you are only looking to visualize one state of the Union rather than the entire map.
+        2018年の米国連邦下院選挙区タイルグラムを州ごとに確認できます。全米の地図ではなく、特定の州だけを可視化したい場合に利用できます。
       </div>
       <div class='quickDL'>
-        Quick Download: <select class='stateList'></select>
-        <a class='topo' target='_blank' rel='noopener noreferrer'>Topojson</a>
+        クイックダウンロード: <select class='stateList'></select>
+        <a class='topo' target='_blank' rel='noopener noreferrer'>TopoJSON</a>
         <a class='svg'>SVG</a>
       </div>
       <div class='states cf'></div>
@@ -110,207 +110,207 @@
       var fipsToState = {
         "01": {
           "name_short": "AL",
-          "name": "ALABAMA"
+          "name": "アラバマ州"
         },
         "02": {
           "name_short": "AK",
-          "name": "ALASKA"
+          "name": "アラスカ州"
         },
         "04": {
           "name_short": "AZ",
-          "name": "ARIZONA"
+          "name": "アリゾナ州"
         },
         "05": {
           "name_short": "AR",
-          "name": "ARKANSAS"
+          "name": "アーカンソー州"
         },
         "06": {
           "name_short": "CA",
-          "name": "CALIFORNIA"
+          "name": "カリフォルニア州"
         },
         "08": {
           "name_short": "CO",
-          "name": "COLORADO"
+          "name": "コロラド州"
         },
         "09": {
           "name_short": "CT",
-          "name": "CONNECTICUT"
+          "name": "コネチカット州"
         },
         "10": {
           "name_short": "DE",
-          "name": "DELAWARE"
+          "name": "デラウェア州"
         },
         "11": {
           "name_short": "DC",
-          "name": "DISTRICT OF COLUMBIA"
+          "name": "コロンビア特別区"
         },
         "12": {
           "name_short": "FL",
-          "name": "FLORIDA"
+          "name": "フロリダ州"
         },
         "13": {
           "name_short": "GA",
-          "name": "GEORGIA"
+          "name": "ジョージア州"
         },
         "15": {
           "name_short": "HI",
-          "name": "HAWAII"
+          "name": "ハワイ州"
         },
         "16": {
           "name_short": "ID",
-          "name": "IDAHO"
+          "name": "アイダホ州"
         },
         "17": {
           "name_short": "IL",
-          "name": "ILLINOIS"
+          "name": "イリノイ州"
         },
         "18": {
           "name_short": "IN",
-          "name": "INDIANA"
+          "name": "インディアナ州"
         },
         "19": {
           "name_short": "IA",
-          "name": "IOWA"
+          "name": "アイオワ州"
         },
         "20": {
           "name_short": "KS",
-          "name": "KANSAS"
+          "name": "カンザス州"
         },
         "21": {
           "name_short": "KY",
-          "name": "KENTUCKY"
+          "name": "ケンタッキー州"
         },
         "22": {
           "name_short": "LA",
-          "name": "LOUISIANA"
+          "name": "ルイジアナ州"
         },
         "23": {
           "name_short": "ME",
-          "name": "MAINE"
+          "name": "メイン州"
         },
         "24": {
           "name_short": "MD",
-          "name": "MARYLAND"
+          "name": "メリーランド州"
         },
         "25": {
           "name_short": "MA",
-          "name": "MASSACHUSETTS"
+          "name": "マサチューセッツ州"
         },
         "26": {
           "name_short": "MI",
-          "name": "MICHIGAN"
+          "name": "ミシガン州"
         },
         "27": {
           "name_short": "MN",
-          "name": "MINNESOTA"
+          "name": "ミネソタ州"
         },
         "28": {
           "name_short": "MS",
-          "name": "MISSISSIPPI"
+          "name": "ミシシッピ州"
         },
         "29": {
           "name_short": "MO",
-          "name": "MISSOURI"
+          "name": "ミズーリ州"
         },
         "30": {
           "name_short": "MT",
-          "name": "MONTANA"
+          "name": "モンタナ州"
         },
         "31": {
           "name_short": "NE",
-          "name": "NEBRASKA"
+          "name": "ネブラスカ州"
         },
         "32": {
           "name_short": "NV",
-          "name": "NEVADA"
+          "name": "ネバダ州"
         },
         "33": {
           "name_short": "NH",
-          "name": "NEW HAMPSHIRE"
+          "name": "ニューハンプシャー州"
         },
         "34": {
           "name_short": "NJ",
-          "name": "NEW JERSEY"
+          "name": "ニュージャージー州"
         },
         "35": {
           "name_short": "NM",
-          "name": "NEW MEXICO"
+          "name": "ニューメキシコ州"
         },
         "36": {
           "name_short": "NY",
-          "name": "NEW YORK"
+          "name": "ニューヨーク州"
         },
         "37": {
           "name_short": "NC",
-          "name": "NORTH CAROLINA"
+          "name": "ノースカロライナ州"
         },
         "38": {
           "name_short": "ND",
-          "name": "NORTH DAKOTA"
+          "name": "ノースダコタ州"
         },
         "39": {
           "name_short": "OH",
-          "name": "OHIO"
+          "name": "オハイオ州"
         },
         "40": {
           "name_short": "OK",
-          "name": "OKLAHOMA"
+          "name": "オクラホマ州"
         },
         "41": {
           "name_short": "OR",
-          "name": "OREGON"
+          "name": "オレゴン州"
         },
         "42": {
           "name_short": "PA",
-          "name": "PENNSYLVANIA"
+          "name": "ペンシルベニア州"
         },
         "44": {
           "name_short": "RI",
-          "name": "RHODE ISLAND"
+          "name": "ロードアイランド州"
         },
         "45": {
           "name_short": "SC",
-          "name": "SOUTH CAROLINA"
+          "name": "サウスカロライナ州"
         },
         "46": {
           "name_short": "SD",
-          "name": "SOUTH DAKOTA"
+          "name": "サウスダコタ州"
         },
         "47": {
           "name_short": "TN",
-          "name": "TENNESSEE"
+          "name": "テネシー州"
         },
         "48": {
           "name_short": "TX",
-          "name": "TEXAS"
+          "name": "テキサス州"
         },
         "49": {
           "name_short": "UT",
-          "name": "UTAH"
+          "name": "ユタ州"
         },
         "50": {
           "name_short": "VT",
-          "name": "VERMONT"
+          "name": "バーモント州"
         },
         "51": {
           "name_short": "VA",
-          "name": "VIRGINIA"
+          "name": "バージニア州"
         },
         "53": {
           "name_short": "WA",
-          "name": "WASHINGTON"
+          "name": "ワシントン州"
         },
         "54": {
           "name_short": "WV",
-          "name": "WEST VIRGINIA"
+          "name": "ウェストバージニア州"
         },
         "55": {
           "name_short": "WI",
-          "name": "WISCONSIN"
+          "name": "ウィスコンシン州"
         },
         "56": {
           "name_short": "WY",
-          "name": "WYOMING"
+          "name": "ワイオミング州"
         }
       }
 
@@ -397,7 +397,7 @@
 
       statesGroup.selectAll('.link').data(identity)
         .enter().append('a').attr('class', 'link')
-          .text((label) => ' Topojson')
+          .text((label) => ' TopoJSON')
           .attr('href', (state) => inputDirectory + state + '.json')
           .attr('target', '_blank')
           .attr('rel', 'noopener noreferrer')
@@ -470,8 +470,10 @@
             const offsetX = width / 2 - (avgX * scale)
             const offsetY = height / 2 - (avgY / 5.5 / scale)
             g.attr('transform', ' translate(' + offsetX + ',' + offsetY + ') scale(' + scale + ')')
+            const stateTitle = titleCase(fullName)
+            const seatLabel = congressCount + '議席'
             statesGroup.select('.state.' + state + ' .name')
-              .html('<b style="font-size: 14px">'+titleCase(fullName) + '</b> <span style="font-size: 12px">(' + state.toUpperCase() + ') - ' + congressCount + ' seat' + (congressCount === 1 ? '' : 's')+"</span>")
+              .html('<b style="font-size: 14px">' + stateTitle + '</b> <span style="font-size: 12px">(' + state.toUpperCase() + ') - ' + seatLabel + '</span>')
 
 
 
