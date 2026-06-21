@@ -3805,15 +3805,39 @@
 	  document.body.removeChild(link);
 	}
 
-	function showProcessingToast(message) {
+	function showHeaderMessage(message) {
+	  var type = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'info';
+	  var duration = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 5000;
+
 	  var header = document.querySelector('dataviz-tool-header');
 	  if (header && typeof header.showMessage === 'function') {
-	    header.showMessage(message || '処理中です', 'info', 5000);
+	    header.showMessage(message, type, duration);
+	    return true;
+	  }
+	  return false;
+	}
+
+	function showProcessingToast(message) {
+	  showHeaderMessage(message || '処理中です', 'info', 5000);
+	}
+
+	function showErrorToast(message) {
+	  if (!showHeaderMessage(message || '処理に失敗しました', 'error', 8000)) {
+	    console.error(message);
 	  }
 	}
 
+	function showWarningToast(message) {
+	  if (!showHeaderMessage(message || '確認が必要です', 'warning', 8000)) {
+	    console.warn(message);
+	  }
+	}
+
+	var NATIVE_PROJECT_PROCESSING_TOASTS_FLAG = '__dvzNativeProjectProcessingToasts';
+	var PROCESSING_TOASTS_INSTALLED_FLAG = '__dvzProcessingToastsInstalled';
+
 	function installHeaderProcessingToasts(header) {
-	  if (!header || header.__dvzNativeProjectProcessingToasts === '1' || header.__dvzProcessingToastsInstalled === '1') {
+	  if (!header || header[NATIVE_PROJECT_PROCESSING_TOASTS_FLAG] === '1' || header[PROCESSING_TOASTS_INSTALLED_FLAG] === '1') {
 	    return;
 	  }
 
@@ -3841,7 +3865,7 @@
 	    };
 	  }
 
-	  header.__dvzProcessingToastsInstalled = '1';
+	  header[PROCESSING_TOASTS_INSTALLED_FLAG] = '1';
 	}
 
 	/** Update memoized bounds if exceeded by bounds */
@@ -3901,6 +3925,8 @@
 	  createElement: createElement,
 	  startDownload: startDownload,
 	  showProcessingToast: showProcessingToast,
+	  showErrorToast: showErrorToast,
+	  showWarningToast: showWarningToast,
 	  installHeaderProcessingToasts: installHeaderProcessingToasts,
 	  updateBounds: updateBounds,
 	  checkWithinBounds: checkWithinBounds,
@@ -49988,8 +50014,7 @@
 	          topoJson.objects[_Exporter.OBJECT_ID].geometries; // eslint-disable-line no-unused-expressions
 	        } catch (e) {
 	          // catch non-json and non-tilegram topojson files
-	          // eslint-disable-next-line max-len, no-alert
-	          alert('We were unable to load your tilegram, sorry. If you\'re seeing this message it\'s probably because the tilegram format is incorrect or you tried to upload an unrecognized file type.');
+	          (0, _utils.showErrorToast)('タイルグラムファイルを読み込めませんでした。形式を確認してください。');
 	          _this2._resetUpload();
 	          return;
 	        }
@@ -51050,8 +51075,6 @@
 
 	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
 	exports.updateUi = updateUi;
 	exports.loadTopoJson = loadTopoJson;
 	exports.loadProject = loadProject;
@@ -51093,6 +51116,8 @@
 
 	var _TilegramResource2 = _interopRequireDefault(_TilegramResource);
 
+	var _utils = __webpack_require__(20);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var cartogramComputeRafId = void 0;
@@ -51124,17 +51149,14 @@
 	}
 
 	function loadProject(projectJson) {
-	  console.log('loadProject called with:', typeof projectJson === 'undefined' ? 'undefined' : _typeof(projectJson), projectJson);
 	  cancelAnimationFrame(cartogramComputeRafId);
 	  importing = true;
 	  try {
-	    console.log('About to call projectImporter.import with:', projectJson);
 	    var importedState = _ProjectImporter2.default.import(projectJson);
-	    console.log('Import successful, geography:', importedState.geography);
 	    applyImportedTilegramState(importedState);
 	  } catch (e) {
 	    console.error('loadProject error:', e);
-	    alert('Failed to load project file.');
+	    (0, _utils.showErrorToast)('プロジェクトファイルを読み込めませんでした');
 	  }
 	}
 
@@ -51196,7 +51218,6 @@
 	  * on first load.
 	  */
 	  importing = false;
-	  console.log('selectGeography called with:', geography);
 	  var datasets = _DatasetResource2.default.getDatasetsByGeography(geography);
 	  var tilegrams = _TilegramResource2.default.getTilegramsByGeography(geography);
 	  var geoCodeToName = _GeographyResource2.default.getGeoCodeHash(geography);
@@ -51606,6 +51627,8 @@
 
 	var _GeographyResource2 = _interopRequireDefault(_GeographyResource);
 
+	var _utils = __webpack_require__(20);
+
 	var _populationByState = __webpack_require__(347);
 
 	var _populationByState2 = _interopRequireDefault(_populationByState);
@@ -51812,8 +51835,7 @@
 	        alertString += ' Ids ' + valueIdString + ' have zero or negative value.';
 	      }
 	      alertString += ' This data has been pruned.';
-	      // eslint-disable-next-line no-alert
-	      alert(alertString);
+	      (0, _utils.showWarningToast)(alertString);
 	    }
 	  }, {
 	    key: 'getLabels',
