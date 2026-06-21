@@ -1,11 +1,12 @@
 .manual {
   position: fixed;
-  top: $header-height;
+  top: 96px;
+  bottom: 0;
   left: $sidebar-width;
   max-width: 450px;
   padding: $ui-margin $ui-margin $ui-margin * 2 $ui-margin;
-  overflow-y: scroll;
-  height: calc(100% - 130px);
+  overflow-y: auto;
+  box-sizing: border-box;
   background-color: $ui-background-color;
   font-size: 0.8em;
   margin-left: 2px;
