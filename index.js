@@ -3,21 +3,15 @@ import canvas from './source/Canvas'
 import ui from './source/Ui'
 import {
   loadProject,
-  loadTopoJson,
-  selectCustomDataset,
-  selectDataset,
   selectGeography,
-  selectTilegram,
-  updateResolution,
-  updateUi,
 } from './source/TilegramController'
 import {
   buildProjectJson,
-  exportProjectJson,
   exportSvg,
   exportTopoJson,
   getCanvasThumbnailDataUri,
 } from './source/ExportController'
+import installAppBindings from './source/AppBindings'
 import installToolHeader from './source/ToolHeaderIntegration'
 import gridGeometry from './source/geometry/GridGeometry'
 
@@ -50,31 +44,7 @@ function confirmNavigation(e) {
 }
 
 function init() {
-  // wire up callbacks
-  canvas.getGrid().onChange(() => updateUi())
-  canvas.getGrid().setUiEditingCallback(() => ui.setEditingTrue())
-  ui.setAddTileCallback(id => canvas.getGrid().onAddTileMouseDown(id))
-  ui.setDatasetSelectedCallback(selectDataset)
-  ui.setTilegramSelectedCallback(selectTilegram)
-  ui.setCustomDatasetCallback(selectCustomDataset)
-  ui.setHightlightCallback(id => canvas.getGrid().onHighlightGeo(id))
-  ui.setUnhighlightCallback(() => canvas.getGrid().resetHighlightedGeo())
-  ui.setResolutionChangedCallback(updateResolution)
-  ui.setUnsavedChangesCallback(() => canvas.getGrid().checkForEdits())
-  ui.setResetUnsavedChangesCallback(() => canvas.getGrid().resetEdits())
-  ui.setExportCallback(geography => {
-    exportTopoJson(geography)
-  })
-  ui.setExportSvgCallback(geography => {
-    exportSvg(geography)
-  })
-  ui.setImportCallback(loadTopoJson)
-  ui.setGeographySelectCallback(selectGeography)
-  ui.setSaveProjectCallback(geography => {
-    exportProjectJson(geography)
-  })
-  ui.setLoadProjectCallback(loadProject)
-
+  installAppBindings()
   selectGeography(defaultGeography)
 
   if (!isDevEnvironment()) {
