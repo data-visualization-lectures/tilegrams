@@ -13,14 +13,12 @@ import HexMetrics from './components/HexMetrics'
 import EditWarningModal from './components/EditWarningModal'
 import Tooltip from './components/Tooltip'
 import Toast from './components/Toast'
-import Credits from './components/Credits'
 import ManualPanel from './components/ManualPanel'
 import MobileRedirect from './components/MobileRedirect'
 import TilegramNotice from './components/TilegramNotice'
 import StepHeader from './components/StepHeader'
 import RefineErrorWarning from './components/RefineErrorWarning'
 import pngExporter from './file/PngExporter'
-import googleNewsLabLogo from './images/gnl-logo.png'
 import tilegramsLogo from './images/tilegrams-logo.svg'
 import GeographySelector from './components/GeographySelector'
 
@@ -408,7 +406,6 @@ class Ui {
           </div>
           <hr />
         </div>
-        <Credits googleNewsLabLogo={googleNewsLabLogo} />
         <Tooltip
           hidden={this._hideRefineTooltip}
           text='Some areas require additional manual adjustment to be statistically accurate.'

@@ -170,9 +170,3 @@ g.selectAll('path.border')
   .attr('stroke', 'black')
   .attr('stroke-width', 4)
 ```
-
-## タイルグラムの共有
-
-このツールを活用した、または改善案がある場合は [@pitchinc](http://twitter.com/pitchinc) もしくは [info@pitchinteractive.com](mailto:info@pitchinteractive.com) までぜひご連絡ください。今後もタイルグラムの事例をアプリに追加していく予定です。
-
-それでは楽しいタイルグラム制作を!
