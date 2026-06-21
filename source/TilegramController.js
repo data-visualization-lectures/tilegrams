@@ -6,6 +6,7 @@ import projectImporter from './file/ProjectImporter'
 import datasetResource from './resources/DatasetResource'
 import geographyResource from './resources/GeographyResource'
 import tilegramResource from './resources/TilegramResource'
+import {showErrorToast} from './utils'
 
 let cartogramComputeRafId
 let importing = false
@@ -32,17 +33,14 @@ export function loadTopoJson(topoJson) {
 }
 
 export function loadProject(projectJson) {
-  console.log('loadProject called with:', typeof projectJson, projectJson)
   cancelAnimationFrame(cartogramComputeRafId)
   importing = true
   try {
-    console.log('About to call projectImporter.import with:', projectJson)
     const importedState = projectImporter.import(projectJson)
-    console.log('Import successful, geography:', importedState.geography)
     applyImportedTilegramState(importedState)
   } catch (e) {
     console.error('loadProject error:', e)
-    alert('Failed to load project file.')
+    showErrorToast('プロジェクトファイルを読み込めませんでした')
   }
 }
 
@@ -103,7 +101,6 @@ export function selectGeography(geography) {
   * on first load.
   */
   importing = false
-  console.log('selectGeography called with:', geography)
   const datasets = datasetResource.getDatasetsByGeography(geography)
   const tilegrams = tilegramResource.getTilegramsByGeography(geography)
   const geoCodeToName = geographyResource.getGeoCodeHash(geography)

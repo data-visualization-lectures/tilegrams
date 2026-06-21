@@ -1,7 +1,10 @@
 import React from 'react'
 import commaNumber from 'comma-number'
 import {OBJECT_ID} from '../file/Exporter'
-import {showProcessingToast} from '../utils'
+import {
+  showErrorToast,
+  showProcessingToast,
+} from '../utils'
 
 const CUSTOM_LABEL = 'Upload custom tilegram'
 
@@ -42,8 +45,7 @@ export default class ImportControls extends React.Component {
         topoJson.objects[OBJECT_ID].geometries // eslint-disable-line no-unused-expressions
       } catch (e) {
         // catch non-json and non-tilegram topojson files
-        // eslint-disable-next-line max-len, no-alert
-        alert('We were unable to load your tilegram, sorry. If you\'re seeing this message it\'s probably because the tilegram format is incorrect or you tried to upload an unrecognized file type.')
+        showErrorToast('タイルグラムファイルを読み込めませんでした。形式を確認してください。')
         this._resetUpload()
         return
       }

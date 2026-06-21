@@ -1,5 +1,6 @@
-import { csvParseRows } from 'd3-dsv'
+import {csvParseRows} from 'd3-dsv'
 import geographyResource from './GeographyResource.js'
+import {showWarningToast} from '../utils'
 import populationCsv from '../../data/us/population-by-state.csv'
 import electoralCollegeCsv from '../../data/us/electoral-college-votes-by-state.csv'
 import gdpCsv from '../../data/us/gdp-by-state.csv'
@@ -180,8 +181,7 @@ class DatasetResource {
       alertString += ` Ids ${valueIdString} have zero or negative value.`
     }
     alertString += ' This data has been pruned.'
-    // eslint-disable-next-line no-alert
-    alert(alertString)
+    showWarningToast(alertString)
   }
 
   getLabels() {
