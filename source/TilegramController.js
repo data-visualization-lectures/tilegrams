@@ -26,18 +26,19 @@ function applyImportedTilegramState(importedState) {
   updateUi()
 }
 
-export function loadTopoJson(topoJson) {
+function loadImportedTilegramState(readImportedState) {
   cancelAnimationFrame(cartogramComputeRafId)
   importing = true
-  applyImportedTilegramState(importer.fromTopoJson(topoJson))
+  applyImportedTilegramState(readImportedState())
+}
+
+export function loadTopoJson(topoJson) {
+  loadImportedTilegramState(() => importer.fromTopoJson(topoJson))
 }
 
 export function loadProject(projectJson) {
-  cancelAnimationFrame(cartogramComputeRafId)
-  importing = true
   try {
-    const importedState = projectImporter.import(projectJson)
-    applyImportedTilegramState(importedState)
+    loadImportedTilegramState(() => projectImporter.import(projectJson))
   } catch (e) {
     console.error('loadProject error:', e)
     showErrorToast('プロジェクトファイルを読み込めませんでした')
