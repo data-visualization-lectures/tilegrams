@@ -50806,7 +50806,7 @@
 	    return _react2.default.createElement(
 	      'div',
 	      { className: 'congressionalDistrictModal' },
-	      'Looking for each State broken out individually? Don\'t worry,',
+	      '\u5DDE\u3054\u3068\u306B\u5206\u5272\u3055\u308C\u305F\u30BF\u30A4\u30EB\u30B0\u30E9\u30E0\u3092\u63A2\u3057\u3066\u3044\u307E\u3059\u304B\uFF1F',
 	      _react2.default.createElement(
 	        'a',
 	        {
@@ -50814,7 +50814,7 @@
 	          target: '_blank',
 	          rel: 'noopener noreferrer'
 	        },
-	        'we have you covered.'
+	        '\u5DDE\u5225\u306E\u30C7\u30FC\u30BF\u306F\u3053\u3061\u3089\u304B\u3089\u78BA\u8A8D\u3067\u304D\u307E\u3059\u3002'
 	      )
 	    );
 	  }
