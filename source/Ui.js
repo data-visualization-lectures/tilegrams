@@ -17,6 +17,7 @@ import Credits from './components/Credits'
 import ManualPanel from './components/ManualPanel'
 import MobileRedirect from './components/MobileRedirect'
 import TilegramNotice from './components/TilegramNotice'
+import StepHeader from './components/StepHeader'
 import pngExporter from './file/PngExporter'
 import googleNewsLabLogo from './images/gnl-logo.png'
 import tilegramsLogo from './images/tilegrams-logo.svg'
@@ -303,13 +304,11 @@ class Ui {
       />
     )
     const generateOption = (
-      <div
-        className={this._generateOpen ? 'step' : 'active step'}
+      <StepHeader
+        open={this._generateOpen}
+        label='生成する'
         onClick={this._toggle('generate')}
-      >
-        <span>生成する</span>
-        <span className='arrow' />
-      </div>
+      />
     )
     let errorWarning = null
     if (this._nErrors > 0) {
@@ -325,14 +324,13 @@ class Ui {
       )
     }
     const editOption = (
-      <div
-        className={this._editOpen ? 'step' : 'active step'}
+      <StepHeader
+        open={this._editOpen}
+        label='洗練させる'
         onClick={this._toggle('edit')}
       >
-        <span>洗練させる</span>
         {errorWarning}
-        <span className='arrow' />
-      </div>
+      </StepHeader>
     )
     let modal = null
     if (this._showModal) {
