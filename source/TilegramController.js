@@ -6,7 +6,7 @@ import projectImporter from './file/ProjectImporter'
 import datasetResource from './resources/DatasetResource'
 import geographyResource from './resources/GeographyResource'
 import tilegramResource from './resources/TilegramResource'
-import {showErrorToast} from './utils'
+import {showErrorToast} from './ToolHeaderMessages'
 
 let cartogramComputeRafId
 let importing = false

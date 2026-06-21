@@ -4,7 +4,7 @@ import {OBJECT_ID} from '../file/Exporter'
 import {
   showErrorToast,
   showProcessingToast,
-} from '../utils'
+} from '../ToolHeaderMessages'
 
 const CUSTOM_LABEL = 'Upload custom tilegram'
 

@@ -1,6 +1,6 @@
 import {csvParseRows} from 'd3-dsv'
 import geographyResource from './GeographyResource.js'
-import {showWarningToast} from '../utils'
+import {showWarningToast} from '../ToolHeaderMessages'
 import populationCsv from '../../data/us/population-by-state.csv'
 import electoralCollegeCsv from '../../data/us/electoral-college-votes-by-state.csv'
 import gdpCsv from '../../data/us/gdp-by-state.csv'

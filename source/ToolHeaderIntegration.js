@@ -1,8 +1,8 @@
+import {getQueryParam} from './utils'
 import {
-  getQueryParam,
   installHeaderProcessingToasts,
   showProcessingToast,
-} from './utils'
+} from './ToolHeaderMessages'
 
 const HEADER_SELECTOR = 'dataviz-tool-header'
 
