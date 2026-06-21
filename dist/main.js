@@ -167,15 +167,11 @@
 	  _Ui2.default.render();
 	}
 
-	function loadTopoJson(topoJson) {
-	  cancelAnimationFrame(cartogramComputeRafId);
-	  importing = true;
-
-	  var _importer$fromTopoJso = _Importer2.default.fromTopoJson(topoJson),
-	      tiles = _importer$fromTopoJso.tiles,
-	      dataset = _importer$fromTopoJso.dataset,
-	      metricPerTile = _importer$fromTopoJso.metricPerTile,
-	      geography = _importer$fromTopoJso.geography;
+	function applyImportedTilegramState(importedState) {
+	  var tiles = importedState.tiles,
+	      dataset = importedState.dataset,
+	      metricPerTile = importedState.metricPerTile,
+	      geography = importedState.geography;
 
 	  _Ui2.default.setGeography(geography);
 	  _Ui2.default.setSelectedDataset(dataset);
@@ -183,7 +179,12 @@
 	  _Canvas2.default.setGeoCodeToName(_GeographyResource2.default.getGeoCodeHash(geography));
 	  _Canvas2.default.importTiles(tiles);
 	  updateUi();
-	  updateUi();
+	}
+
+	function loadTopoJson(topoJson) {
+	  cancelAnimationFrame(cartogramComputeRafId);
+	  importing = true;
+	  applyImportedTilegramState(_Importer2.default.fromTopoJson(topoJson));
 	}
 
 	function loadProject(projectJson) {
@@ -192,20 +193,9 @@
 	  importing = true;
 	  try {
 	    console.log('About to call projectImporter.import with:', projectJson);
-
-	    var _projectImporter$impo = _ProjectImporter2.default.import(projectJson),
-	        tiles = _projectImporter$impo.tiles,
-	        dataset = _projectImporter$impo.dataset,
-	        metricPerTile = _projectImporter$impo.metricPerTile,
-	        geography = _projectImporter$impo.geography;
-
-	    console.log('Import successful, geography:', geography);
-	    _Ui2.default.setGeography(geography);
-	    _Ui2.default.setSelectedDataset(dataset);
-	    _Metrics2.default.metricPerTile = metricPerTile;
-	    _Canvas2.default.setGeoCodeToName(_GeographyResource2.default.getGeoCodeHash(geography));
-	    _Canvas2.default.importTiles(tiles);
-	    updateUi();
+	    var importedState = _ProjectImporter2.default.import(projectJson);
+	    console.log('Import successful, geography:', importedState.geography);
+	    applyImportedTilegramState(importedState);
 	  } catch (e) {
 	    console.error('loadProject error:', e);
 	    alert('Failed to load project file.');
