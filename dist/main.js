@@ -51142,18 +51142,23 @@
 	  updateUi();
 	}
 
-	function loadTopoJson(topoJson) {
+	function loadImportedTilegramState(readImportedState) {
 	  cancelAnimationFrame(cartogramComputeRafId);
 	  importing = true;
-	  applyImportedTilegramState(_Importer2.default.fromTopoJson(topoJson));
+	  applyImportedTilegramState(readImportedState());
+	}
+
+	function loadTopoJson(topoJson) {
+	  loadImportedTilegramState(function () {
+	    return _Importer2.default.fromTopoJson(topoJson);
+	  });
 	}
 
 	function loadProject(projectJson) {
-	  cancelAnimationFrame(cartogramComputeRafId);
-	  importing = true;
 	  try {
-	    var importedState = _ProjectImporter2.default.import(projectJson);
-	    applyImportedTilegramState(importedState);
+	    loadImportedTilegramState(function () {
+	      return _ProjectImporter2.default.import(projectJson);
+	    });
 	  } catch (e) {
 	    console.error('loadProject error:', e);
 	    (0, _utils.showErrorToast)('プロジェクトファイルを読み込めませんでした');
