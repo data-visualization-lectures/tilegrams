@@ -1,9 +1,6 @@
 import MobileDetect from 'mobile-detect'
 import canvas from './source/Canvas'
 import ui from './source/Ui'
-import metrics from './source/Metrics'
-import exporter from './source/file/Exporter'
-import pngExporter from './source/file/PngExporter'
 import {
   loadProject,
   loadTopoJson,
@@ -14,12 +11,17 @@ import {
   updateResolution,
   updateUi,
 } from './source/TilegramController'
+import {
+  buildProjectJson,
+  exportProjectJson,
+  exportSvg,
+  exportTopoJson,
+  getCanvasThumbnailDataUri,
+} from './source/ExportController'
 import installToolHeader from './source/ToolHeaderIntegration'
 import gridGeometry from './source/geometry/GridGeometry'
-import projectExporter from './source/file/ProjectExporter'
 
 import {
-  startDownload,
   isDevEnvironment,
 } from './source/utils'
 import {updateCanvasSize} from './source/constants'
@@ -45,63 +47,6 @@ function confirmNavigation(e) {
   const message = '本当にこのページから離脱しますか？セーブされていない作業がすべて失われます。'
   e.returnValue = message
   return message
-}
-
-function getCurrentTiles() {
-  return canvas.getGrid().getTiles()
-}
-
-function buildTopoJson(geography) {
-  return exporter.toTopoJson(
-    getCurrentTiles(),
-    ui.getSelectedDataset(),
-    metrics.metricPerTile,
-    geography
-  )
-}
-
-function buildSvg(geography) {
-  return exporter.toSvg(
-    getCurrentTiles(),
-    geography
-  )
-}
-
-function buildProjectJson(geography) {
-  return projectExporter.export(
-    getCurrentTiles(),
-    ui.getSelectedDataset(),
-    metrics.metricPerTile,
-    geography
-  )
-}
-
-function exportTopoJson(geography) {
-  startDownload({
-    filename: 'tiles.topo.json',
-    mimeType: 'text/plain',
-    content: JSON.stringify(buildTopoJson(geography)),
-  })
-}
-
-function exportSvg(geography) {
-  startDownload({
-    filename: 'tiles.svg',
-    mimeType: 'image/svg+xml',
-    content: buildSvg(geography),
-  })
-}
-
-function exportProjectJson(geography) {
-  startDownload({
-    filename: 'tilegram-project.json',
-    mimeType: 'application/json',
-    content: buildProjectJson(geography),
-  })
-}
-
-function getCanvasThumbnailDataUri() {
-  return pngExporter.toDataUrl()
 }
 
 function init() {
