@@ -69,17 +69,20 @@ function updateUi() {
   ui.render()
 }
 
-function loadTopoJson(topoJson) {
-  cancelAnimationFrame(cartogramComputeRafId)
-  importing = true
-  const {tiles, dataset, metricPerTile, geography} = importer.fromTopoJson(topoJson)
+function applyImportedTilegramState(importedState) {
+  const {tiles, dataset, metricPerTile, geography} = importedState
   ui.setGeography(geography)
   ui.setSelectedDataset(dataset)
   metrics.metricPerTile = metricPerTile
   canvas.setGeoCodeToName(geographyResource.getGeoCodeHash(geography))
   canvas.importTiles(tiles)
   updateUi()
-  updateUi()
+}
+
+function loadTopoJson(topoJson) {
+  cancelAnimationFrame(cartogramComputeRafId)
+  importing = true
+  applyImportedTilegramState(importer.fromTopoJson(topoJson))
 }
 
 function loadProject(projectJson) {
@@ -88,14 +91,9 @@ function loadProject(projectJson) {
   importing = true
   try {
     console.log('About to call projectImporter.import with:', projectJson)
-    const {tiles, dataset, metricPerTile, geography} = projectImporter.import(projectJson)
-    console.log('Import successful, geography:', geography)
-    ui.setGeography(geography)
-    ui.setSelectedDataset(dataset)
-    metrics.metricPerTile = metricPerTile
-    canvas.setGeoCodeToName(geographyResource.getGeoCodeHash(geography))
-    canvas.importTiles(tiles)
-    updateUi()
+    const importedState = projectImporter.import(projectJson)
+    console.log('Import successful, geography:', importedState.geography)
+    applyImportedTilegramState(importedState)
   } catch (e) {
     console.error('loadProject error:', e)
     alert('Failed to load project file.')
