@@ -16,7 +16,7 @@ function configureHeaderButtons(header, dependencies, projectState) {
 }
 
 function loadProjectFromQueryParam(header, loadProject) {
-  const projectId = getQueryParam('project_id')
+  const projectId = getQueryParam('projectId')
   if (!projectId) {
     return
   }

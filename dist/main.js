@@ -52686,7 +52686,7 @@
 	}
 
 	function loadProjectFromQueryParam(header, loadProject) {
-	  var projectId = (0, _utils.getQueryParam)('project_id');
+	  var projectId = (0, _utils.getQueryParam)('projectId');
 	  if (!projectId) {
 	    return;
 	  }
