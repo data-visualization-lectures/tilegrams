@@ -59,7 +59,7 @@ export default class TileGenerationUiControls extends React.Component {
             onChange={this._changeOption}
           />
           <label htmlFor='load-tilegram' className='radio-label'>
-            既存のタイルグラムを読み込む
+            完成済みタイルグラムを開く
           </label>
           <div className={this.props.generateOption !== 'import' ? 'collapsed' : ''} >
             <ImportControls
@@ -84,7 +84,7 @@ export default class TileGenerationUiControls extends React.Component {
             onChange={this._changeOption}
           />
           <label htmlFor='generate-tilegram' className='radio-label'>
-            データから生成する
+            地図とデータから新規作成
           </label>
           <div className={this.props.generateOption !== 'generate' ? 'collapsed' : null}>
             <DatasetSelector

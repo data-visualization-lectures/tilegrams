@@ -18,7 +18,7 @@ export default function GeographySelector(props) {
   })
   return (
     <div className='geographySelector'>
-      ベース・マップを選択してください
+      対象地域を選択
       <fieldset>
         <select onChange={selectGeography} value={props.selectedGeography}>
           {options}

@@ -13,6 +13,7 @@ import usCongress2018brokenOut from '../../tilegrams/us-congressional-districts-
 import brazilStatesPopulation2018 from '../../tilegrams/brazil-states-population.json'
 import ukRegions from '../../tilegrams/uk-regions.json';
 import indiaConstituencies from '../../tilegrams/india-constituencies.json';
+import japanPrefecturesOneToOne from '../../tilegrams/japan-prefectures-one-to-one.json';
 
 class TilegramResource {
   constructor() {
@@ -81,6 +82,11 @@ class TilegramResource {
         label: 'India Constituencies',
         topoJson: indiaConstituencies,
         geography: 'India',
+      },
+      {
+        label: 'Japan Prefectures 1-to-1',
+        topoJson: japanPrefecturesOneToOne,
+        geography: 'Japan',
       },
     ]
   }

@@ -26,21 +26,31 @@ class Exporter {
       -Infinity
     )
     const geoCodeToName = geographyResource.getGeoCodeHash(geography)
+    const datasetById = dataset.reduce((memo, row) => {
+      memo[String(row[0])] = row
+      return memo
+    }, {})
     // Aggregate tiles by state
     const tilesByState = {}
     tiles.forEach(tile => {
-      if (!tilesByState[tile.id]) {
-        tilesByState[tile.id] = []
+      const tileId = String(tile.id)
+      if (!tilesByState[tileId]) {
+        tilesByState[tileId] = []
       }
-      tilesByState[tile.id].push(tile)
+      tilesByState[tileId].push(tile)
     })
     dataset.forEach(d => {
+      const datasetId = String(d[0])
       // even if no tiles, make sure all entries in dataset are added to object
-      if (!tilesByState[d[0]]) { tilesByState[d[0]] = null }
+      if (!Object.prototype.hasOwnProperty.call(tilesByState, datasetId)) {
+        tilesByState[datasetId] = null
+      }
     })
 
     const features = Object.keys(tilesByState).map(stateId => {
       const stateTiles = tilesByState[stateId]
+      const datasetRow = datasetById[stateId]
+      const geoCode = geoCodeToName[stateId]
       let tilesCoordinates = null
       let geometry = null
       if (stateTiles !== null) {
@@ -70,10 +80,10 @@ class Exporter {
       const feature = {
         type: 'Feature',
         geometry,
-        id: stateId,
+        id: datasetRow ? datasetRow[0] : stateId,
         properties: {
-          name: geoCodeToName[stateId].name,
-          tilegramValue: dataset.find(d => d[0] === stateId)[1],
+          name: geoCode ? geoCode.name : stateId,
+          tilegramValue: datasetRow ? datasetRow[1] : null,
         },
       }
       return feature

@@ -308,7 +308,7 @@ class Ui {
     const generateOption = (
       <StepHeader
         open={this._generateOpen}
-        label='生成する'
+        label='1. 開く・作成する'
         onClick={this._toggle('generate')}
       />
     )
@@ -323,7 +323,7 @@ class Ui {
     const editOption = (
       <StepHeader
         open={this._editOpen}
-        label='洗練させる'
+        label='2. タイルを調整する'
         onClick={this._toggle('edit')}
       >
         {errorWarning}

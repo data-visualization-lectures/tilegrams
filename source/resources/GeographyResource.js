@@ -1,4 +1,5 @@
 import { geoAlbersUsa, geoMercator } from 'd3-geo'
+import { feature } from 'topojson/build/topojson.js'
 
 import usTopoJson from '../../maps/us/us-110m.topo.json'
 // import ukConstituencyTopoJson from '../../maps/uk/constituency.topo.json'
@@ -12,7 +13,6 @@ import irelandTopoJson from '../../maps/ireland/Irish_Constituencies.topo.json'
 import ukRegionsTopojson from '../../maps/uk/uk_countries_and_england_regions.topo.json'
 import indiaTopojson from '../../maps/india/india.topo.json'
 import japanTopoJson from '../../maps/japan/japan.topo.json'
-import tokyoTopoJson from '../../maps/japan/tokyo.topo.json'
 
 import MapResource from './MapResource'
 import fipsHash from '../../data/us/fips-to-state.json'
@@ -27,7 +27,8 @@ import irelandHash from '../../data/ireland/constituency_names.json'
 import ukRegionsHash from '../../data/uk/uk_region_names.json';
 import indiaHash from '../../data/india/india_names.json';
 import japanHash from '../../data/japan/japan-names.json';
-import tokyoHash from '../../data/japan/tokyo-names.json';
+
+const japanGeoJson = feature(japanTopoJson, japanTopoJson.objects.japan)
 
 const usProjection = (canvasDimensions) => {
   return geoAlbersUsa()
@@ -109,23 +110,13 @@ const indiaProjection = (canvasDimensions) => {
 }
 
 const japanProjection = (canvasDimensions) => {
+  const xPadding = canvasDimensions.width * 0.08
+  const yPadding = canvasDimensions.height * 0.08
   return geoMercator()
-    .center([137, 38])
-    .scale(canvasDimensions.height * 3.5)
-    .translate([
-      canvasDimensions.width * 0.5,
-      canvasDimensions.height * 0.5,
-    ])
-}
-
-const tokyoProjection = (canvasDimensions) => {
-  return geoMercator()
-    .center([139.75, 35.7])
-    .scale(canvasDimensions.height * 40)
-    .translate([
-      canvasDimensions.width * 0.5,
-      canvasDimensions.height * 0.5,
-    ])
+    .fitExtent([
+      [xPadding, yPadding],
+      [canvasDimensions.width - xPadding, canvasDimensions.height - yPadding],
+    ], japanGeoJson)
 }
 
 class GeographyResource {
@@ -197,18 +188,12 @@ class GeographyResource {
         geoCodeToName: indiaHash,
         projection: indiaProjection,
       },
-      // {
-      //   label: 'Japan',
-      //   mapResource: new MapResource(japanTopoJson, 'japan'),
-      //   geoCodeToName: japanHash,
-      //   projection: japanProjection,
-      // },
-      // {
-      //   label: 'Tokyo',
-      //   mapResource: new MapResource(tokyoTopoJson, 'tokyo'),
-      //   geoCodeToName: tokyoHash,
-      //   projection: tokyoProjection,
-      // },
+      {
+        label: 'Japan',
+        mapResource: new MapResource(japanTopoJson, 'japan'),
+        geoCodeToName: japanHash,
+        projection: japanProjection,
+      },
     ]
   }
 
