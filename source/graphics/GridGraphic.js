@@ -12,6 +12,7 @@ import {
   hoveredTileBorderColor,
   movingTileOriginalPositionColor,
   labelFontFamily,
+  settings,
 } from '../constants'
 
 export default class GridGraphic extends Graphic {
@@ -451,6 +452,8 @@ export default class GridGraphic extends Graphic {
       )
       return {
         id,
+        // larger clusters get label placement priority when culling overlaps
+        weight: biggestCluster.length,
         position: {
           x: clusterSum[0] / biggestCluster.length,
           y: clusterSum[1] / biggestCluster.length,
@@ -459,16 +462,66 @@ export default class GridGraphic extends Graphic {
     })
   }
 
+  _labelText(id) {
+    const geoCode = this.geoCodeToName[id]
+    return String(geoCode ? geoCode.name_short || id : id)
+  }
+
+  /**
+  * Greedily keep labels whose bounding box does not intersect an already
+  * placed one. Larger clusters win so dense areas drop small-region labels.
+  */
+  _cullOverlappingLabels(labels, fontSize) {
+    const pad = 2.0 * devicePixelRatio
+    const placed = []
+    const sorted = labels.slice().sort((a, b) => b.weight - a.weight)
+    const visibleIds = new Set()
+    sorted.forEach(label => {
+      const width = this._ctx.measureText(this._labelText(label.id)).width
+      const rect = {
+        x: (label.position.x - (width * 0.5)) - pad,
+        y: (label.position.y - (fontSize * 0.5)) - pad,
+        w: width + (pad * 2),
+        h: fontSize + (pad * 2),
+      }
+      const overlaps = placed.some(other => (
+        rect.x < other.x + other.w &&
+        other.x < rect.x + rect.w &&
+        rect.y < other.y + other.h &&
+        other.y < rect.y + rect.h
+      ))
+      if (!overlaps) {
+        placed.push(rect)
+        visibleIds.add(label.id)
+      }
+    })
+    return labels.filter(label => visibleIds.has(label.id))
+  }
+
+  /** white halo behind label text keeps it legible over tile colors */
+  _drawHaloText(text, x, y) {
+    this._ctx.lineJoin = 'round'
+    this._ctx.lineWidth = 3.0 * devicePixelRatio
+    this._ctx.strokeStyle = 'rgba(255, 255, 255, 0.85)'
+    this._ctx.strokeText(text, x, y)
+    this._ctx.fillText(text, x, y)
+  }
+
   _drawClusterLabels() {
-    this._labels.forEach(label => {
-      this._ctx.textAlign = 'center'
-      this._ctx.textBaseline = 'middle'
-      this._ctx.fillStyle = 'black'
-      this._ctx.font = `${12.0 * devicePixelRatio}px ${labelFontFamily}`
-      const geoCode = this.geoCodeToName[label.id]
-      const text = geoCode ? geoCode.name_short || label.id : label.id
-      this._ctx.fillText(
-        text,
+    if (settings.labelMode === 'none') {
+      return
+    }
+    const fontSize = 12.0 * devicePixelRatio
+    this._ctx.textAlign = 'center'
+    this._ctx.textBaseline = 'middle'
+    this._ctx.fillStyle = 'black'
+    this._ctx.font = `${fontSize}px ${labelFontFamily}`
+    const labels = settings.labelMode === 'auto' ?
+      this._cullOverlappingLabels(this._labels, fontSize) :
+      this._labels
+    labels.forEach(label => {
+      this._drawHaloText(
+        this._labelText(label.id),
         label.position.x,
         label.position.y
       )
@@ -550,7 +603,7 @@ export default class GridGraphic extends Graphic {
     this._ctx.font = `${14.0 * devicePixelRatio}px ${labelFontFamily}`
     const geoCode = this.geoCodeToName[id]
     const text = geoCode ? geoCode.name : id
-    this._ctx.fillText(text, 40, 30)
+    this._drawHaloText(text, 40, 30)
   }
 
   /** Compute contiguous outline (convex hull) of given tiles */

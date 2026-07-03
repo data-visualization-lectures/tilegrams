@@ -7,7 +7,7 @@ import manual from 'raw!../MANUAL.md'
 import metrics from './Metrics'
 import {createElement} from './utils'
 import {showProcessingToast} from './ToolHeaderMessages'
-import {nTileDomain} from './constants'
+import {nTileDomain, settings} from './constants'
 import TileGenerationUiControls from './components/TileGenerationUiControls'
 import HexMetrics from './components/HexMetrics'
 import EditWarningModal from './components/EditWarningModal'
@@ -45,6 +45,7 @@ class Ui {
     this._updateNErrors = this._updateNErrors.bind(this)
     this._toggleRefineTooltip = this._toggleRefineTooltip.bind(this)
     this._closeMobile = this._closeMobile.bind(this)
+    this._changeLabelMode = this._changeLabelMode.bind(this)
     this.selectTilegramGenerateOption = this.selectTilegramGenerateOption.bind(this)
     this._selectedTilegramIndex = 0;
 
@@ -270,6 +271,12 @@ class Ui {
     this.render()
   }
 
+  _changeLabelMode(event) {
+    // the canvas render loop picks the new mode up on its next frame
+    settings.labelMode = event.target.value
+    this.render()
+  }
+
   _updateNErrors(value) {
     if (this._nErrors !== value) {
       this._nErrors = value
@@ -385,6 +392,17 @@ class Ui {
                 selectGeography={this._selectGeographyCallback}
               />
               {tileGenerationControls}
+            </div>
+            <hr />
+            <div className='geographySelector labelModeSelector'>
+              地名ラベルの表示
+              <fieldset>
+                <select value={settings.labelMode} onChange={this._changeLabelMode}>
+                  <option value='auto'>自動間引き（重なりを回避）</option>
+                  <option value='all'>すべて表示</option>
+                  <option value='none'>非表示</option>
+                </select>
+              </fieldset>
             </div>
             <hr />
             {editOption}

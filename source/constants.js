@@ -28,6 +28,8 @@ class Settings {
     this.tileScale = 0.95
     this.displayMap = true
     this.displayGrid = true
+    // 'auto' = cull overlapping labels, 'all' = draw all, 'none' = hide
+    this.labelMode = 'auto'
   }
 }
 const settings = new Settings()
