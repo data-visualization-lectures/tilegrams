@@ -12,28 +12,28 @@
 
 ## 既存タイルグラムのエクスポート
 
-起動するとまず **Load existing** メニューで選ばれたタイルグラムが表示されます。別のオプションを試しながら内容を確認してください。
+起動するとまず「**1. 開く・作成する**」の「**完成済みタイルグラムを開く**」で選ばれたタイルグラム（初期状態では「日本 都道府県 1対1」）が表示されます。別のオプションを試しながら内容を確認してください。
 
-表示どおりの状態で問題なければ、左下の **Export** ボタンから **TopoJSON** または **SVG** を出力できます。
+表示どおりの状態で問題なければ、画面上部の「**エクスポート**」メニューから **TopoJSON**・**SVG**・**PNG** を出力できます。
 
-SVG はデザイナーが Illustrator などへ読み込めます。TopoJSON は開発者が Web アプリへ組み込めます。どちらにも米国 [FIPS](https://en.wikipedia.org/wiki/Federal_Information_Processing_Standards) コードが付与されます。
+SVG はデザイナーが Illustrator などへ読み込めます。地域名ラベルは `labels` グループにまとめて入っているので、不要な場合はグループごと削除できます。TopoJSON は開発者が Web アプリへ組み込めます。日本の地図には都道府県コード（1〜47）、米国の地図には [FIPS](https://en.wikipedia.org/wiki/Federal_Information_Processing_Standards) コードが付与されます。
 
 ## タイルグラムの編集
 
-既存タイルグラムを読み込んだあと、例えばフロリダが大きすぎたりミズーリが細長すぎたりすると感じたら手動で調整できます。
+既存タイルグラムを読み込んだあと、例えば北海道が大きすぎたり長野県が細長すぎたりすると感じたら手動で調整できます。
 
-ステップ **2** の **Refine your tilegram** をクリックします。
+ステップ「**2. タイルを調整する**」をクリックします。
 
 ### タイルを移動する
 
 - 任意のタイルをドラッグすると移動できます。
 - 複数タイルをまとめて動かしたい場合は矩形選択で囲んでからドラッグします。
-- 特定の州だけ移動したい場合は、その州のタイルをダブルクリックして全選択し、まとめてドラッグします。
-- 右側の **State Tiles** リストの州にマウスを乗せると該当タイルが地図上でハイライトされます。
+- 特定の都道府県だけ移動したい場合は、そのタイルをダブルクリックして全選択し、まとめてドラッグします。
+- 右側のタイル一覧の地域名にマウスを乗せると該当タイルが地図上でハイライトされます。
 
 ### 数値の整合性を保つ
 
-**State Tiles** には各州の名前、数字、六角形アイコンが並びます。
+タイル一覧には各地域の名前、数字、六角形アイコンが並びます。
 
 数字は現在のタイル数と、データ上「あるべき」タイル数との差（デルタ）です。正ならタイルが多すぎ、負なら足りません。警告アイコンが出ている場合は、選択した解像度で 1 タイル分のデータすら満たしていないことを意味します。
 
@@ -47,18 +47,39 @@ SVG はデザイナーが Illustrator などへ読み込めます。TopoJSON は
 
 ここまで理解できたら、ゼロからタイルグラムを作る準備が整っています。
 
-**Generate from data** を選ぶと、通常の地図から選択したデータに合わせて領域が徐々にリサイズされていく様子が見られます。
+「**地図とデータから新規作成**」を選ぶと、通常の地図から選択したデータに合わせて領域が徐々にリサイズされていく様子が見られます。
 
-**Dataset** では用意済みのデータセットを選ぶか、FIPS コード形式の **Custom CSV** を貼り付けて独自データを投入できます。
+データセットの選択肢では用意済みのデータセットを選ぶか、「**カスタムCSV（貼り付け）**」で独自データを投入できます。
 
 解像度は次の 2 通りで調整します。
 
-1. **Resolution** スライダーをドラッグしてリアルタイムにタイル再計算を確認する方法。
-2. **Per tile** 入力欄に 1 タイルあたりの値を直接入力する、より厳密な方法。
+1. スライダーをドラッグしてリアルタイムにタイル再計算を確認する方法。
+2. 入力欄に 1 タイルあたりの値を直接入力する、より厳密な方法。
 
-例えば人口データを使う場合、`500,000` と入力すると 1 タイル ≒ 50 万人になります。各州の人口をその値で割り、最も近い整数に丸めたタイル数が割り当てられます。人口 70 万なら 1 タイル、80 万なら 2 タイル、といった具合です。
+例えば人口データを使う場合、`500,000` と入力すると 1 タイル ≒ 50 万人になります。各地域の人口をその値で割り、最も近い整数に丸めたタイル数が割り当てられます。人口 70 万なら 1 タイル、80 万なら 2 タイル、といった具合です。
 
-**Dataset** と **Resolution**/**Per tile** を変えると **State Tiles** のデルタが自動更新されます。最終的にはすべてが `0` になるよう調整し、責任あるタイルグラムを作成してください。
+データセットや解像度を変えるとタイル一覧のデルタが自動更新されます。最終的にはすべてが `0` になるよう調整し、責任あるタイルグラムを作成してください。
+
+## カスタムCSVの書式（日本の地図）
+
+CSV はヘッダー行なしで、1 列目に地域ID、2 列目に値を記入します。日本の地図（都道府県・東京都）では、1 列目に次のいずれの形式も使えます。
+
+- 都道府県コード: `1`〜`47`（`01` のような0埋めも可）
+- ISO 3166-2 コード: `JP-13` など
+- 都道府県名: `東京都`・`東京` など（正式名称・短縮名のどちらも可）
+- 東京都の地図では市区町村コード（例: `131016`）または市区町村名（例: `千代田区`）。なお東京都の地図は23区と多摩地域を対象とし、島しょ部は含みません
+
+値の列は `1,234,567` のような桁区切りカンマや全角数字も受け付けます。ヘッダー行が混ざっていた場合は自動的にスキップされます。
+
+例（都道府県の人口）:
+
+```
+北海道,5224614
+青森県,1237984
+東京都,14047594
+```
+
+政府統計の総合窓口 [e-Stat](https://www.e-stat.go.jp/) などからダウンロードした統計表は、「都道府県名の列」と「値の列」の 2 列に整形してから貼り付けてください。
 
 ## エクスポートしたタイルグラムの利用
 
@@ -77,7 +98,7 @@ SVG はデザイナーが Illustrator などへ読み込めます。TopoJSON は
 ```javascript
 var WIDTH = 800
 
-d3.text('tiles.svg', (e, data) => {
+d3.text('japan-tilegram.svg', (e, data) => {
   var div = d3.select(document.body).append('div').html(data)
   var svg = div.select('svg')
   var groups = svg.selectAll('g')
@@ -118,7 +139,7 @@ var svg = d3.select('body').append('svg')
     .attr('width', WIDTH)
     .attr('height', HEIGHT)
 
-d3.json('tiles.topo.json', function showData(error, tilegram) {
+d3.json('japan-tilegram.topo.json', function showData(error, tilegram) {
   var tiles = topojson.feature(tilegram, tilegram.objects.tiles)
 
   var transform = d3.geoTransform({
@@ -139,30 +160,30 @@ d3.json('tiles.topo.json', function showData(error, tilegram) {
 })
 ```
 
-各州の境界線を描くには、州ごとにタイルをマージしたパスを作ります。
+各地域の境界線を描くには、地域ごとにタイルをマージしたパスを作ります。エクスポートされた TopoJSON の各ジオメトリには `properties.name`（地域名）が入っています。
 
 ```javascript
-// 州コード一覧を作成
-var stateCodes = []
+// 地域名一覧を作成
+var regionNames = []
 tilegram.objects.tiles.geometries.forEach(function(geometry) {
-  if (stateCodes.indexOf(geometry.properties.state) === -1) {
-    stateCodes.push(geometry.properties.state)
+  if (regionNames.indexOf(geometry.properties.name) === -1) {
+    regionNames.push(geometry.properties.name)
   }
 })
 
-// 州ごとにジオメトリをマージ
-var stateBorders = stateCodes.map(function(code) {
+// 地域ごとにジオメトリをマージ
+var regionBorders = regionNames.map(function(name) {
   return topojson.merge(
     tilegram,
     tilegram.objects.tiles.geometries.filter(function(geometry) {
-      return geometry.properties.state === code
+      return geometry.properties.name === name
     })
   )
 })
 
 // 描画
 g.selectAll('path.border')
-  .data(stateBorders)
+  .data(regionBorders)
   .enter().append('path')
   .attr('d', path)
   .attr('class', 'border')

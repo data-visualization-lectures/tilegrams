@@ -408,7 +408,7 @@ class Ui {
         </div>
         <Tooltip
           hidden={this._hideRefineTooltip}
-          text='Some areas require additional manual adjustment to be statistically accurate.'
+          text='統計的に正確な形にするには、一部の地域で手動調整が必要です。'
           yPos={this._mouseY}
         />
         <Toast

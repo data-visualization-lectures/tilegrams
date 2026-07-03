@@ -10,14 +10,14 @@ export default function RefineErrorWarning({
 }) {
   if (nErrors <= 0) return null
 
-  const objectId = geographyResource.getMapResource(geography).getObjectId()
+  const unitName = geographyResource.getUnitName(geography)
   return (
     <span
       className='n-errors'
       onMouseOver={onMouseOver}
       onMouseOut={onMouseOut}
     >
-      <i className='fa fa-exclamation-triangle' /> {nErrors} {objectId}
+      <i className='fa fa-exclamation-triangle' /> {nErrors} {unitName}
     </span>
   )
 }

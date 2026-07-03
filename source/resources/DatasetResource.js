@@ -17,7 +17,7 @@ import ukRegionConstituencyCounts from '../../data/uk/uk_region_constituency_cou
 import indiaContituencyCounts from '../../data/india/india_constituency_counts.csv';
 import japanPrefecturesVariables from '../../data/japan/prefectures.csv';
 import japanPopulationCsv from '../../data/japan/population.csv';
-// import tokyoWardsVariables from '../../data/japan/tokyo-wards.csv';
+import tokyoWardsVariables from '../../data/japan/tokyo-wards.csv';
 
 class DatasetResource {
   constructor() {
@@ -28,36 +28,54 @@ class DatasetResource {
     */
     this._datasets = [
       {
-        label: 'U.S. Population 2016',
+        label: '日本の人口（2020年国勢調査）',
+        data: this.parseCsv(japanPopulationCsv, 'Japan'),
+        geography: 'Japan',
+        defaultResolution: 500000,
+      },
+      {
+        label: '都道府県 1対1',
+        data: this.parseCsv(japanPrefecturesVariables, 'Japan'),
+        geography: 'Japan',
+        defaultResolution: 1,
+      },
+      {
+        label: '東京都 市区町村 1対1（島しょ部を除く）',
+        data: this.parseCsv(tokyoWardsVariables, 'Tokyo'),
+        geography: 'Tokyo',
+        defaultResolution: 1,
+      },
+      {
+        label: 'アメリカの人口（2016年）',
         data: this.parseCsv(populationCsv, 'United States'),
         geography: 'United States',
         defaultResolution: 1000000,
       },
       {
-        label: 'U.S. Electoral College 2016',
+        label: 'アメリカ大統領選挙人（2016年）',
         data: this.parseCsv(electoralCollegeCsv, 'United States'),
         geography: 'United States',
         defaultResolution: 1,
       },
       {
-        label: 'U.S. GDP 2015 (Millions)',
+        label: 'アメリカ州別GDP（2015年・百万ドル）',
         data: this.parseCsv(gdpCsv, 'United States'),
         geography: 'United States',
       },
       {
-        label: 'U.S. Congressional Districts 2018',
+        label: 'アメリカ連邦下院選挙区（2018年）',
         data: this.parseCsv(congressionalDistricts2018, 'United States'),
         geography: 'United States',
         defaultResolution: 1,
       },
       {
-        label: 'Netherlands – Population',
+        label: 'オランダの人口',
         data: this.parseCsv(netherlandsPopulation, 'Netherlands'),
         geography: 'Netherlands',
         defaultResolution: 50000,
       },
       {
-        label: 'Brazil – Population 2017',
+        label: 'ブラジルの人口（2017年）',
         data: this.parseCsv(brazilPopulation2018, 'Brazil'),
         geography: 'Brazil',
         defaultResolution: 500000,
@@ -75,66 +93,91 @@ class DatasetResource {
       //   defaultResolution: 1,
       // },
       {
-        label: 'Germany Constituency 1-to-1',
+        label: 'ドイツ連邦議会選挙区 1対1',
         data: this.parseCsv(germanyConstituency, 'Germany - Constituencies'),
         geography: 'Germany - Constituencies',
         defaultResolution: 1,
       },
       {
-        label: 'France Region Population',
+        label: 'フランス地域圏の人口',
         data: this.parseCsv(franceRegionPopulation, 'France - Regions'),
         geography: 'France - Regions',
         defaultResolution: 100000,
       },
       {
-        label: 'France Department 1-to-1',
+        label: 'フランス県 1対1',
         data: this.parseCsv(franceDepartment, 'France - Departments'),
         geography: 'France - Departments',
         defaultResolution: 1,
       },
       {
-        label: 'Ireland Constituencies',
+        label: 'アイルランド選挙区',
         data: this.parseCsv(irelandVotes, 'Ireland'),
         geography: 'Ireland',
         defaultResolution: 1,
       },
       {
-        label: 'United Kingdom - Regions',
+        label: 'イギリス地域（選挙区数）',
         data: this.parseCsv(ukRegionConstituencyCounts, 'United Kingdom - Regions'),
         geography: 'United Kingdom - Regions',
         defaultResolution: 1,
       },
       {
-        label: 'India Constituencies',
+        label: 'インド選挙区',
         data: this.parseCsv(indiaContituencyCounts, 'India'),
         geography: 'India',
         defaultResolution: 1,
       },
-      {
-        label: 'Japan Prefectures 1-to-1',
-        data: this.parseCsv(japanPrefecturesVariables, 'Japan'),
-        geography: 'Japan',
-        defaultResolution: 1,
-      },
-      {
-        label: 'Japan Population',
-        data: this.parseCsv(japanPopulationCsv, 'Japan'),
-        geography: 'Japan',
-        defaultResolution: 500000,
-      },
-      // {
-      //   label: 'Tokyo Wards 1-to-1',
-      //   data: this.parseCsv(tokyoWardsVariables, 'Tokyo'),
-      //   geography: 'Tokyo',
-      //   defaultResolution: 1,
-      // },
     ]
-
-    this._selectedDatasetIndex = 2
   }
 
   _validateFips(fips) {
     return fips && fips.length < 2 ? `0${fips}` : fips
+  }
+
+  /** trim, strip quotes, and convert full-width digits/commas to half-width */
+  _normalizeJapaneseCell(value) {
+    if (value == null) { return '' }
+    return String(value)
+      .trim()
+      .replace(/^["']+|["']+$/g, '')
+      .replace(/[０-９]/g, ch => String.fromCharCode(ch.charCodeAt(0) - 0xFEE0))
+      .replace(/，/g, ',')
+      .trim()
+  }
+
+  /** parse numbers that may contain thousands separators or full-width digits */
+  _parseJapaneseNumber(value) {
+    const normalized = this._normalizeJapaneseCell(value).replace(/,/g, '')
+    if (normalized === '') { return NaN }
+    return parseFloat(normalized)
+  }
+
+  /**
+  * Resolve a geo id for Japanese maps. Accepts numeric codes (1, 01, 131016),
+  * ISO 3166-2 codes (JP-13), and names from the geo dictionary (東京都 / 東京).
+  * Returns the normalized input string when unresolvable so validation can
+  * report it back to the user.
+  */
+  _resolveJapaneseGeoCode(geography, rawId) {
+    const id = this._normalizeJapaneseCell(rawId)
+    const isoMatch = id.match(/^JP-?0*(\d+)$/i)
+    if (isoMatch) { return parseInt(isoMatch[1], 10) }
+    if (/^\d+$/.test(id)) { return parseInt(id, 10) }
+    this._nameToGeoCode = this._nameToGeoCode || {}
+    if (!this._nameToGeoCode[geography]) {
+      const hash = geographyResource.getGeoCodeHash(geography)
+      const lookup = {}
+      Object.keys(hash).forEach(code => {
+        const entry = hash[code]
+        const numericCode = parseInt(code, 10)
+        if (entry.name) { lookup[entry.name] = numericCode }
+        if (entry.name_short) { lookup[entry.name_short] = numericCode }
+      })
+      this._nameToGeoCode[geography] = lookup
+    }
+    const code = this._nameToGeoCode[geography][id]
+    return code !== undefined ? code : id
   }
 
   parseCsv(csv, geography, customUpload) {
@@ -147,7 +190,15 @@ class DatasetResource {
     if (geography === 'United States') {
       parsed = csvParseRows(csv, d => [this._validateFips(d[0]), parseFloat(d[1])])
     } else if (geography === 'Japan' || geography === 'Tokyo') {
-      parsed = csvParseRows(csv, d => [parseInt(d[0], 10), parseFloat(d[1])])
+      parsed = csvParseRows(csv, d => {
+        const id = this._resolveJapaneseGeoCode(geography, d[0])
+        const value = this._parseJapaneseNumber(d[1])
+        if (typeof id === 'string' && isNaN(value)) {
+          // neither column parses: treat as a header row and skip it
+          return null
+        }
+        return [id, value]
+      })
     } else {
       parsed = csvParseRows(csv, d => [d[0], parseFloat(d[1])])
     }
@@ -175,12 +226,12 @@ class DatasetResource {
     const valueIdString = badValueIds.map(id => `"${id}"`).join(', ')
     let alertString = ''
     if (mapIdString) {
-      alertString += `There is no associated map data associated with id(s): ${mapIdString}.`
+      alertString += `地図データに存在しないID（${mapIdString}）がありました。`
     }
     if (valueIdString) {
-      alertString += ` Ids ${valueIdString} have zero or negative value.`
+      alertString += `ID ${valueIdString} の値が0以下または数値ではありません。`
     }
-    alertString += ' This data has been pruned.'
+    alertString += '該当する行は除外されました。'
     showWarningToast(alertString)
   }
 

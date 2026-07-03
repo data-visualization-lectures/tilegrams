@@ -6,7 +6,7 @@ import {
   showProcessingToast,
 } from '../ToolHeaderMessages'
 
-const CUSTOM_LABEL = 'Upload custom tilegram'
+const CUSTOM_LABEL = 'タイルグラムをアップロード'
 
 export default class ImportControls extends React.Component {
   constructor(props) {
@@ -131,7 +131,7 @@ export default class ImportControls extends React.Component {
       importControls = (
         <div>
           <fieldset>
-            <span>Using {this.state.uploadedFilename}</span>
+            <span>{this.state.uploadedFilename} を使用中</span>
             <a onClick={this._resetUpload}>&times;</a>
           </fieldset>
           {resolution}

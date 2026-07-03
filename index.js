@@ -26,7 +26,7 @@ require('./source/css/main.scss')
 require('font-awesome/scss/font-awesome.scss')
 require('./source/css/toast.scss')
 
-const defaultGeography = 'United States'
+const defaultGeography = 'Japan'
 
 if (typeof window !== 'undefined') {
   const mobileDetect = new MobileDetect(window.navigator.userAgent)

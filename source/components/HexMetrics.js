@@ -143,8 +143,9 @@ export default class HexMetrics extends React.Component {
     return (
       <div id='warning'>
         <i className='fa fa-exclamation-triangle' />
-        このデータの解像度では、いくつかの {this.state.objectId} が表示されません。
-        より低い解像度を検討してください。
+        このデータの解像度では、いくつかの
+        {geographyResource.getUnitName(this.props.geography)}
+        が表示されません。より低い解像度を検討してください。
       </div>
     )
   }
@@ -174,7 +175,7 @@ export default class HexMetrics extends React.Component {
             style={{cursor: 'pointer'}}
             onMouseDown={count.disable ? () => {} : this._mouseDown}
           >
-            {count.disable ? 'No Data' : this._drawHexagon(count.key)}
+            {count.disable ? 'データなし' : this._drawHexagon(count.key)}
           </div>
           <div>{keyString.name_short || count.key}</div>
           <div>{adjustString}</div>
@@ -210,7 +211,9 @@ export default class HexMetrics extends React.Component {
             onClick={this._toggleHide}
           />
           <label htmlFor='toggleNull'>
-            余剰または不足のある {this.state.objectId} のみを表示
+            余剰または不足のある
+            {geographyResource.getUnitName(this.props.geography)}
+            のみを表示
           </label>
           {this._renderWarning(metrics.shouldWarn)}
         </div>

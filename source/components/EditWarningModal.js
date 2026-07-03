@@ -1,8 +1,8 @@
 import React from 'react'
 
-const warningText = `You have made changes to your map.
- Generating a new Tilegram or changing the resolution
-  of an existing Tilegram will overwrite those changes.`
+const warningText = `地図に手動編集が加えられています。
+新しいタイルグラムを生成したり、既存タイルグラムの解像度を変更すると、
+これらの編集内容は失われます。`
 
 export default function EditWarningModal(props) {
   return (
@@ -14,20 +14,20 @@ export default function EditWarningModal(props) {
         {warningText}
         <br />
         <br />
-        Do you wish to continue?
+        続行しますか？
         <br />
         <br />
         <a
           style={{float: 'left'}}
           onClick={props.startOver}
         >
-          Yes
+          はい、続行する
         </a>
         <a
           style={{float: 'right'}}
           onClick={props.resumeEditing}
         >
-          Resume Editing
+          編集に戻る
         </a>
         <div style={{clear: 'both'}} />
       </div>

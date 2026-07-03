@@ -15,6 +15,7 @@ import version from '../version'
 import gridGeometry from '../geometry/GridGeometry'
 import {fipsColor} from '../utils'
 import geographyResource from '../resources/GeographyResource'
+import {devicePixelRatio, labelFontFamily} from '../constants'
 
 export const OBJECT_ID = 'tiles'
 
@@ -141,6 +142,29 @@ class Exporter {
       })
       svg.appendChild(groupEl)
     })
+    // add region labels in their own group so designers can restyle or delete them at once
+    const labelsGroupEl = document.createElementNS('http://www.w3.org/2000/svg', 'g')
+    labelsGroupEl.setAttribute('id', 'labels')
+    labelsGroupEl.setAttribute('font-family', labelFontFamily)
+    labelsGroupEl.setAttribute('font-size', `${12.0 * devicePixelRatio}`)
+    labelsGroupEl.setAttribute('text-anchor', 'middle')
+    labelsGroupEl.setAttribute('fill', 'black')
+    groupedTiles.forEach((group) => {
+      const centerSum = group.values.reduce((sum, tile) => {
+        const center = gridGeometry.tileCenterPoint({
+          x: tile.position.x,
+          y: tile.position.y,
+        })
+        return [sum[0] + center.x, sum[1] + center.y]
+      }, [0, 0])
+      const geoCode = geoCodeToName[group.key]
+      const text = document.createElementNS('http://www.w3.org/2000/svg', 'text')
+      text.setAttributeNS(null, 'x', centerSum[0] / group.values.length)
+      text.setAttributeNS(null, 'y', centerSum[1] / group.values.length)
+      text.textContent = geoCode ? geoCode.name_short || geoCode.name : group.key
+      labelsGroupEl.appendChild(text)
+    })
+    svg.appendChild(labelsGroupEl)
     const header = '<?xml version="1.0" encoding="utf-8"?>'
     const svgSerialized = header + new XMLSerializer().serializeToString(svg)
     return svgSerialized

@@ -4,7 +4,7 @@ import GridGraphic from './graphics/GridGraphic'
 import MapGraphic from './graphics/MapGraphic'
 import gridGeometry from './geometry/GridGeometry'
 import metrics from './Metrics'
-import {devicePixelRatio, canvasDimensions, settings} from './constants'
+import {devicePixelRatio, canvasDimensions, settings, labelFontFamily} from './constants'
 import {createElement, isDevEnvironment} from './utils'
 
 class Canvas {
@@ -134,9 +134,9 @@ class Canvas {
 
       this._ctx.textAlign = 'center'
       this._ctx.textBaseline = 'middle'
-      this._ctx.font = `${16.0 * devicePixelRatio}px Fira Sans`
+      this._ctx.font = `${16.0 * devicePixelRatio}px ${labelFontFamily}`
 
-      const label = 'Computing Tilegram...'
+      const label = 'タイルグラムを計算中...'
       this._ctx.fillText(label, canvasDimensions.width / 2, barY - 16)
     }
     this._stats.end()

@@ -11,6 +11,7 @@ import {
   selectedTileBorderColor,
   hoveredTileBorderColor,
   movingTileOriginalPositionColor,
+  labelFontFamily,
 } from '../constants'
 
 export default class GridGraphic extends Graphic {
@@ -463,7 +464,7 @@ export default class GridGraphic extends Graphic {
       this._ctx.textAlign = 'center'
       this._ctx.textBaseline = 'middle'
       this._ctx.fillStyle = 'black'
-      this._ctx.font = `${12.0 * devicePixelRatio}px Fira Sans`
+      this._ctx.font = `${12.0 * devicePixelRatio}px ${labelFontFamily}`
       const geoCode = this.geoCodeToName[label.id]
       const text = geoCode ? geoCode.name_short || label.id : label.id
       this._ctx.fillText(
@@ -546,7 +547,7 @@ export default class GridGraphic extends Graphic {
     this._ctx.textAlign = 'left'
     this._ctx.textBaseline = 'top'
     this._ctx.fillStyle = 'black'
-    this._ctx.font = `${14.0 * devicePixelRatio}px Fira Sans`
+    this._ctx.font = `${14.0 * devicePixelRatio}px ${labelFontFamily}`
     const geoCode = this.geoCodeToName[id]
     const text = geoCode ? geoCode.name : id
     this._ctx.fillText(text, 40, 30)

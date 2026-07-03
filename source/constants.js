@@ -37,12 +37,17 @@ gui.add(settings, 'displayMap')
 gui.add(settings, 'displayGrid')
 dat.GUI.toggleHide()
 
+/** font stack for canvas/SVG labels, with Japanese fallbacks */
+const labelFontFamily =
+  "'Fira Sans', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'Noto Sans JP', 'Yu Gothic', sans-serif"
+
 module.exports = {
   settings,
   devicePixelRatio,
   canvasDimensions,
   updateCanvasSize,
   nTileDomain,
+  labelFontFamily,
   tileEdgeRange: {
     default: 20,
     min: 10,

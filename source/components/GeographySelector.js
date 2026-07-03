@@ -12,7 +12,7 @@ export default function GeographySelector(props) {
         key={geographyIndex}
         value={geography.label}
       >
-        {geography.label}
+        {geography.displayLabel || geography.label}
       </option>
     )
   })

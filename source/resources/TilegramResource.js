@@ -19,74 +19,74 @@ class TilegramResource {
   constructor() {
     this._tilegrams = [
       {
-        label: 'Pitch Electoral College',
+        label: '日本 都道府県 1対1',
+        topoJson: japanPrefecturesOneToOne,
+        geography: 'Japan',
+      },
+      {
+        label: 'Pitch アメリカ大統領選挙人',
         topoJson: pitchElectoralCollegeTilegram,
         geography: 'United States',
       },
       {
-        label: 'Pitch U.S. Population 2016',
+        label: 'Pitch アメリカの人口 2016',
         topoJson: pitchPopulationTilegram,
         geography: 'United States',
       },
       {
-        label: 'FiveThirtyEight Electoral College',
+        label: 'FiveThirtyEight アメリカ大統領選挙人',
         topoJson: fiveThirtyEightElectoralCollegeTilegram,
         geography: 'United States',
       },
       {
-        label: 'NPR 1-to-1',
+        label: 'NPR 1対1',
         topoJson: nprOneToOneTilegram,
         geography: 'United States',
       },
       {
-        label: 'U.S. Congressional Districts 2018',
+        label: 'アメリカ連邦下院選挙区 2018',
         topoJson: usCongress2018,
         geography: 'United States',
       },
       {
-        label: 'U.S. Congressional Districts 2018 Broken Out By State',
+        label: 'アメリカ連邦下院選挙区 2018（州別に分割）',
         topoJson: usCongress2018brokenOut,
         geography: 'United States',
       },
       {
-        label: 'France Population',
+        label: 'フランスの人口',
         topoJson: francePopulationTilegram,
         geography: 'France - Regions',
       },
       {
-        label: 'France Population With Overseas',
+        label: 'フランスの人口（海外領土を含む）',
         topoJson: francePopulationWithOverseasTilegram,
         geography: 'France - Regions',
       },
       {
-        label: 'France Departments 1-to-1',
+        label: 'フランス県 1対1',
         topoJson: franceOneToOneDepartmentsTilegram,
         geography: 'France - Departments',
       },
       {
-        label: 'Germany Constituencies 1-to-1',
+        label: 'ドイツ連邦議会選挙区 1対1',
         topoJson: germanyOneToOneConstituenciesTilegram,
         geography: 'Germany - Constituencies',
       },
       {
-        label: 'Brazil States Population 2017',
+        label: 'ブラジル州別人口 2017',
         topoJson: brazilStatesPopulation2018,
         geography: 'Brazil',
       },
       {
-        label: 'United Kingdom - Regions',
+        label: 'イギリス地域',
         topoJson: ukRegions,
         geography: 'United Kingdom - Regions',
       },
       {
-        label: 'India Constituencies',
+        label: 'インド選挙区',
         topoJson: indiaConstituencies,
         geography: 'India',
-      },
-      {
-        label: 'Japan Prefectures 1-to-1',
-        topoJson: japanPrefecturesOneToOne,
-        geography: 'Japan',
       },
     ]
   }

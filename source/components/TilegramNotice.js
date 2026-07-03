@@ -9,7 +9,7 @@ export default function TilegramNotice(props) {
 
   if (
     props.generateOption === 'import' &&
-    selectedTilegram.includes('U.S. Congressional Districts 2018')
+    selectedTilegram.includes('アメリカ連邦下院選挙区 2018')
   ) {
     return (
       <div className='congressionalDistrictModal'>
@@ -25,7 +25,7 @@ export default function TilegramNotice(props) {
     )
   }
 
-  if (selectedTilegram.includes('India')) {
+  if (selectedTilegram.includes('インド')) {
     return (
       <div className='congressionalDistrictModal india'>
         このデータビジュアライゼーションは、インドの伝統的な地図をもとにした地図表現であり、地理的な正確性が100%保証されているわけではありません。

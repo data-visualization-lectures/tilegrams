@@ -10,6 +10,15 @@ function getCurrentTiles() {
   return canvas.getGrid().getTiles()
 }
 
+/** filename-safe slug from the geography's internal label, e.g. "japan" */
+function geographySlug(geography) {
+  const slug = (geography || '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+  return slug || 'tilegram'
+}
+
 export function buildTopoJson(geography) {
   return exporter.toTopoJson(
     getCurrentTiles(),
@@ -37,7 +46,7 @@ export function buildProjectJson(geography) {
 
 export function exportTopoJson(geography) {
   startDownload({
-    filename: 'tiles.topo.json',
+    filename: `${geographySlug(geography)}-tilegram.topo.json`,
     mimeType: 'text/plain',
     content: JSON.stringify(buildTopoJson(geography)),
   })
@@ -45,7 +54,7 @@ export function exportTopoJson(geography) {
 
 export function exportSvg(geography) {
   startDownload({
-    filename: 'tiles.svg',
+    filename: `${geographySlug(geography)}-tilegram.svg`,
     mimeType: 'image/svg+xml',
     content: buildSvg(geography),
   })
@@ -53,7 +62,7 @@ export function exportSvg(geography) {
 
 export function exportProjectJson(geography) {
   startDownload({
-    filename: 'tilegram-project.json',
+    filename: `${geographySlug(geography)}-tilegram-project.json`,
     mimeType: 'application/json',
     content: buildProjectJson(geography),
   })
