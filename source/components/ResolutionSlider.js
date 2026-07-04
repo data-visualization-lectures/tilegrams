@@ -15,6 +15,15 @@ export default class ResolutionSlider extends React.Component {
     this._triggerChangeFromText = this._triggerChangeFromText.bind(this)
   }
 
+  componentDidMount() {
+    // sync metrics and the text field when mounted with an already-selected dataset
+    if (this.props.defaultResolution) {
+      this._triggerChangerFromDefault(this.props.defaultResolution)
+    } else if (this.props.metricDomain.length) {
+      this._triggerChangeFromSlider(50)
+    }
+  }
+
   componentWillReceiveProps(nextProps) {
     if (JSON.stringify(nextProps) !== JSON.stringify(this.props)) {
       this.normalizeValue.domain(nextProps.metricDomain) // update the domain

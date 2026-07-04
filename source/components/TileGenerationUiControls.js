@@ -50,14 +50,6 @@ export default class TileGenerationUiControls extends React.Component {
       <div className='ui-controls'>
         <div className='generate-tabs'>
           <button
-            id='load-tilegram'
-            type='button'
-            className={isImport ? 'generate-tab active' : 'generate-tab'}
-            onClick={() => this._changeOption('import')}
-          >
-            完成済み<br />タイルグラムを開く
-          </button>
-          <button
             id='generate-tilegram'
             type='button'
             className={isImport ? 'generate-tab' : 'generate-tab active'}
@@ -65,14 +57,14 @@ export default class TileGenerationUiControls extends React.Component {
           >
             地図とデータから<br />新規作成
           </button>
-        </div>
-        <div className={isImport ? 'generate-tab-panel' : 'generate-tab-panel collapsed'}>
-          <ImportControls
-            labels={this.props.tilegramLabels}
-            onCustomImport={this._onCustomImport}
-            onTilegramSelected={this._onTilegramSelected}
-            metricPerTile={this.props.metricPerTile}
-          />
+          <button
+            id='load-tilegram'
+            type='button'
+            className={isImport ? 'generate-tab active' : 'generate-tab'}
+            onClick={() => this._changeOption('import')}
+          >
+            完成済み<br />タイルグラムを開く
+          </button>
         </div>
         <div className={isImport ? 'generate-tab-panel collapsed' : 'generate-tab-panel'}>
           <DatasetSelector
@@ -85,6 +77,14 @@ export default class TileGenerationUiControls extends React.Component {
             defaultResolution={this.props.defaultResolution}
             metricDomain={this.props.metricDomain}
             onChange={value => this.props.changeResolution(value, this.props.datasetSum)}
+          />
+        </div>
+        <div className={isImport ? 'generate-tab-panel' : 'generate-tab-panel collapsed'}>
+          <ImportControls
+            labels={this.props.tilegramLabels}
+            onCustomImport={this._onCustomImport}
+            onTilegramSelected={this._onTilegramSelected}
+            metricPerTile={this.props.metricPerTile}
           />
         </div>
       </div>

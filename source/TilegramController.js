@@ -96,8 +96,8 @@ export function selectGeography(geography) {
   * Updates ui with matching geo data (list of tilegrams, list of datasets).
   * Update ui and canvas with the matching geoCodeHash for the current geography. This is used
   * in the hexMetrics component and to render the labels on canvas.
-  * Loads the first tilegram associated with the geography if it exists, else loads the first
-  * dataset.
+  * Generates a tilegram from the first dataset associated with the geography if it exists,
+  * else loads the first premade tilegram.
   * NB: ui.selectTilegramGenerateOption is loaded _after_ the dataset is updated to prevent error
   * on first load.
   */
@@ -109,12 +109,11 @@ export function selectGeography(geography) {
   ui.setDatasetLabels(datasets.map(dataset => dataset.label))
   ui.setTilegramLabels(tilegrams.map(tilegram => tilegram.label))
   canvas.setGeoCodeToName(geoCodeToName)
-  if (tilegrams.length) {
-    loadTopoJson(tilegrams[0].topoJson)
-    // ui.selectTilegram(0)
-    ui.selectTilegramGenerateOption('import')
-  } else {
+  if (datasets.length) {
     selectDataset(geography, 0)
     ui.selectTilegramGenerateOption('generate')
+  } else if (tilegrams.length) {
+    loadTopoJson(tilegrams[0].topoJson)
+    ui.selectTilegramGenerateOption('import')
   }
 }
