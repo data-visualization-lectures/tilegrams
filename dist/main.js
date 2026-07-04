@@ -46489,20 +46489,6 @@
 	          _react2.default.createElement(
 	            'button',
 	            {
-	              id: 'load-tilegram',
-	              type: 'button',
-	              className: isImport ? 'generate-tab active' : 'generate-tab',
-	              onClick: function onClick() {
-	                return _this4._changeOption('import');
-	              }
-	            },
-	            '\u5B8C\u6210\u6E08\u307F',
-	            _react2.default.createElement('br', null),
-	            '\u30BF\u30A4\u30EB\u30B0\u30E9\u30E0\u3092\u958B\u304F'
-	          ),
-	          _react2.default.createElement(
-	            'button',
-	            {
 	              id: 'generate-tilegram',
 	              type: 'button',
 	              className: isImport ? 'generate-tab' : 'generate-tab active',
@@ -46513,17 +46499,21 @@
 	            '\u5730\u56F3\u3068\u30C7\u30FC\u30BF\u304B\u3089',
 	            _react2.default.createElement('br', null),
 	            '\u65B0\u898F\u4F5C\u6210'
+	          ),
+	          _react2.default.createElement(
+	            'button',
+	            {
+	              id: 'load-tilegram',
+	              type: 'button',
+	              className: isImport ? 'generate-tab active' : 'generate-tab',
+	              onClick: function onClick() {
+	                return _this4._changeOption('import');
+	              }
+	            },
+	            '\u5B8C\u6210\u6E08\u307F',
+	            _react2.default.createElement('br', null),
+	            '\u30BF\u30A4\u30EB\u30B0\u30E9\u30E0\u3092\u958B\u304F'
 	          )
-	        ),
-	        _react2.default.createElement(
-	          'div',
-	          { className: isImport ? 'generate-tab-panel' : 'generate-tab-panel collapsed' },
-	          _react2.default.createElement(_ImportControls2.default, {
-	            labels: this.props.tilegramLabels,
-	            onCustomImport: this._onCustomImport,
-	            onTilegramSelected: this._onTilegramSelected,
-	            metricPerTile: this.props.metricPerTile
-	          })
 	        ),
 	        _react2.default.createElement(
 	          'div',
@@ -46544,6 +46534,16 @@
 	            onChange: function onChange(value) {
 	              return _this4.props.changeResolution(value, _this4.props.datasetSum);
 	            }
+	          })
+	        ),
+	        _react2.default.createElement(
+	          'div',
+	          { className: isImport ? 'generate-tab-panel' : 'generate-tab-panel collapsed' },
+	          _react2.default.createElement(_ImportControls2.default, {
+	            labels: this.props.tilegramLabels,
+	            onCustomImport: this._onCustomImport,
+	            onTilegramSelected: this._onTilegramSelected,
+	            metricPerTile: this.props.metricPerTile
 	          })
 	        )
 	      );
@@ -46860,6 +46860,16 @@
 	  }
 
 	  _createClass(ResolutionSlider, [{
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      // sync metrics and the text field when mounted with an already-selected dataset
+	      if (this.props.defaultResolution) {
+	        this._triggerChangerFromDefault(this.props.defaultResolution);
+	      } else if (this.props.metricDomain.length) {
+	        this._triggerChangeFromSlider(50);
+	      }
+	    }
+	  }, {
 	    key: 'componentWillReceiveProps',
 	    value: function componentWillReceiveProps(nextProps) {
 	      if (JSON.stringify(nextProps) !== JSON.stringify(this.props)) {
@@ -51366,8 +51376,8 @@
 	  * Updates ui with matching geo data (list of tilegrams, list of datasets).
 	  * Update ui and canvas with the matching geoCodeHash for the current geography. This is used
 	  * in the hexMetrics component and to render the labels on canvas.
-	  * Loads the first tilegram associated with the geography if it exists, else loads the first
-	  * dataset.
+	  * Generates a tilegram from the first dataset associated with the geography if it exists,
+	  * else loads the first premade tilegram.
 	  * NB: ui.selectTilegramGenerateOption is loaded _after_ the dataset is updated to prevent error
 	  * on first load.
 	  */
@@ -51383,13 +51393,12 @@
 	    return tilegram.label;
 	  }));
 	  _Canvas2.default.setGeoCodeToName(geoCodeToName);
-	  if (tilegrams.length) {
-	    loadTopoJson(tilegrams[0].topoJson);
-	    // ui.selectTilegram(0)
-	    _Ui2.default.selectTilegramGenerateOption('import');
-	  } else {
+	  if (datasets.length) {
 	    selectDataset(geography, 0);
 	    _Ui2.default.selectTilegramGenerateOption('generate');
+	  } else if (tilegrams.length) {
+	    loadTopoJson(tilegrams[0].topoJson);
+	    _Ui2.default.selectTilegramGenerateOption('import');
 	  }
 	}
 
