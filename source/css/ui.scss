@@ -156,20 +156,42 @@ code {
       padding-bottom: 20px;
     }
 
-    .import {
-      padding: 0 $ui-margin 12px $ui-margin;
+    .generate-tabs {
+      display: flex;
       border-top: 1px solid $very-light-gray;
+      border-bottom: 1px solid $very-light-gray;
 
-      &.active {
-        background-color: $very-light-gray;
-        border-left: 3px solid $gray;
-        padding-left: $ui-margin - 3px;
+      .generate-tab {
+        flex: 1;
+        padding: 12px 6px;
+        background: none;
+        border: none;
+        border-bottom: 3px solid transparent;
+        font-family: $font-stack;
+        font-size: 13px;
+        color: $gray;
+        opacity: 0.65;
+        cursor: pointer;
 
-        label.radio-label {
-          &:hover {
-            opacity: 1;
-          }
+        &:hover {
+          opacity: 1;
         }
+
+        &.active {
+          background-color: $very-light-gray;
+          border-bottom-color: $gray;
+          font-weight: 500;
+          opacity: 1;
+          cursor: default;
+        }
+      }
+    }
+
+    .generate-tab-panel {
+      padding: 12px $ui-margin;
+
+      &.collapsed {
+        display: none;
       }
     }
 

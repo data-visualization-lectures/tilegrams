@@ -40,6 +40,8 @@ class Canvas {
   }
 
   importTiles(tiles) {
+    // hide the progress overlay left behind by a cancelled cartogram compute
+    this._progress = -1
     this._mapGraphic.resetBounds()
     this._gridGraphic.importTiles(tiles)
     this._cartogramReady = true

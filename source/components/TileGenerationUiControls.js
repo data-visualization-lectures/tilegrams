@@ -15,8 +15,10 @@ export default class TileGenerationUiControls extends React.Component {
     this._restoreLastTilegramSelection = null
   }
 
-  _changeOption(event) {
-    const value = event.target.value
+  _changeOption(value) {
+    if (value === this.props.generateOption) {
+      return
+    }
     this.props.changeOption(value)
     if (value === 'import') {
       if (this._restoreLastTilegramSelection) {
@@ -43,62 +45,47 @@ export default class TileGenerationUiControls extends React.Component {
   }
 
   render() {
+    const isImport = this.props.generateOption === 'import'
     return (
       <div className='ui-controls'>
-        <div
-          className={this.props.generateOption === 'import'
-            ? 'import active padding-bottom'
-            : 'import padding-bottom'}
-        >
-          <input
+        <div className='generate-tabs'>
+          <button
             id='load-tilegram'
-            type='radio'
-            name='tile-controls'
-            value='import'
-            checked={this.props.generateOption === 'import'}
-            onChange={this._changeOption}
-          />
-          <label htmlFor='load-tilegram' className='radio-label'>
-            完成済みタイルグラムを開く
-          </label>
-          <div className={this.props.generateOption !== 'import' ? 'collapsed' : ''} >
-            <ImportControls
-              labels={this.props.tilegramLabels}
-              onCustomImport={this._onCustomImport}
-              onTilegramSelected={this._onTilegramSelected}
-              metricPerTile={this.props.metricPerTile}
-            />
-          </div>
-        </div>
-        <div
-          className={this.props.generateOption === 'generate'
-            ? 'import active padding-bottom'
-            : 'import padding-bottom'}
-        >
-          <input
+            type='button'
+            className={isImport ? 'generate-tab active' : 'generate-tab'}
+            onClick={() => this._changeOption('import')}
+          >
+            完成済み<br />タイルグラムを開く
+          </button>
+          <button
             id='generate-tilegram'
-            type='radio'
-            name='tile-controls'
-            value='generate'
-            checked={this.props.generateOption === 'generate'}
-            onChange={this._changeOption}
+            type='button'
+            className={isImport ? 'generate-tab' : 'generate-tab active'}
+            onClick={() => this._changeOption('generate')}
+          >
+            地図とデータから<br />新規作成
+          </button>
+        </div>
+        <div className={isImport ? 'generate-tab-panel' : 'generate-tab-panel collapsed'}>
+          <ImportControls
+            labels={this.props.tilegramLabels}
+            onCustomImport={this._onCustomImport}
+            onTilegramSelected={this._onTilegramSelected}
+            metricPerTile={this.props.metricPerTile}
           />
-          <label htmlFor='generate-tilegram' className='radio-label'>
-            地図とデータから新規作成
-          </label>
-          <div className={this.props.generateOption !== 'generate' ? 'collapsed' : null}>
-            <DatasetSelector
-              labels={this.props.datasetLabels}
-              onDatasetSelected={index => this.props.selectDataset(index)}
-              onCustomDataset={csv => this.props.selectCustomDataset(csv)}
-              geography={this.props.geography}
-            />
-            <ResolutionSlider
-              defaultResolution={this.props.defaultResolution}
-              metricDomain={this.props.metricDomain}
-              onChange={value => this.props.changeResolution(value, this.props.datasetSum)}
-            />
-          </div>
+        </div>
+        <div className={isImport ? 'generate-tab-panel collapsed' : 'generate-tab-panel'}>
+          <DatasetSelector
+            labels={this.props.datasetLabels}
+            onDatasetSelected={index => this.props.selectDataset(index)}
+            onCustomDataset={csv => this.props.selectCustomDataset(csv)}
+            geography={this.props.geography}
+          />
+          <ResolutionSlider
+            defaultResolution={this.props.defaultResolution}
+            metricDomain={this.props.metricDomain}
+            onChange={value => this.props.changeResolution(value, this.props.datasetSum)}
+          />
         </div>
       </div>
     )
