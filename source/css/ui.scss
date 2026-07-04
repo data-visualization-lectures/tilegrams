@@ -1,20 +1,27 @@
 select {
   width: 100%;
+  box-sizing: border-box;
   -webkit-appearance: none;
-  -webkit-border-radius: 0px;
   -moz-appearance: none;
   appearance: none;
-  background: url('../images/arrow.svg') no-repeat 97% 50% #ffffff;
-  background-size: 1em 0.5em;
-  border: none;
+  background: url('../images/select-caret.svg') no-repeat right 10px center #ffffff;
+  background-size: 10px 5px;
+  border: 1px solid $light-gray;
+  border-radius: 4px;
   color: #1a1a1a;
   font-size: 100%;
-  font-weight: 300;
+  font-weight: 400;
   cursor: pointer;
-  padding: 3px;
+  padding: 8px 32px 8px 10px;
+
+  &:hover {
+    border-color: $gray;
+  }
 
   &:focus {
     outline: none;
+    border-color: $blue;
+    box-shadow: 0 0 0 2px rgba(57, 57, 165, 0.15);
   }
 }
 
@@ -139,10 +146,6 @@ code {
 
   .geographySelector {
     padding: 0 $ui-margin 12px $ui-margin;
-
-    select {
-      background-color: $very-light-gray;
-    }
   }
 
   .labelModeSelector {
@@ -218,10 +221,20 @@ code {
 
     textarea {
       width: 100%;
+      box-sizing: border-box;
       margin-top: 10px;
+      padding: 8px;
+      border: 1px solid $light-gray;
+      border-radius: 4px;
+
+      &:hover {
+        border-color: $gray;
+      }
 
       &:focus {
         outline: none;
+        border-color: $blue;
+        box-shadow: 0 0 0 2px rgba(57, 57, 165, 0.15);
       }
     }
 
@@ -234,8 +247,8 @@ code {
     .submit-custom {
       margin: 5px 0;
       background-color: white;
-      padding: 5px;
-      border-radius: 3px;
+      padding: 6px 14px;
+      border-radius: 4px;
       display: inline-block;
       border: 1px solid $light-gray;
       cursor: pointer;
@@ -243,6 +256,11 @@ code {
 
       &.active {
         opacity: 1;
+
+        &:hover {
+          border-color: $gray;
+          background-color: $very-light-gray;
+        }
       }
     }
   }
@@ -284,15 +302,23 @@ code {
   .resolution-input {
     input {
       min-width: 50%;
-      border: none;
+      box-sizing: border-box;
+      border: 1px solid $light-gray;
+      border-radius: 4px;
+      padding: 6px 8px;
+      background-color: #fff;
       font-size: 1.1em;
-      border-bottom: 1px solid $light-gray;
       margin: 0 5px 0 0;
       color: $blue;
 
+      &:hover {
+        border-color: $gray;
+      }
+
       &:focus {
         outline: none;
-        border-bottom: 1px solid $gray;
+        border-color: $blue;
+        box-shadow: 0 0 0 2px rgba(57, 57, 165, 0.15);
       }
     }
   }
