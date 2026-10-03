@@ -2,6 +2,7 @@ import dat from 'dat-gui'
 import {isDevEnvironment} from './utils'
 
 // re-read on resize: moving the window to another display can change it
+// eslint-disable-next-line import/no-mutable-exports
 let devicePixelRatio = window.devicePixelRatio || 1
 
 const canvasDimensions = {
@@ -47,7 +48,8 @@ if (isDevEnvironment()) {
 
 /** font stack for canvas/SVG labels, with Japanese fallbacks */
 const labelFontFamily =
-  "'Fira Sans', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'Noto Sans JP', 'Yu Gothic', sans-serif"
+  "'Fira Sans', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', " +
+  "'Noto Sans JP', 'Yu Gothic', sans-serif"
 
 const tileEdgeRange = {
   default: 20,

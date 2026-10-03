@@ -12,7 +12,9 @@
   "scripts": {
     "start": "webpack-dev-server --config webpack.config.js --hot --inline",
     "build": "webpack --mode production",
-    "test": "BABEL_DISABLE_CACHE=1 node tests/run.js"
+    "test": "BABEL_DISABLE_CACHE=1 node tests/run.js",
+    "lint": "eslint index.js source tests",
+    "check": "npm run lint && npm test"
   },
   "devDependencies": {
     "babel-core": "^6.13.2",

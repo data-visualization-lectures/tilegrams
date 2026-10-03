@@ -1,5 +1,5 @@
-import { geoAlbersUsa, geoMercator } from 'd3-geo'
-import { feature } from 'topojson/build/topojson.js'
+import {geoAlbersUsa, geoMercator} from 'd3-geo'
+import {feature} from 'topojson/build/topojson.js'
 
 import usTopoJson from '../../maps/us/us-110m.topo.json'
 import germanyConstituencyTopoJson from '../../maps/germany/constituency.topo.json'

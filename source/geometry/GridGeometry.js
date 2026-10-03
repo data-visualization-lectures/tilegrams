@@ -23,7 +23,9 @@ class GridGeometry {
       debugger
     }
     this._tileEdge = tileEdge
-    this._canvasDimensionsAtTileEdge = {
+    // reference for rescaleToCanvas; scaling from it keeps resizes reversible
+    this._fitTileEdge = tileEdge
+    this._fitCanvasDimensions = {
       width: canvasDimensions.width,
       height: canvasDimensions.height,
     }
@@ -32,16 +34,17 @@ class GridGeometry {
 
   /** scale the tile edge so the tilegram keeps fitting a resized canvas */
   rescaleToCanvas() {
-    const previous = this._canvasDimensionsAtTileEdge
-    if (!previous || !previous.width || !previous.height) {
+    const fit = this._fitCanvasDimensions
+    if (!fit || !fit.width || !fit.height) {
       this.setTileEdge(this._tileEdge)
       return
     }
     const scale = Math.min(
-      canvasDimensions.width / previous.width,
-      canvasDimensions.height / previous.height
+      canvasDimensions.width / fit.width,
+      canvasDimensions.height / fit.height
     )
-    this.setTileEdge(this._tileEdge * scale)
+    this._tileEdge = this._fitTileEdge * scale
+    this.resize()
   }
 
   setTileEdgeFromMax(maxX, maxY) {

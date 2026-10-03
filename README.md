@@ -13,6 +13,9 @@ http://localhost:8081/?auth_debug
 
 npm run build
 
+<!-- lint + テスト（コミット前に実行） -->
+npm run check
+
 ---
 
 ## Development

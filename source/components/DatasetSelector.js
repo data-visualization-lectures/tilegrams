@@ -109,7 +109,9 @@ export default class DatasetSelector extends React.Component {
           onChange={this._onCsvChange}
           value={this.state.csvInputValue || ''}
         />
-        <div className={submitClass} onClick={this._submitCustomCsv}>{strings.datasetSelector.csvSubmit}</div>
+        <div className={submitClass} onClick={this._submitCustomCsv}>
+          {strings.datasetSelector.csvSubmit}
+        </div>
       </div>
     )
   }

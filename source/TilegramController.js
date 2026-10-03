@@ -51,19 +51,6 @@ export function loadProject(projectJson) {
   }
 }
 
-export function selectDataset(geography, index, customCsv) {
-  const dataset = index !== null ?
-    datasetResource.getDataset(geography, index) :
-    datasetResource.buildDatasetFromCustomCsv(geography, customCsv)
-  if (!dataset) {
-    console.error('selectDataset: Dataset not found for', geography)
-    return
-  }
-  importing = false
-  ui.setSelectedDataset(dataset)
-  computeCartogram(dataset)
-}
-
 function computeCartogram(dataset) {
   currentDataset = dataset
   cartogramStale = false
@@ -83,6 +70,19 @@ function computeCartogram(dataset) {
   cancelAnimationFrame(cartogramComputeRafId)
   canvas.progress = 0
   cartogramComputeRafId = requestAnimationFrame(iterateLoop)
+}
+
+export function selectDataset(geography, index, customCsv) {
+  const dataset = index !== null ?
+    datasetResource.getDataset(geography, index) :
+    datasetResource.buildDatasetFromCustomCsv(geography, customCsv)
+  if (!dataset) {
+    console.error('selectDataset: Dataset not found for', geography)
+    return
+  }
+  importing = false
+  ui.setSelectedDataset(dataset)
+  computeCartogram(dataset)
 }
 
 /** call after the canvas has been resized and the grid rescaled */

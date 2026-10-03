@@ -1,4 +1,4 @@
-import { geoPath } from 'd3-geo'
+import {geoPath} from 'd3-geo'
 import inside from 'point-in-polygon';
 import area from 'area-polygon'
 import topogramImport from 'topogram'
@@ -6,8 +6,8 @@ import topogramImport from 'topogram'
 import Graphic from './Graphic'
 import geographyResource from '../resources/GeographyResource'
 import exporter from '../file/Exporter'
-import { fipsColor, updateBounds, checkWithinBounds } from '../utils'
-import { canvasDimensions } from '../constants'
+import {fipsColor, updateBounds, checkWithinBounds} from '../utils'
+import {canvasDimensions} from '../constants'
 
 const topogram = topogramImport()
 
@@ -122,7 +122,7 @@ export default class MapGraphic extends Graphic {
       const paths = feature.geometry.coordinates
         .filter(path => area(hasMultiplePaths ? path[0] : path) > MIN_PATH_AREA)
         .map(path => [hasMultiplePaths ? path[0] : path])
-      return { bounds, paths }
+      return {bounds, paths}
     })
   }
 
