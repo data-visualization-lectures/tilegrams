@@ -7,6 +7,7 @@ import {
 } from './source/TilegramController'
 import {
   buildProjectJson,
+  exportPng,
   exportSvg,
   exportTopoJson,
   getCanvasThumbnailDataUri,
@@ -24,7 +25,6 @@ import logo from './source/images/logo.png' // eslint-disable-line no-unused-var
 
 require('./source/css/main.scss')
 require('font-awesome/scss/font-awesome.scss')
-require('./source/css/toast.scss')
 
 const defaultGeography = 'Japan'
 
@@ -77,5 +77,5 @@ installToolHeader({
   getThumbnailDataUri: getCanvasThumbnailDataUri,
   exportTopoJson,
   exportSvg,
-  exportPng: () => ui.exportPng(),
+  exportPng,
 })

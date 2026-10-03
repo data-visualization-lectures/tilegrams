@@ -6,19 +6,16 @@ import manual from 'raw!../MANUAL.md'
 
 import metrics from './Metrics'
 import {createElement} from './utils'
-import {showProcessingToast} from './ToolHeaderMessages'
 import {nTileDomain, settings} from './constants'
 import TileGenerationUiControls from './components/TileGenerationUiControls'
 import HexMetrics from './components/HexMetrics'
 import EditWarningModal from './components/EditWarningModal'
 import Tooltip from './components/Tooltip'
-import Toast from './components/Toast'
 import ManualPanel from './components/ManualPanel'
 import MobileRedirect from './components/MobileRedirect'
 import TilegramNotice from './components/TilegramNotice'
 import StepHeader from './components/StepHeader'
 import RefineErrorWarning from './components/RefineErrorWarning'
-import pngExporter from './file/PngExporter'
 import tilegramsLogo from './images/tilegrams-logo.svg'
 import GeographySelector from './components/GeographySelector'
 
@@ -34,9 +31,6 @@ class Ui {
     this._nErrors = 0
     this._hideRefineTooltip = true
     this._mouseY = 0
-    this._toastMessage = ''
-    this._toastVisible = false
-    this._toastType = 'info'
 
     this._startOver = this._startOver.bind(this)
     this._resumeEditing = this._resumeEditing.bind(this)
@@ -48,25 +42,6 @@ class Ui {
     this._changeLabelMode = this._changeLabelMode.bind(this)
     this.selectTilegramGenerateOption = this.selectTilegramGenerateOption.bind(this)
     this._selectedTilegramIndex = 0;
-
-    this.exportPng = this.exportPng.bind(this)
-  }
-
-  exportPng() {
-    if (!pngExporter.download()) {
-      this._showToast('画像生成に失敗しました', 'error')
-    }
-  }
-
-  _showToast(message, type = 'info') {
-    this._toastMessage = message
-    this._toastType = type
-    this._toastVisible = true
-    this.render()
-    setTimeout(() => {
-      this._toastVisible = false
-      this.render()
-    }, 3000)
   }
 
   _closeMobile() {
@@ -156,28 +131,12 @@ class Ui {
     this._highlightCallback = callback
   }
 
-  setHightlightCallback(callback) {
-    this.setHighlightCallback(callback)
-  }
-
   setUnhighlightCallback(callback) {
     this._unhighlightCallback = callback
   }
 
   setResolutionChangedCallback(callback) {
     this._resolutionChangedCallback = callback
-  }
-
-  setExportCallback(callback) {
-    this._exportCallback = () => {
-      callback(this._selectedGeography)
-    }
-  }
-
-  setExportSvgCallback(callback) {
-    this._exportSvgCallback = () => {
-      callback(this._selectedGeography)
-    }
   }
 
   setImportCallback(callback) {
@@ -189,26 +148,6 @@ class Ui {
   setGeographySelectCallback(callback) {
     this._selectGeographyCallback = (geography) => {
       callback(geography)
-    }
-  }
-
-  setSaveProjectCallback(callback) {
-    this._saveProjectCallback = (geography) => {
-      callback(geography)
-    }
-  }
-
-  setLoadProjectCallback(callback) {
-    this._loadProjectCallback = (event) => {
-      const file = event.target.files[0]
-      if (!file) return
-      showProcessingToast('ファイルを読み込み中です')
-      const reader = new FileReader()
-      reader.onload = readEvent => {
-        callback(readEvent.target.result)
-      }
-      reader.readAsText(file)
-      event.target.value = ''
     }
   }
 
@@ -307,7 +246,6 @@ class Ui {
         metricPerTile={metrics.metricPerTile}
         changeResolution={this._resolutionChangedCallback}
         datasetSum={this._selectedDatasetSum}
-        editing={this._editing}
         generateOption={this._generateOption}
         geography={this._selectedGeography}
       />
@@ -428,11 +366,6 @@ class Ui {
           hidden={this._hideRefineTooltip}
           text='統計的に正確な形にするには、一部の地域で手動調整が必要です。'
           yPos={this._mouseY}
-        />
-        <Toast
-          message={this._toastMessage}
-          visible={this._toastVisible}
-          type={this._toastType}
         />
       </div>,
       this._container

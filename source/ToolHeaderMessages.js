@@ -62,7 +62,7 @@ function installHeaderProcessingToasts(header) {
   header[PROCESSING_TOASTS_INSTALLED_FLAG] = '1'
 }
 
-module.exports = {
+export {
   showProcessingToast,
   showErrorToast,
   showWarningToast,

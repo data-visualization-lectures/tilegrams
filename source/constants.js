@@ -1,4 +1,5 @@
 import dat from 'dat-gui'
+import {isDevEnvironment} from './utils'
 
 const devicePixelRatio = window.devicePixelRatio
 
@@ -33,29 +34,37 @@ class Settings {
   }
 }
 const settings = new Settings()
-const gui = new dat.GUI()
-gui.add(settings, 'tileScale', 0.9, 1.0)
-gui.add(settings, 'displayMap')
-gui.add(settings, 'displayGrid')
-dat.GUI.toggleHide()
+// debug panel (press "h" to toggle), dev server only
+if (isDevEnvironment()) {
+  const gui = new dat.GUI()
+  gui.add(settings, 'tileScale', 0.9, 1.0)
+  gui.add(settings, 'displayMap')
+  gui.add(settings, 'displayGrid')
+  dat.GUI.toggleHide()
+}
 
 /** font stack for canvas/SVG labels, with Japanese fallbacks */
 const labelFontFamily =
   "'Fira Sans', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'Noto Sans JP', 'Yu Gothic', sans-serif"
 
-module.exports = {
+const tileEdgeRange = {
+  default: 20,
+  min: 10,
+  max: 40,
+}
+const selectedTileBorderColor = '#737373'
+const hoveredTileBorderColor = '#737373'
+const movingTileOriginalPositionColor = '#d0d2d3'
+
+export {
   settings,
   devicePixelRatio,
   canvasDimensions,
   updateCanvasSize,
   nTileDomain,
   labelFontFamily,
-  tileEdgeRange: {
-    default: 20,
-    min: 10,
-    max: 40,
-  },
-  selectedTileBorderColor: '#737373',
-  hoveredTileBorderColor: '#737373',
-  movingTileOriginalPositionColor: '#d0d2d3',
+  tileEdgeRange,
+  selectedTileBorderColor,
+  hoveredTileBorderColor,
+  movingTileOriginalPositionColor,
 }

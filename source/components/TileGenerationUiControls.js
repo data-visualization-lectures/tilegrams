@@ -106,9 +106,6 @@ TileGenerationUiControls.propTypes = {
   metricDomain: React.PropTypes.array,
   defaultResolution: React.PropTypes.number,
   metricPerTile: React.PropTypes.number,
-  editing: React.PropTypes.bool,
-  generateOpen: React.PropTypes.bool,
-  editOpen: React.PropTypes.bool,
   geography: React.PropTypes.string,
 }
 
@@ -122,6 +119,5 @@ TileGenerationUiControls.defaultProps = {
   importCustom: () => {},
   changeResolution: () => {},
   metricPerTile: 1,
-  editing: false,
   generateOption: 'import',
 }

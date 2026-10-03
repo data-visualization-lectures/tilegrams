@@ -1,7 +1,6 @@
 import canvas from './Canvas'
 import ui from './Ui'
 import {
-  loadProject,
   loadTopoJson,
   selectCustomDataset,
   selectDataset,
@@ -10,11 +9,6 @@ import {
   updateResolution,
   updateUi,
 } from './TilegramController'
-import {
-  exportProjectJson,
-  exportSvg,
-  exportTopoJson,
-} from './ExportController'
 
 export default function installAppBindings() {
   canvas.getGrid().onChange(() => updateUi())
@@ -28,16 +22,6 @@ export default function installAppBindings() {
   ui.setResolutionChangedCallback(updateResolution)
   ui.setUnsavedChangesCallback(() => canvas.getGrid().checkForEdits())
   ui.setResetUnsavedChangesCallback(() => canvas.getGrid().resetEdits())
-  ui.setExportCallback(geography => {
-    exportTopoJson(geography)
-  })
-  ui.setExportSvgCallback(geography => {
-    exportSvg(geography)
-  })
   ui.setImportCallback(loadTopoJson)
   ui.setGeographySelectCallback(selectGeography)
-  ui.setSaveProjectCallback(geography => {
-    exportProjectJson(geography)
-  })
-  ui.setLoadProjectCallback(loadProject)
 }

@@ -5,6 +5,7 @@ import exporter from './file/Exporter'
 import pngExporter from './file/PngExporter'
 import projectExporter from './file/ProjectExporter'
 import {startDownload} from './utils'
+import {showErrorToast} from './ToolHeaderMessages'
 
 function getCurrentTiles() {
   return canvas.getGrid().getTiles()
@@ -60,12 +61,10 @@ export function exportSvg(geography) {
   })
 }
 
-export function exportProjectJson(geography) {
-  startDownload({
-    filename: `${geographySlug(geography)}-tilegram-project.json`,
-    mimeType: 'application/json',
-    content: buildProjectJson(geography),
-  })
+export function exportPng() {
+  if (!pngExporter.download()) {
+    showErrorToast('画像生成に失敗しました')
+  }
 }
 
 export function getCanvasThumbnailDataUri() {

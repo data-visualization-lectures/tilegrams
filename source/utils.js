@@ -88,7 +88,7 @@ function getQueryParam(name) {
   return urlParams.get(name)
 }
 
-module.exports = {
+export {
   fipsColor,
   createElement,
   startDownload,

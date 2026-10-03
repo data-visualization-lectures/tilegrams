@@ -5,8 +5,6 @@ import populationCsv from '../../data/us/population-by-state.csv'
 import electoralCollegeCsv from '../../data/us/electoral-college-votes-by-state.csv'
 import gdpCsv from '../../data/us/gdp-by-state.csv'
 import congressionalDistricts2018 from '../../data/us/congressional-districts-2018.csv'
-// import ukConstituency from '../../data/uk/constituencies.csv'
-// import ukAuthority from '../../data/uk/authorities.csv'
 import germanyConstituency from '../../data/germany/constituencies.csv'
 import franceRegionPopulation from '../../data/france/region-population.csv'
 import franceDepartment from '../../data/france/departments.csv'
@@ -80,18 +78,6 @@ class DatasetResource {
         geography: 'Brazil',
         defaultResolution: 500000,
       },
-      // {
-      //   label: 'U.K. Constituency 1-to-1',
-      //   data: this.parseCsv(ukConstituency, 'United Kingdom - Constituencies'),
-      //   geography: 'United Kingdom - Constituencies',
-      //   defaultResolution: 1,
-      // },
-      // {
-      //   label: 'U.K. Authority 1-to-1',
-      //   data: this.parseCsv(ukAuthority, 'United Kingdom - Local Authorities'),
-      //   geography: 'United Kingdom - Local Authorities',
-      //   defaultResolution: 1,
-      // },
       {
         label: 'ドイツ連邦議会選挙区 1対1',
         data: this.parseCsv(germanyConstituency, 'Germany - Constituencies'),
