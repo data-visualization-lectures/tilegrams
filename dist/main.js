@@ -1362,20 +1362,20 @@
 	        var fullBarWidth = Math.min(400, _constants.canvasDimensions.width / 3);
 	        var barX = _constants.canvasDimensions.width / 2 - fullBarWidth / 2;
 	        var progressBarWidth = this._progress * fullBarWidth;
-	        var barHeight = 30;
+	        var barHeight = 8 * _constants.devicePixelRatio;
 	        var barY = _constants.canvasDimensions.height / 2 - barHeight / 2;
-	        this._ctx.fillStyle = '#fff';
+	        // translucent track + solid white fill reads clearly on the dark overlay
+	        this._ctx.fillStyle = 'rgba(255, 255, 255, 0.25)';
 	        this._ctx.fillRect(barX, barY, fullBarWidth, barHeight);
-	        this._ctx.fillStyle = '#666';
-	        this._ctx.fillRect(barX, barY, progressBarWidth, barHeight);
 	        this._ctx.fillStyle = '#fff';
+	        this._ctx.fillRect(barX, barY, progressBarWidth, barHeight);
 
 	        this._ctx.textAlign = 'center';
 	        this._ctx.textBaseline = 'middle';
 	        this._ctx.font = 16.0 * _constants.devicePixelRatio + 'px ' + _constants.labelFontFamily;
 
-	        var label = _strings2.default.canvas.computing;
-	        this._ctx.fillText(label, _constants.canvasDimensions.width / 2, barY - 16);
+	        var label = _strings2.default.canvas.computing + ' ' + Math.round(this._progress * 100) + '%';
+	        this._ctx.fillText(label, _constants.canvasDimensions.width / 2, barY - 16 * _constants.devicePixelRatio);
 	      }
 	      this._stats.end();
 	    }
@@ -17783,8 +17783,8 @@
 	    label: '対象地域を選択'
 	  },
 	  tabs: {
-	    generate: ['地図とデータから', '新規作成'],
-	    import: ['完成済み', 'タイルグラムを開く']
+	    generate: 'データから作成',
+	    import: '完成済みを開く'
 	  },
 	  datasetSelector: {
 	    customOption: 'カスタムCSV（貼り付け）',
@@ -17795,7 +17795,13 @@
 	  },
 	  resolution: {
 	    label: '解像度',
-	    perTile: 'タイルあたり'
+	    perTile: 'タイルあたり',
+	    perTileLabel: '1タイルあたりの値',
+	    finer: 'タイルを細かく（数を増やす）',
+	    coarser: 'タイルを粗く（数を減らす）',
+	    estimatedTiles: function estimatedTiles(count) {
+	      return '\u5408\u8A08 \u7D04' + count + '\u30BF\u30A4\u30EB';
+	    }
 	  },
 	  importControls: {
 	    uploadOption: 'タイルグラムをアップロード',
@@ -17814,11 +17820,20 @@
 	    showOnlyMismatched: function showOnlyMismatched(unitName) {
 	      return '\u4F59\u5270\u307E\u305F\u306F\u4E0D\u8DB3\u306E\u3042\u308B' + unitName + '\u306E\u307F\u3092\u8868\u793A';
 	    },
+	    legendSurplus: '+n：多すぎる（n枚減らす）',
+	    legendDeficit: '−n：足りない（n枚増やす）',
+	    legendHint: '各カードの六角形を地図へドラッグするとタイルを追加できます',
 	    resolutionWarning: function resolutionWarning(unitName) {
 	      return '\u3053\u306E\u30C7\u30FC\u30BF\u306E\u89E3\u50CF\u5EA6\u3067\u306F\u3001\u3044\u304F\u3064\u304B\u306E' + unitName + '\u304C\u8868\u793A\u3055\u308C\u307E\u305B\u3093\u3002\u3088\u308A\u4F4E\u3044\u89E3\u50CF\u5EA6\u3092\u691C\u8A0E\u3057\u3066\u304F\u3060\u3055\u3044\u3002';
 	    }
 	  },
 	  refineTooltip: '統計的に正確な形にするには、一部の地域で手動調整が必要です。',
+	  refineWarning: function refineWarning(count) {
+	    return '\u8981\u8ABF\u6574 ' + count;
+	  },
+	  refineWarningTitle: function refineWarningTitle(count, unitName) {
+	    return '' + count + unitName + '\u3067\u30BF\u30A4\u30EB\u6570\u304C\u76EE\u6A19\u3068\u305A\u308C\u3066\u3044\u307E\u3059';
+	  },
 	  editWarning: {
 	    text: '\u5730\u56F3\u306B\u624B\u52D5\u7DE8\u96C6\u304C\u52A0\u3048\u3089\u308C\u3066\u3044\u307E\u3059\u3002\n\u65B0\u3057\u3044\u30BF\u30A4\u30EB\u30B0\u30E9\u30E0\u3092\u751F\u6210\u3057\u305F\u308A\u3001\u65E2\u5B58\u30BF\u30A4\u30EB\u30B0\u30E9\u30E0\u306E\u89E3\u50CF\u5EA6\u3092\u5909\u66F4\u3059\u308B\u3068\u3001\n\u3053\u308C\u3089\u306E\u7DE8\u96C6\u5185\u5BB9\u306F\u5931\u308F\u308C\u307E\u3059\u3002',
 	    question: '続行しますか？',
@@ -17831,6 +17846,7 @@
 	    india: 'このデータビジュアライゼーションは、インドの伝統的な地図をもとにした地図表現であり、地理的な正確性が100%保証されているわけではありません。'
 	  },
 	  mobile: {
+	    title: 'タイルグラム',
 	    lead: 'データセットに比例して地域の大きさを調整したタイル地図を作成しましょう。',
 	    desktopOnly: '最適な体験のためには、ノートパソコンまたはデスクトップコンピューターでご利用ください。'
 	  },
@@ -17840,7 +17856,11 @@
 	  header: {
 	    saveProject: 'プロジェクトの保存',
 	    loadProject: 'プロジェクトの読込',
-	    export: 'エクスポート'
+	    export: 'エクスポート',
+	    // the header dropdown has a fixed width, so keep these short
+	    exportTopoJson: 'TopoJSON',
+	    exportSvg: 'SVG',
+	    exportPng: 'PNG'
 	  },
 	  messages: {
 	    processing: '処理中です',
@@ -18172,10 +18192,17 @@
 	      var _this4 = this;
 
 	      return function () {
+	        // accordion: opening one step closes the other
 	        if (toggleOpt === 'generate') {
 	          _this4._generateOpen = !_this4._generateOpen;
+	          if (_this4._generateOpen) {
+	            _this4._editOpen = false;
+	          }
 	        } else if (toggleOpt === 'edit') {
 	          _this4._editOpen = !_this4._editOpen;
+	          if (_this4._editOpen) {
+	            _this4._generateOpen = false;
+	          }
 	        }
 	        _this4.render();
 	      };
@@ -46381,7 +46408,7 @@
 
 	var _ResolutionSlider2 = _interopRequireDefault(_ResolutionSlider);
 
-	var _ImportControls = __webpack_require__(329);
+	var _ImportControls = __webpack_require__(330);
 
 	var _ImportControls2 = _interopRequireDefault(_ImportControls);
 
@@ -46476,9 +46503,7 @@
 	                return _this4._changeOption('generate');
 	              }
 	            },
-	            _strings2.default.tabs.generate[0],
-	            _react2.default.createElement('br', null),
-	            _strings2.default.tabs.generate[1]
+	            _strings2.default.tabs.generate
 	          ),
 	          _react2.default.createElement(
 	            'button',
@@ -46490,9 +46515,7 @@
 	                return _this4._changeOption('import');
 	              }
 	            },
-	            _strings2.default.tabs.import[0],
-	            _react2.default.createElement('br', null),
-	            _strings2.default.tabs.import[1]
+	            _strings2.default.tabs.import
 	          )
 	        ),
 	        _react2.default.createElement(
@@ -46511,6 +46534,7 @@
 	          _react2.default.createElement(_ResolutionSlider2.default, {
 	            defaultResolution: this.props.defaultResolution,
 	            metricDomain: this.props.metricDomain,
+	            datasetSum: this.props.datasetSum,
 	            onChange: function onChange(value) {
 	              return _this4.props.changeResolution(value, _this4.props.datasetSum);
 	            }
@@ -46806,11 +46830,15 @@
 
 	var _d3Scale = __webpack_require__(322);
 
-	var _smallHex = __webpack_require__(327);
+	var _commaNumber = __webpack_require__(327);
+
+	var _commaNumber2 = _interopRequireDefault(_commaNumber);
+
+	var _smallHex = __webpack_require__(328);
 
 	var _smallHex2 = _interopRequireDefault(_smallHex);
 
-	var _bigHex = __webpack_require__(328);
+	var _bigHex = __webpack_require__(329);
 
 	var _bigHex2 = _interopRequireDefault(_bigHex);
 
@@ -46928,6 +46956,23 @@
 	      this.typedInput.blur();
 	    }
 	  }, {
+	    key: '_formatTypedValue',
+	    value: function _formatTypedValue(typedValue) {
+	      return typeof typedValue === 'number' ? (0, _commaNumber2.default)(typedValue) : typedValue;
+	    }
+	  }, {
+	    key: '_renderEstimatedTiles',
+	    value: function _renderEstimatedTiles() {
+	      var value = typeof this.state.typedValue === 'number' ? this.state.typedValue : parseFloat(String(this.state.typedValue).replace(/,/g, ''));
+	      if (!this.props.datasetSum || !(value > 0)) return null;
+	      var count = Math.round(this.props.datasetSum / value);
+	      return _react2.default.createElement(
+	        'span',
+	        { className: 'estimated-tiles' },
+	        _strings2.default.resolution.estimatedTiles((0, _commaNumber2.default)(count))
+	      );
+	    }
+	  }, {
 	    key: '_setStateFromText',
 	    value: function _setStateFromText(typedValue) {
 	      this.setState({ typedValue: typedValue });
@@ -46948,8 +46993,18 @@
 	            { htmlFor: 'resolutionSlider' },
 	            _strings2.default.resolution.label
 	          ),
-	          _react2.default.createElement('img', { src: _smallHex2.default, className: 'small-hex hex-img', alt: 'smaller hexagons' }),
-	          _react2.default.createElement('img', { src: _bigHex2.default, className: 'big-hex hex-img', alt: 'bigger hexagons' }),
+	          _react2.default.createElement('img', {
+	            src: _smallHex2.default,
+	            className: 'small-hex hex-img',
+	            alt: _strings2.default.resolution.finer,
+	            title: _strings2.default.resolution.finer
+	          }),
+	          _react2.default.createElement('img', {
+	            src: _bigHex2.default,
+	            className: 'big-hex hex-img',
+	            alt: _strings2.default.resolution.coarser,
+	            title: _strings2.default.resolution.coarser
+	          }),
 	          _react2.default.createElement('input', {
 	            type: 'range',
 	            min: 1,
@@ -46963,13 +47018,19 @@
 	        _react2.default.createElement(
 	          'fieldset',
 	          { className: 'resolution-input' },
+	          _react2.default.createElement(
+	            'label',
+	            { htmlFor: 'resolutionInput' },
+	            _strings2.default.resolution.perTileLabel
+	          ),
 	          _react2.default.createElement('input', {
+	            id: 'resolutionInput',
 	            ref: function ref(_ref) {
 	              _this2.typedInput = _ref;
 	            },
 	            type: 'text',
 	            size: '10',
-	            value: this.state.typedValue,
+	            value: this._formatTypedValue(this.state.typedValue),
 	            onChange: function onChange(event) {
 	              return _this2._setStateFromText(event.target.value);
 	            },
@@ -46978,7 +47039,7 @@
 	              return _this2._checkForEnter(event);
 	            }
 	          }),
-	          _strings2.default.resolution.perTile
+	          this._renderEstimatedTiles()
 	        )
 	      );
 	    }
@@ -46991,6 +47052,7 @@
 
 	ResolutionSlider.propTypes = {
 	  defaultResolution: _react2.default.PropTypes.number,
+	  datasetSum: _react2.default.PropTypes.number,
 	  metricDomain: _react2.default.PropTypes.array,
 	  onChange: _react2.default.PropTypes.func
 	};
@@ -50012,16 +50074,67 @@
 /* 327 */
 /***/ (function(module, exports) {
 
-	module.exports = "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBBZG9iZSBJbGx1c3RyYXRvciAxOS4xLjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9uOiA2LjAwIEJ1aWxkIDApICAtLT4NCjxzdmcgdmVyc2lvbj0iMS4xIiBpZD0iTGF5ZXJfMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgeD0iMHB4IiB5PSIwcHgiDQoJIHZpZXdCb3g9IjAgMCAzMi4yNTUgMzAuODQ1IiBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCAzMi4yNTUgMzAuODQ1IiB4bWw6c3BhY2U9InByZXNlcnZlIj4NCjxnPg0KCTxwb2x5bGluZSBmaWxsPSIjNGQ0ZDRkIiBwb2ludHM9IjEwLjU4NSwwIDE1LjYyOCwyLjkxMSAxNS42MjgsOC43MzQgMTAuNTg1LDExLjY0NSA1LjU0Myw4LjczNCA1LjU0MywyLjkxMSAxMC41ODUsMCAJIi8+DQoJPHBvbHlsaW5lIGZpbGw9IiM0ZDRkNGQiIHBvaW50cz0iNS4wNDMsOS42IDEwLjA4NSwxMi41MTEgMTAuMDg1LDE4LjMzNCA1LjA0MywyMS4yNDUgMCwxOC4zMzQgMCwxMi41MTEgNS4wNDMsOS42IAkiLz4NCgk8cG9seWxpbmUgZmlsbD0iIzRkNGQ0ZCIgcG9pbnRzPSIxMC41ODUsMTkuMiAxNS42MjgsMjIuMTExIDE1LjYyOCwyNy45MzQgMTAuNTg1LDMwLjg0NSA1LjU0MywyNy45MzQgNS41NDMsMjIuMTExIDEwLjU4NSwxOS4yDQoJCSIvPg0KCTxwb2x5bGluZSBmaWxsPSIjNGQ0ZDRkIiBwb2ludHM9IjIxLjY3LDAgMjYuNzEzLDIuOTExIDI2LjcxMyw4LjczNCAyMS42NywxMS42NDUgMTYuNjI4LDguNzM0IDE2LjYyOCwyLjkxMSAyMS42NywwIAkiLz4NCgk8cG9seWxpbmUgZmlsbD0iIzRkNGQ0ZCIgcG9pbnRzPSIxNi4xMjgsOS42IDIxLjE3LDEyLjUxMSAyMS4xNywxOC4zMzQgMTYuMTI4LDIxLjI0NSAxMS4wODUsMTguMzM0IDExLjA4NSwxMi41MTEgMTYuMTI4LDkuNiAJIi8+DQoJPHBvbHlsaW5lIGZpbGw9IiM0ZDRkNGQiIHBvaW50cz0iMjEuNjcsMTkuMiAyNi43MTMsMjIuMTExIDI2LjcxMywyNy45MzQgMjEuNjcsMzAuODQ1IDE2LjYyOCwyNy45MzQgMTYuNjI4LDIyLjExMSAyMS42NywxOS4yDQoJCSIvPg0KCTxwb2x5bGluZSBmaWxsPSIjNGQ0ZDRkIiBwb2ludHM9IjI3LjIxMyw5LjYgMzIuMjU1LDEyLjUxMSAzMi4yNTUsMTguMzM0IDI3LjIxMywyMS4yNDUgMjIuMTcsMTguMzM0IDIyLjE3LDEyLjUxMSAyNy4yMTMsOS42IAkiLz4NCjwvZz4NCjwvc3ZnPg0K"
+	/**
+	 * Comma number formatter
+	 * @param {Number} number Number to format
+	 * @param {String} [separator=','] Value used to separate numbers
+	 * @returns {String} Comma formatted number
+	 */
+	module.exports = function commaNumber (number, separator) {
+	  separator = typeof separator === 'undefined' ? ',' : ('' + separator)
+
+	  // Convert to number if it's a non-numeric value
+	  if (typeof number !== 'number') {
+	    number = Number(number)
+	  }
+
+	  // NaN => 0
+	  if (isNaN(number)) {
+	    number = 0
+	  }
+
+	  // Return Infinity immediately
+	  if (!isFinite(number)) {
+	    return '' + number
+	  }
+
+	  var stringNumber = ('' + Math.abs(number))
+	    .split('')
+	    .reverse()
+
+	  var result = []
+	  for (var i = 0; i < stringNumber.length; i++) {
+	    if (i && i % 3 === 0) {
+	      result.push(separator)
+	    }
+	    result.push(stringNumber[i])
+	  }
+
+	  // Handle negative numbers
+	  if (number < 0) {
+	    result.push('-')
+	  }
+
+	  return result
+	    .reverse()
+	    .join('')
+	}
+
 
 /***/ }),
 /* 328 */
 /***/ (function(module, exports) {
 
-	module.exports = "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBBZG9iZSBJbGx1c3RyYXRvciAxOS4xLjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9uOiA2LjAwIEJ1aWxkIDApICAtLT4NCjxzdmcgdmVyc2lvbj0iMS4xIiBpZD0iTGF5ZXJfMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgeD0iMHB4IiB5PSIwcHgiDQoJIHZpZXdCb3g9IjAgMCAzMC42NzIgMzAuODQ1IiBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCAzMC42NzIgMzAuODQ1IiB4bWw6c3BhY2U9InByZXNlcnZlIj4NCjxnPg0KCTxwb2x5bGluZSBmaWxsPSIjNGQ0ZDRkIiBwb2ludHM9IjE1LjMzNiwwIDIyLjc1NCw0LjI4MyAyMi43NTQsMTIuODQ4IDE1LjMzNiwxNy4xMzEgNy45MTgsMTIuODQ4IDcuOTE4LDQuMjgzIDE1LjMzNiwwIAkiLz4NCgk8cG9seWxpbmUgZmlsbD0iIzRkNGQ0ZCIgcG9pbnRzPSI3LjQxOCwxMy43MTQgMTQuODM2LDE3Ljk5NyAxNC44MzYsMjYuNTYyIDcuNDE4LDMwLjg0NSAwLDI2LjU2MiAwLDE3Ljk5NyA3LjQxOCwxMy43MTQgCSIvPg0KCTxwb2x5bGluZSBmaWxsPSIjNGQ0ZDRkIiBwb2ludHM9IjIzLjI1NCwxMy43MTQgMzAuNjcyLDE3Ljk5NyAzMC42NzIsMjYuNTYyIDIzLjI1NCwzMC44NDUgMTUuODM2LDI2LjU2MiAxNS44MzYsMTcuOTk3DQoJCTIzLjI1NCwxMy43MTQgCSIvPg0KPC9nPg0KPC9zdmc+DQo="
+	module.exports = "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBBZG9iZSBJbGx1c3RyYXRvciAxOS4xLjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9uOiA2LjAwIEJ1aWxkIDApICAtLT4NCjxzdmcgdmVyc2lvbj0iMS4xIiBpZD0iTGF5ZXJfMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgeD0iMHB4IiB5PSIwcHgiDQoJIHZpZXdCb3g9IjAgMCAzMi4yNTUgMzAuODQ1IiBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCAzMi4yNTUgMzAuODQ1IiB4bWw6c3BhY2U9InByZXNlcnZlIj4NCjxnPg0KCTxwb2x5bGluZSBmaWxsPSIjNGQ0ZDRkIiBwb2ludHM9IjEwLjU4NSwwIDE1LjYyOCwyLjkxMSAxNS42MjgsOC43MzQgMTAuNTg1LDExLjY0NSA1LjU0Myw4LjczNCA1LjU0MywyLjkxMSAxMC41ODUsMCAJIi8+DQoJPHBvbHlsaW5lIGZpbGw9IiM0ZDRkNGQiIHBvaW50cz0iNS4wNDMsOS42IDEwLjA4NSwxMi41MTEgMTAuMDg1LDE4LjMzNCA1LjA0MywyMS4yNDUgMCwxOC4zMzQgMCwxMi41MTEgNS4wNDMsOS42IAkiLz4NCgk8cG9seWxpbmUgZmlsbD0iIzRkNGQ0ZCIgcG9pbnRzPSIxMC41ODUsMTkuMiAxNS42MjgsMjIuMTExIDE1LjYyOCwyNy45MzQgMTAuNTg1LDMwLjg0NSA1LjU0MywyNy45MzQgNS41NDMsMjIuMTExIDEwLjU4NSwxOS4yDQoJCSIvPg0KCTxwb2x5bGluZSBmaWxsPSIjNGQ0ZDRkIiBwb2ludHM9IjIxLjY3LDAgMjYuNzEzLDIuOTExIDI2LjcxMyw4LjczNCAyMS42NywxMS42NDUgMTYuNjI4LDguNzM0IDE2LjYyOCwyLjkxMSAyMS42NywwIAkiLz4NCgk8cG9seWxpbmUgZmlsbD0iIzRkNGQ0ZCIgcG9pbnRzPSIxNi4xMjgsOS42IDIxLjE3LDEyLjUxMSAyMS4xNywxOC4zMzQgMTYuMTI4LDIxLjI0NSAxMS4wODUsMTguMzM0IDExLjA4NSwxMi41MTEgMTYuMTI4LDkuNiAJIi8+DQoJPHBvbHlsaW5lIGZpbGw9IiM0ZDRkNGQiIHBvaW50cz0iMjEuNjcsMTkuMiAyNi43MTMsMjIuMTExIDI2LjcxMywyNy45MzQgMjEuNjcsMzAuODQ1IDE2LjYyOCwyNy45MzQgMTYuNjI4LDIyLjExMSAyMS42NywxOS4yDQoJCSIvPg0KCTxwb2x5bGluZSBmaWxsPSIjNGQ0ZDRkIiBwb2ludHM9IjI3LjIxMyw5LjYgMzIuMjU1LDEyLjUxMSAzMi4yNTUsMTguMzM0IDI3LjIxMywyMS4yNDUgMjIuMTcsMTguMzM0IDIyLjE3LDEyLjUxMSAyNy4yMTMsOS42IAkiLz4NCjwvZz4NCjwvc3ZnPg0K"
 
 /***/ }),
 /* 329 */
+/***/ (function(module, exports) {
+
+	module.exports = "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBBZG9iZSBJbGx1c3RyYXRvciAxOS4xLjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9uOiA2LjAwIEJ1aWxkIDApICAtLT4NCjxzdmcgdmVyc2lvbj0iMS4xIiBpZD0iTGF5ZXJfMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgeD0iMHB4IiB5PSIwcHgiDQoJIHZpZXdCb3g9IjAgMCAzMC42NzIgMzAuODQ1IiBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCAzMC42NzIgMzAuODQ1IiB4bWw6c3BhY2U9InByZXNlcnZlIj4NCjxnPg0KCTxwb2x5bGluZSBmaWxsPSIjNGQ0ZDRkIiBwb2ludHM9IjE1LjMzNiwwIDIyLjc1NCw0LjI4MyAyMi43NTQsMTIuODQ4IDE1LjMzNiwxNy4xMzEgNy45MTgsMTIuODQ4IDcuOTE4LDQuMjgzIDE1LjMzNiwwIAkiLz4NCgk8cG9seWxpbmUgZmlsbD0iIzRkNGQ0ZCIgcG9pbnRzPSI3LjQxOCwxMy43MTQgMTQuODM2LDE3Ljk5NyAxNC44MzYsMjYuNTYyIDcuNDE4LDMwLjg0NSAwLDI2LjU2MiAwLDE3Ljk5NyA3LjQxOCwxMy43MTQgCSIvPg0KCTxwb2x5bGluZSBmaWxsPSIjNGQ0ZDRkIiBwb2ludHM9IjIzLjI1NCwxMy43MTQgMzAuNjcyLDE3Ljk5NyAzMC42NzIsMjYuNTYyIDIzLjI1NCwzMC44NDUgMTUuODM2LDI2LjU2MiAxNS44MzYsMTcuOTk3DQoJCTIzLjI1NCwxMy43MTQgCSIvPg0KPC9nPg0KPC9zdmc+DQo="
+
+/***/ }),
+/* 330 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -50036,7 +50149,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _commaNumber = __webpack_require__(330);
+	var _commaNumber = __webpack_require__(327);
 
 	var _commaNumber2 = _interopRequireDefault(_commaNumber);
 
@@ -50256,57 +50369,6 @@
 	  onCustomImport: function onCustomImport() {},
 	  metricPerTile: 1
 	};
-
-/***/ }),
-/* 330 */
-/***/ (function(module, exports) {
-
-	/**
-	 * Comma number formatter
-	 * @param {Number} number Number to format
-	 * @param {String} [separator=','] Value used to separate numbers
-	 * @returns {String} Comma formatted number
-	 */
-	module.exports = function commaNumber (number, separator) {
-	  separator = typeof separator === 'undefined' ? ',' : ('' + separator)
-
-	  // Convert to number if it's a non-numeric value
-	  if (typeof number !== 'number') {
-	    number = Number(number)
-	  }
-
-	  // NaN => 0
-	  if (isNaN(number)) {
-	    number = 0
-	  }
-
-	  // Return Infinity immediately
-	  if (!isFinite(number)) {
-	    return '' + number
-	  }
-
-	  var stringNumber = ('' + Math.abs(number))
-	    .split('')
-	    .reverse()
-
-	  var result = []
-	  for (var i = 0; i < stringNumber.length; i++) {
-	    if (i && i % 3 === 0) {
-	      result.push(separator)
-	    }
-	    result.push(stringNumber[i])
-	  }
-
-	  // Handle negative numbers
-	  if (number < 0) {
-	    result.push('-')
-	  }
-
-	  return result
-	    .reverse()
-	    .join('')
-	}
-
 
 /***/ }),
 /* 331 */
@@ -50590,6 +50652,13 @@
 	      );
 	    }
 	  }, {
+	    key: '_deviationClass',
+	    value: function _deviationClass(deviation) {
+	      if (deviation > 0) return 'deviation surplus';
+	      if (deviation < 0) return 'deviation deficit';
+	      return 'deviation';
+	    }
+	  }, {
 	    key: '_renderHexCount',
 	    value: function _renderHexCount(metrics) {
 	      var _this2 = this;
@@ -50636,7 +50705,7 @@
 	          ),
 	          _react2.default.createElement(
 	            'div',
-	            null,
+	            { className: _this2._deviationClass(count.deviation) },
 	            adjustString
 	          )
 	        );
@@ -50655,7 +50724,7 @@
 	      var draggingHex = this.state.draggingHex ? this._drawHexagon(this.state.draggingHex, true) : null;
 	      return _react2.default.createElement(
 	        'div',
-	        { className: hexClass },
+	        { className: hexClass, onMouseLeave: this.props.onMetricMouseOut },
 	        _react2.default.createElement(
 	          'div',
 	          {
@@ -50679,6 +50748,25 @@
 	            _strings2.default.hexMetrics.showOnlyMismatched(_GeographyResource2.default.getUnitName(this.props.geography))
 	          ),
 	          this._renderWarning(metrics.shouldWarn)
+	        ),
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'metrics-legend' },
+	          _react2.default.createElement(
+	            'span',
+	            { className: 'deviation surplus' },
+	            _strings2.default.hexMetrics.legendSurplus
+	          ),
+	          _react2.default.createElement(
+	            'span',
+	            { className: 'deviation deficit' },
+	            _strings2.default.hexMetrics.legendDeficit
+	          ),
+	          _react2.default.createElement(
+	            'span',
+	            { className: 'hint' },
+	            _strings2.default.hexMetrics.legendHint
+	          )
 	        ),
 	        this._renderHexCount(metrics.stats)
 	      );
@@ -50915,7 +51003,7 @@
 	        _react2.default.createElement(
 	          'h1',
 	          null,
-	          'TILEGRAMS'
+	          _strings2.default.mobile.title
 	        ),
 	        _react2.default.createElement('img', { src: props.tilegramsLogo, className: 'tilegrams-logo', alt: 'Tilegrams' }),
 	        _react2.default.createElement(
@@ -51088,6 +51176,10 @@
 
 	var _GeographyResource2 = _interopRequireDefault(_GeographyResource);
 
+	var _strings = __webpack_require__(102);
+
+	var _strings2 = _interopRequireDefault(_strings);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function RefineErrorWarning(_ref) {
@@ -51103,14 +51195,13 @@
 	    'span',
 	    {
 	      className: 'n-errors',
+	      title: _strings2.default.refineWarningTitle(nErrors, unitName),
 	      onMouseOver: onMouseOver,
 	      onMouseOut: onMouseOut
 	    },
 	    _react2.default.createElement('i', { className: 'fa fa-exclamation-triangle' }),
 	    ' ',
-	    nErrors,
-	    ' ',
-	    unitName
+	    _strings2.default.refineWarning(nErrors)
 	  );
 	}
 
@@ -53072,19 +53163,19 @@
 
 	function buildExportMenuItems(dependencies) {
 	  return [{
-	    label: 'TopoJSON',
+	    label: _strings2.default.header.exportTopoJson,
 	    action: function action() {
 	      (0, _ToolHeaderMessages.showProcessingToast)(_strings2.default.messages.exporting);
 	      dependencies.exportTopoJson(dependencies.getGeography());
 	    }
 	  }, {
-	    label: 'SVG',
+	    label: _strings2.default.header.exportSvg,
 	    action: function action() {
 	      (0, _ToolHeaderMessages.showProcessingToast)(_strings2.default.messages.exporting);
 	      dependencies.exportSvg(dependencies.getGeography());
 	    }
 	  }, {
-	    label: 'PNG',
+	    label: _strings2.default.header.exportPng,
 	    action: function action() {
 	      (0, _ToolHeaderMessages.showProcessingToast)(_strings2.default.messages.exporting);
 	      dependencies.exportPng();
@@ -53175,7 +53266,7 @@
 	exports.push([module.id, "@import url(https://fonts.googleapis.com/css?family=Fira+Sans);", ""]);
 
 	// module
-	exports.push([module.id, "html, body, div, span, applet, object, iframe,\nh1, h2, h3, h4, h5, h6, p, blockquote, pre,\na, abbr, acronym, address, big, cite, code,\ndel, dfn, em, img, ins, kbd, q, s, samp,\nsmall, strike, strong, sub, sup, tt, var,\nb, u, i, center,\ndl, dt, dd, ol, ul, li,\nfieldset, form, label, legend,\ntable, caption, tbody, tfoot, thead, tr, th, td,\narticle, aside, canvas, details, embed,\nfigure, figcaption, footer, header, hgroup,\nmenu, nav, output, ruby, section, summary,\ntime, mark, audio, video {\n  margin: 0;\n  padding: 0;\n  border: 0;\n  font-size: 100%;\n  font: inherit;\n  vertical-align: baseline;\n}\n\n/* HTML5 display-role reset for older browsers */\narticle, aside, details, figcaption, figure,\nfooter, header, hgroup, menu, nav, section {\n  display: block;\n}\n\nbody {\n  line-height: 1;\n}\n\nol, ul {\n  list-style: none;\n}\n\nblockquote, q {\n  quotes: none;\n}\n\nblockquote:before, blockquote:after,\nq:before, q:after {\n  content: \"\";\n  content: none;\n}\n\ntable {\n  border-collapse: collapse;\n  border-spacing: 0;\n}\n\nbody {\n  margin: 0;\n  font-family: \"Roboto\", sans-serif;\n  font-weight: 400;\n  font-size: 15px;\n  color: #1a1a1a;\n  background-color: #fdfdfd;\n}\n\n* {\n  -webkit-touch-callout: none;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n}\n\n.code,\ncode,\ninput,\ntextarea {\n  -webkit-touch-callout: default;\n  -webkit-user-select: text;\n  -moz-user-select: text;\n  -ms-user-select: text;\n  user-select: text;\n}\n\na {\n  color: #3939a5;\n  margin: 0 5px;\n  cursor: pointer;\n}\n\n.gray {\n  color: #4d4d4d;\n}\n\ninput[type=radio] {\n  display: none;\n}\n\n.padding-bottom {\n  padding-bottom: 10px;\n}\n\n.collapsed {\n  display: none;\n}\n\ndataviz-tool-header {\n  position: fixed;\n  top: 48px;\n  z-index: 100;\n  width: 100%;\n}\n\n#canvas {\n  position: fixed;\n  right: 0;\n  top: 96px;\n  bottom: 0;\n  left: 320px;\n  overflow: hidden;\n  z-index: -1;\n}\n#canvas canvas {\n  cursor: pointer;\n  background-color: #f3f3f3;\n}\n\n#stats {\n  z-index: 2;\n}\n\n.dg.ac {\n  pointer-events: none;\n}\n\n#dataviz-global-header-host {\n  position: fixed !important;\n  top: 0;\n  left: 0;\n  width: 100%;\n  z-index: 99999;\n}\n\n.manual {\n  position: fixed;\n  top: 96px;\n  bottom: 0;\n  left: 320px;\n  max-width: 450px;\n  padding: 25px 25px 50px 25px;\n  overflow-y: auto;\n  box-sizing: border-box;\n  background-color: #fdfdfd;\n  font-size: 0.8em;\n  margin-left: 2px;\n  line-height: 1.2em;\n  border-right: 1px solid #d0d2d3;\n  z-index: 1;\n}\n.manual.hidden {\n  display: none;\n}\n.manual .manual-close {\n  position: absolute;\n  top: 25px;\n  right: 25px;\n  font-size: 1.7em;\n  cursor: pointer;\n}\n.manual h1 {\n  font-size: 1.7em;\n  color: #1a1a1a;\n  padding: 0;\n  letter-spacing: normal;\n  border-bottom: 1px solid #d0d2d3;\n  min-width: 100%;\n  margin-bottom: 1em;\n  padding-bottom: 10px;\n}\n.manual h2 {\n  font-size: 1.4em;\n  padding: 0.6em 0;\n}\n.manual h3 {\n  font-size: 1.2em;\n  padding: 0.5em 0;\n}\n.manual h4 {\n  font-size: 1.1em;\n  padding: 0.5em 0;\n}\n.manual p {\n  padding-bottom: 1em;\n}\n.manual a {\n  margin: 0;\n}\n\n.header {\n  top: 48px;\n  position: fixed;\n  width: 100%;\n  background: #1a1a1a;\n  z-index: 1;\n  display: table;\n  height: 55px;\n}\n.header h1 {\n  font-size: 120%;\n  line-height: 1.2em;\n  padding: 12.5px 25px;\n  color: #fdfdfd;\n  letter-spacing: 0.15em;\n  display: inline-block;\n  display: table-cell;\n}\n.header .tilegrams-logo {\n  width: 1.2em;\n  height: 1.2em;\n  margin: 0 0.4em 0 0.2em;\n  transform: translateY(20%);\n}\n.header .by-pitch {\n  font-size: 60%;\n  letter-spacing: 0.08em;\n  font-weight: 300;\n}\n.header .share {\n  display: table-cell;\n}\n.header .share img {\n  width: 1.2em;\n  height: 1.2em;\n  float: right;\n  padding-right: 20px;\n}\n.header .share {\n  clear: both;\n}\n\nselect {\n  width: 100%;\n  box-sizing: border-box;\n  -webkit-appearance: none;\n  -moz-appearance: none;\n  appearance: none;\n  background: url(" + __webpack_require__(387) + ") no-repeat right 10px center #ffffff;\n  background-size: 10px 5px;\n  border: 1px solid #d0d2d3;\n  border-radius: 4px;\n  color: #1a1a1a;\n  font-size: 100%;\n  font-weight: 400;\n  cursor: pointer;\n  padding: 8px 32px 8px 10px;\n}\nselect:hover {\n  border-color: #4d4d4d;\n}\nselect:focus {\n  outline: none;\n  border-color: #3939a5;\n  box-shadow: 0 0 0 2px rgba(57, 57, 165, 0.15);\n}\n\nfieldset {\n  padding: 10px 15px 0px 0px;\n}\nfieldset label {\n  display: inline-block;\n  width: 96px;\n  margin-bottom: 6px;\n}\n\ncode {\n  font-weight: 500;\n}\n\n.language-javascript,\n.language-html {\n  display: block;\n  font-family: \"Lucida Console\", Monaco, monospace;\n  background-color: #f1f1f2;\n  padding: 5px;\n  white-space: pre-wrap;\n  margin-bottom: 10px;\n  font-weight: 400;\n}\n\n.code {\n  font-family: \"Lucida Console\", Monaco, monospace;\n  background-color: #d0d2d3;\n  padding: 10px;\n  margin: 10px;\n  font-size: 80%;\n  line-height: 110%;\n  display: block;\n}\n\n.step {\n  position: relative;\n  cursor: pointer;\n  font-size: 1.15em;\n  padding: 15px 25px;\n  line-height: 1.25em;\n}\n.step .arrow {\n  width: 1em;\n  height: 1em;\n  background: url(" + __webpack_require__(388) + ") no-repeat center center;\n  background-size: 1em 1em;\n  float: right;\n  transition: transform 500ms ease-in-out;\n}\n.step.active .arrow {\n  transform: rotateX(180deg);\n}\n\n.dragging-hex {\n  position: absolute;\n  transform: translateX(-50%) translateY(-50%);\n}\n.dragging-hex svg polygon {\n  stroke: #000;\n  stroke-width: 1px;\n  opacity: 0.4;\n}\n\n#ui {\n  position: absolute;\n  top: 96px;\n  min-height: calc(100% - 96px);\n  border-right: 2px solid #d0d2d3;\n}\n\n#ui .column {\n  width: 320px;\n  background-color: #fdfdfd;\n  overflow-x: hidden;\n  overflow-y: auto;\n  font-size: 0.85em;\n  font-weight: 400;\n}\n#ui .column hr {\n  border: none;\n  height: 1px;\n  background-color: #d0d2d3;\n  margin: 0;\n}\n#ui .column p.intro {\n  margin: 25px;\n  opacity: 0.8;\n  line-height: 1.2em;\n}\n#ui .column p.intro a {\n  text-decoration: none;\n  margin: 0;\n}\n#ui .column label.radio-label {\n  cursor: pointer;\n  padding-top: 12px;\n  display: block;\n  width: 100%;\n}\n#ui .column label.radio-label:hover {\n  opacity: 0.6;\n}\n#ui .column .scroll-ui {\n  overflow: scroll;\n}\n#ui .column .geographySelector {\n  padding: 0 25px 12px 25px;\n}\n#ui .column .labelModeSelector {\n  padding-top: 12px;\n}\n#ui .column .ui-controls {\n  overflow: hidden;\n}\n#ui .column .ui-controls .ui-control-type {\n  padding-bottom: 20px;\n}\n#ui .column .ui-controls .generate-tabs {\n  display: flex;\n  border-top: 1px solid #f1f1f2;\n  border-bottom: 1px solid #f1f1f2;\n}\n#ui .column .ui-controls .generate-tabs .generate-tab {\n  flex: 1;\n  padding: 12px 6px;\n  background: none;\n  border: none;\n  border-bottom: 3px solid transparent;\n  font-family: \"Roboto\", sans-serif;\n  font-size: 13px;\n  color: #4d4d4d;\n  opacity: 0.65;\n  cursor: pointer;\n}\n#ui .column .ui-controls .generate-tabs .generate-tab:hover {\n  opacity: 1;\n}\n#ui .column .ui-controls .generate-tabs .generate-tab.active {\n  background-color: #f1f1f2;\n  border-bottom-color: #4d4d4d;\n  font-weight: 500;\n  opacity: 1;\n  cursor: default;\n}\n#ui .column .ui-controls .generate-tab-panel {\n  padding: 12px 25px;\n}\n#ui .column .ui-controls .generate-tab-panel.collapsed {\n  display: none;\n}\n#ui .column .ui-controls input.import {\n  padding: 0;\n}\n#ui .column .import-metric {\n  font-size: 85%;\n  opacity: 0.6;\n  color: #3939a5;\n  font-weight: 500;\n}\n#ui .column .n-errors {\n  font-size: 85%;\n  opacity: 0.6;\n  padding-left: 3px;\n}\n#ui .column .csv-input {\n  margin-top: 15px;\n}\n#ui .column .csv-input textarea {\n  width: 100%;\n  box-sizing: border-box;\n  margin-top: 10px;\n  padding: 8px;\n  border: 1px solid #d0d2d3;\n  border-radius: 4px;\n}\n#ui .column .csv-input textarea:hover {\n  border-color: #4d4d4d;\n}\n#ui .column .csv-input textarea:focus {\n  outline: none;\n  border-color: #3939a5;\n  box-shadow: 0 0 0 2px rgba(57, 57, 165, 0.15);\n}\n#ui .column .csv-input .code {\n  white-space: pre-line;\n  max-height: 70px;\n  overflow-y: scroll;\n}\n#ui .column .csv-input .submit-custom {\n  margin: 5px 0;\n  background-color: white;\n  padding: 6px 14px;\n  border-radius: 4px;\n  display: inline-block;\n  border: 1px solid #d0d2d3;\n  cursor: pointer;\n  opacity: 0.3;\n}\n#ui .column .csv-input .submit-custom.active {\n  opacity: 1;\n}\n#ui .column .csv-input .submit-custom.active:hover {\n  border-color: #4d4d4d;\n  background-color: #f1f1f2;\n}\n#ui .column .dataset-select {\n  width: 100%;\n}\n#ui .column .instruction {\n  margin-top: 10px;\n  line-height: 1.2em;\n}\n#ui .column .resolution-slider label {\n  display: block;\n}\n#ui .column .resolution-slider .hex-img {\n  width: 1.5em;\n  height: 1.5em;\n  display: inline-block;\n}\n#ui .column .resolution-slider .small-hex {\n  float: left;\n}\n#ui .column .resolution-slider .big-hex {\n  float: right;\n}\n#ui .column .resolution-slider input {\n  width: 100%;\n  cursor: pointer;\n}\n#ui .column .resolution-input input {\n  min-width: 50%;\n  box-sizing: border-box;\n  border: 1px solid #d0d2d3;\n  border-radius: 4px;\n  padding: 6px 8px;\n  background-color: #fff;\n  font-size: 1.1em;\n  margin: 0 5px 0 0;\n  color: #3939a5;\n}\n#ui .column .resolution-input input:hover {\n  border-color: #4d4d4d;\n}\n#ui .column .resolution-input input:focus {\n  outline: none;\n  border-color: #3939a5;\n  box-shadow: 0 0 0 2px rgba(57, 57, 165, 0.15);\n}\n#ui .column .metrics {\n  padding: 0 25px;\n  overflow: scroll;\n}\n#ui .column .metrics label {\n  padding-left: 5px;\n}\n#ui .column #metrics-header {\n  padding-bottom: 0.5em;\n  cursor: pointer;\n}\n#ui .column #warning {\n  font-size: 0.8em;\n  padding-top: 10px;\n  line-height: 1.2em;\n}\n#ui .column #warning i {\n  padding-right: 0.5em;\n}\n#ui .column .download .instruction {\n  margin: 0 25px;\n  line-height: 1.2em;\n}\n#ui .column .download fieldset {\n  display: block;\n  margin-left: 15px;\n  margin-bottom: 12.5px;\n}\n#ui .column .download a.export {\n  display: block;\n  background-color: #1a1a1a;\n  border-radius: 2px;\n  padding: 0.5em 0.75em;\n  margin: 0.5em 10px;\n  color: white;\n  text-align: center;\n}\n#ui .column .download a.export img {\n  width: 1.2em;\n  height: 1.2em;\n  margin-left: 15px;\n}\n#ui .column .project-management .instruction {\n  margin: 0 25px;\n  line-height: 1.2em;\n}\n#ui .column .project-management fieldset {\n  display: block;\n  margin-left: 15px;\n  margin-bottom: 12.5px;\n}\n#ui .column .project-management .button {\n  display: block;\n  background-color: #1a1a1a;\n  border-radius: 2px;\n  padding: 0.5em 0.75em;\n  margin: 0.5em 10px;\n  color: white;\n  text-align: center;\n  cursor: pointer;\n  border: none;\n  width: calc(100% - 20px);\n  font-family: inherit;\n  font-size: 100%;\n  text-decoration: none;\n}\n#ui .column .project-management .button:hover {\n  opacity: 0.8;\n}\n\n.metrics-wrapper {\n  width: 100%;\n  display: flex;\n  flex-wrap: wrap;\n  justify-content: space-between;\n}\n.metrics-wrapper .metrics-box {\n  text-align: center;\n  flex-basis: 18%;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  font-size: 90%;\n  border: 1px solid #f1f1f2;\n  padding: 3px 0;\n  margin: 3px auto;\n  box-shadow: 1px 1px 2px #f1f1f2;\n}\n.metrics-wrapper .metrics-box div {\n  padding: 2px 0;\n}\n.metrics-wrapper .metrics-box svg polygon {\n  stroke: #d0d2d3;\n}\n.metrics-wrapper .metrics-box.fade {\n  box-shadow: none;\n}\n.metrics-wrapper .metrics-box.fade div:not(:first-child) {\n  opacity: 0.3;\n}\n.metrics-wrapper .metrics-box.disabled {\n  opacity: 0.3;\n  cursor: pointer;\n}\n\n.metrics.hide-null .metrics-box.fade,\n.metrics.hide-null .metrics-box.disabled {\n  display: none;\n}\n\n.congressionalDistrictModal {\n  position: fixed;\n  top: 55px;\n  left: 323px;\n  width: calc(100% - 323px);\n  text-align: center;\n  z-index: 99999;\n  background-color: rgba(255, 255, 255, 0.8);\n  line-height: 3em;\n  font-size: 120%;\n}\n.congressionalDistrictModal.india {\n  font-size: 100%;\n  line-height: 2em;\n}\n\n.modal-edit-warning {\n  position: fixed;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  z-index: 99999;\n  background-color: rgba(0, 0, 0, 0.3);\n  border: 1px solid #4d4d4d;\n}\n.modal-edit-warning .warning-text {\n  position: relative;\n  max-width: 400px;\n  left: 50%;\n  top: 50%;\n  color: #1a1a1a;\n  padding: 25px 25px 12.5px 25px;\n  font-size: 1em;\n  transform: translateX(-50%) translateY(-50%);\n  background-color: #fdfdfd;\n  line-height: 1.2em;\n}\n.modal-edit-warning .warning-text a {\n  padding: 0.3em;\n  margin-top: 0.6em;\n  background-color: black;\n  color: white;\n  border-radius: 2px;\n  min-width: 40%;\n  text-align: center;\n}\n\n.modal-cloud {\n  position: fixed;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  z-index: 99999;\n  background-color: rgba(0, 0, 0, 0.3);\n}\n.modal-cloud .modal-content {\n  position: relative;\n  max-width: 500px;\n  left: 50%;\n  top: 50%;\n  color: #1a1a1a;\n  padding: 20px;\n  font-size: 1em;\n  transform: translateX(-50%) translateY(-50%);\n  background-color: #f7f7f7;\n  line-height: 1.2em;\n  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);\n  max-height: 80vh;\n  overflow-y: auto;\n}\n.modal-cloud .modal-content h3 {\n  margin-top: 0;\n  margin-bottom: 1em;\n}\n.modal-cloud .modal-content input[type=text] {\n  width: 100%;\n  padding: 8px;\n  margin-bottom: 1em;\n  border: 1px solid #ccc;\n  border-radius: 4px;\n}\n.modal-cloud .modal-content .project-grid {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 15px;\n  max-height: 400px;\n  overflow-y: auto;\n  border: 1px solid #e0e0e0;\n  padding: 10px;\n}\n.modal-cloud .modal-content .project-card {\n  width: 130px;\n  border: 1px solid #ccc;\n  border-radius: 4px;\n  background: #fff;\n  cursor: pointer;\n  overflow: hidden;\n  display: flex;\n  flex-direction: column;\n}\n.modal-cloud .modal-content .project-card:hover {\n  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);\n}\n.modal-cloud .modal-content .project-card .thumbnail-container {\n  height: 100px;\n  background-color: #eee;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  overflow: hidden;\n  border-bottom: 1px solid #eee;\n}\n.modal-cloud .modal-content .project-card .thumbnail-container img {\n  width: 100%;\n  height: 100%;\n  object-fit: cover;\n}\n.modal-cloud .modal-content .project-card .thumbnail-container .no-thumbnail {\n  color: #999;\n  font-size: 0.8em;\n}\n.modal-cloud .modal-content .project-card .card-footer {\n  padding: 5px;\n  font-size: 0.8em;\n}\n.modal-cloud .modal-content .project-card .card-footer .project-name {\n  font-weight: bold;\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n.modal-cloud .modal-content .project-card .card-footer .project-date {\n  font-size: 0.8em;\n  color: #666;\n  margin-bottom: 5px;\n}\n.modal-cloud .modal-content .project-card .card-footer .delete-btn {\n  color: red;\n  text-align: right;\n  cursor: pointer;\n}\n.modal-cloud .modal-content .project-card .card-footer .delete-btn:hover {\n  text-decoration: underline;\n}\n.modal-cloud .modal-content .buttons {\n  margin-top: 1.5em;\n  display: flex;\n  justify-content: flex-end;\n  gap: 10px;\n}\n.modal-cloud .modal-content .buttons button {\n  padding: 8px 16px;\n  border: none;\n  border-radius: 4px;\n  cursor: pointer;\n  font-size: 0.9em;\n}\n.modal-cloud .modal-content .buttons button.cancel {\n  background-color: #ddd;\n  color: #333;\n}\n.modal-cloud .modal-content .buttons button.save {\n  background-color: #1a1a1a;\n  color: white;\n}\n\n.tooltip {\n  background-color: #fff;\n  padding: 5px;\n  border: 1px solid black;\n  font-size: 12px;\n  max-width: 500px;\n  margin-left: 8px;\n  transform: translateY(-50%);\n}\n\n.tooltip:after, .tooltip:before {\n  right: 100%;\n  top: 50%;\n  border: solid transparent;\n  content: \" \";\n  height: 0;\n  width: 0;\n  position: absolute;\n  pointer-events: none;\n}\n\n.tooltip:after {\n  border-right-color: black;\n  border-width: 7px;\n  margin-top: -7px;\n}\n\n.tooltip:before {\n  border-right-color: black;\n  border-width: 8px;\n  margin-top: -8px;\n}\n\n.mobile-redirect {\n  display: none;\n}\n\nbody.isMobile {\n  overflow-x: hidden;\n  overflow-y: hidden;\n}\nbody.isMobile .mobile-redirect {\n  display: block;\n  position: fixed;\n  width: 100%;\n  height: 100%;\n  z-index: 99;\n  background: url(" + __webpack_require__(389) + ") no-repeat center center fixed;\n  -webkit-background-size: cover;\n  -moz-background-size: cover;\n  -o-background-size: cover;\n  background-size: cover;\n}\nbody.isMobile .mobile-redirect .background {\n  width: 100%;\n  height: 100%;\n  background-color: rgba(0, 0, 0, 0.7);\n}\nbody.isMobile .mobile-redirect .close-mobile {\n  position: absolute;\n  top: 30px;\n  right: 30px;\n  font-size: 30px;\n}\nbody.isMobile .mobile-redirect .tilegrams-logo {\n  width: 2em;\n  height: 2em;\n  margin: 0 0.4em 0 0.2em;\n  transform: translateY(20%);\n}\nbody.isMobile .mobile-redirect .main {\n  position: relative;\n  max-width: 90%;\n  left: 50%;\n  top: 40%;\n  color: #1a1a1a;\n  padding: 25px 25px 12.5px 25px;\n  font-size: 1em;\n  transform: translateX(-50%) translateY(-50%);\n  color: #fdfdfd;\n}\nbody.isMobile .mobile-redirect .main h1 {\n  font-size: 2em;\n  display: inline-block;\n  padding: 0 0 0.5em 0;\n}\nbody.isMobile .mobile-redirect .main h2 {\n  font-size: 1.5em;\n  padding: 0 0 0.5em 0;\n}\nbody.isMobile .mobile-redirect .main h3 {\n  font-size: 1em;\n}", ""]);
+	exports.push([module.id, "html, body, div, span, applet, object, iframe,\nh1, h2, h3, h4, h5, h6, p, blockquote, pre,\na, abbr, acronym, address, big, cite, code,\ndel, dfn, em, img, ins, kbd, q, s, samp,\nsmall, strike, strong, sub, sup, tt, var,\nb, u, i, center,\ndl, dt, dd, ol, ul, li,\nfieldset, form, label, legend,\ntable, caption, tbody, tfoot, thead, tr, th, td,\narticle, aside, canvas, details, embed,\nfigure, figcaption, footer, header, hgroup,\nmenu, nav, output, ruby, section, summary,\ntime, mark, audio, video {\n  margin: 0;\n  padding: 0;\n  border: 0;\n  font-size: 100%;\n  font: inherit;\n  vertical-align: baseline;\n}\n\n/* HTML5 display-role reset for older browsers */\narticle, aside, details, figcaption, figure,\nfooter, header, hgroup, menu, nav, section {\n  display: block;\n}\n\nbody {\n  line-height: 1;\n}\n\nol, ul {\n  list-style: none;\n}\n\nblockquote, q {\n  quotes: none;\n}\n\nblockquote:before, blockquote:after,\nq:before, q:after {\n  content: \"\";\n  content: none;\n}\n\ntable {\n  border-collapse: collapse;\n  border-spacing: 0;\n}\n\nbody {\n  margin: 0;\n  font-family: \"Roboto\", sans-serif;\n  font-weight: 400;\n  font-size: 15px;\n  color: #1a1a1a;\n  background-color: #fdfdfd;\n}\n\n* {\n  -webkit-touch-callout: none;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n}\n\n.code,\ncode,\ninput,\ntextarea {\n  -webkit-touch-callout: default;\n  -webkit-user-select: text;\n  -moz-user-select: text;\n  -ms-user-select: text;\n  user-select: text;\n}\n\na {\n  color: #3939a5;\n  margin: 0 5px;\n  cursor: pointer;\n}\n\n.gray {\n  color: #4d4d4d;\n}\n\ninput[type=radio] {\n  display: none;\n}\n\n.padding-bottom {\n  padding-bottom: 10px;\n}\n\n.collapsed {\n  display: none;\n}\n\ndataviz-tool-header {\n  position: fixed;\n  top: 48px;\n  z-index: 100;\n  width: 100%;\n}\n\n#canvas {\n  position: fixed;\n  right: 0;\n  top: 96px;\n  bottom: 0;\n  left: 320px;\n  overflow: hidden;\n  z-index: -1;\n}\n#canvas canvas {\n  cursor: pointer;\n  background-color: #f3f3f3;\n}\n\n#stats {\n  z-index: 2;\n}\n\n.dg.ac {\n  pointer-events: none;\n}\n\n#dataviz-global-header-host {\n  position: fixed !important;\n  top: 0;\n  left: 0;\n  width: 100%;\n  z-index: 99999;\n}\n\n.manual {\n  position: fixed;\n  top: 96px;\n  bottom: 0;\n  left: 320px;\n  max-width: 450px;\n  padding: 25px 25px 50px 25px;\n  overflow-y: auto;\n  box-sizing: border-box;\n  background-color: #fdfdfd;\n  font-size: 0.8em;\n  margin-left: 2px;\n  line-height: 1.2em;\n  border-right: 1px solid #d0d2d3;\n  z-index: 1;\n}\n.manual.hidden {\n  display: none;\n}\n.manual .manual-close {\n  position: absolute;\n  top: 25px;\n  right: 25px;\n  font-size: 1.7em;\n  cursor: pointer;\n}\n.manual h1 {\n  font-size: 1.7em;\n  color: #1a1a1a;\n  padding: 0;\n  letter-spacing: normal;\n  border-bottom: 1px solid #d0d2d3;\n  min-width: 100%;\n  margin-bottom: 1em;\n  padding-bottom: 10px;\n}\n.manual h2 {\n  font-size: 1.4em;\n  padding: 0.6em 0;\n}\n.manual h3 {\n  font-size: 1.2em;\n  padding: 0.5em 0;\n}\n.manual h4 {\n  font-size: 1.1em;\n  padding: 0.5em 0;\n}\n.manual p {\n  padding-bottom: 1em;\n}\n.manual a {\n  margin: 0;\n}\n\n.header {\n  top: 48px;\n  position: fixed;\n  width: 100%;\n  background: #1a1a1a;\n  z-index: 1;\n  display: table;\n  height: 55px;\n}\n.header h1 {\n  font-size: 120%;\n  line-height: 1.2em;\n  padding: 12.5px 25px;\n  color: #fdfdfd;\n  letter-spacing: 0.15em;\n  display: inline-block;\n  display: table-cell;\n}\n.header .tilegrams-logo {\n  width: 1.2em;\n  height: 1.2em;\n  margin: 0 0.4em 0 0.2em;\n  transform: translateY(20%);\n}\n.header .by-pitch {\n  font-size: 60%;\n  letter-spacing: 0.08em;\n  font-weight: 300;\n}\n.header .share {\n  display: table-cell;\n}\n.header .share img {\n  width: 1.2em;\n  height: 1.2em;\n  float: right;\n  padding-right: 20px;\n}\n.header .share {\n  clear: both;\n}\n\nselect {\n  width: 100%;\n  box-sizing: border-box;\n  -webkit-appearance: none;\n  -moz-appearance: none;\n  appearance: none;\n  background: url(" + __webpack_require__(387) + ") no-repeat right 10px center #ffffff;\n  background-size: 10px 5px;\n  border: 1px solid #d0d2d3;\n  border-radius: 4px;\n  color: #1a1a1a;\n  font-size: 100%;\n  font-weight: 400;\n  cursor: pointer;\n  padding: 8px 32px 8px 10px;\n}\nselect:hover {\n  border-color: #4d4d4d;\n}\nselect:focus {\n  outline: none;\n  border-color: #3939a5;\n  box-shadow: 0 0 0 2px rgba(57, 57, 165, 0.15);\n}\n\nfieldset {\n  padding: 10px 15px 0px 0px;\n}\nfieldset label {\n  display: inline-block;\n  width: 96px;\n  margin-bottom: 6px;\n}\n\ncode {\n  font-weight: 500;\n}\n\n.language-javascript,\n.language-html {\n  display: block;\n  font-family: \"Lucida Console\", Monaco, monospace;\n  background-color: #f1f1f2;\n  padding: 5px;\n  white-space: pre-wrap;\n  margin-bottom: 10px;\n  font-weight: 400;\n}\n\n.code {\n  font-family: \"Lucida Console\", Monaco, monospace;\n  background-color: #d0d2d3;\n  padding: 10px;\n  margin: 10px;\n  font-size: 80%;\n  line-height: 110%;\n  display: block;\n}\n\n.step {\n  position: relative;\n  cursor: pointer;\n  font-size: 1.15em;\n  padding: 15px 25px;\n  line-height: 1.25em;\n  display: flex;\n  align-items: center;\n  white-space: nowrap;\n}\n.step .arrow {\n  flex: none;\n  width: 1em;\n  height: 1em;\n  margin-left: auto;\n  background: url(" + __webpack_require__(388) + ") no-repeat center center;\n  background-size: 1em 1em;\n  transition: transform 500ms ease-in-out;\n}\n.step.active .arrow {\n  transform: rotateX(180deg);\n}\n\n.dragging-hex {\n  position: absolute;\n  transform: translateX(-50%) translateY(-50%);\n}\n.dragging-hex svg polygon {\n  stroke: #000;\n  stroke-width: 1px;\n  opacity: 0.4;\n}\n\n#ui {\n  position: fixed;\n  top: 96px;\n  bottom: 0;\n  left: 0;\n  border-right: 2px solid #d0d2d3;\n}\n\n#ui .column {\n  width: 320px;\n  height: 100%;\n  background-color: #fdfdfd;\n  overflow-x: hidden;\n  overflow-y: auto;\n  font-size: 0.85em;\n  font-weight: 400;\n}\n#ui .column hr {\n  border: none;\n  height: 1px;\n  background-color: #d0d2d3;\n  margin: 0;\n}\n#ui .column p.intro {\n  margin: 25px;\n  opacity: 0.8;\n  line-height: 1.2em;\n}\n#ui .column p.intro a {\n  text-decoration: none;\n  margin: 0;\n}\n#ui .column label.radio-label {\n  cursor: pointer;\n  padding-top: 12px;\n  display: block;\n  width: 100%;\n}\n#ui .column label.radio-label:hover {\n  opacity: 0.6;\n}\n#ui .column .scroll-ui {\n  overflow: scroll;\n}\n#ui .column .geographySelector {\n  padding: 0 25px 12px 25px;\n}\n#ui .column .labelModeSelector {\n  padding-top: 12px;\n}\n#ui .column .ui-controls {\n  overflow: hidden;\n}\n#ui .column .ui-controls .ui-control-type {\n  padding-bottom: 20px;\n}\n#ui .column .ui-controls .generate-tabs {\n  display: flex;\n  border-top: 1px solid #f1f1f2;\n  border-bottom: 1px solid #f1f1f2;\n}\n#ui .column .ui-controls .generate-tabs .generate-tab {\n  flex: 1;\n  padding: 12px 6px;\n  background: none;\n  border: none;\n  border-bottom: 3px solid transparent;\n  font-family: \"Roboto\", sans-serif;\n  font-size: 13px;\n  color: #4d4d4d;\n  opacity: 0.65;\n  cursor: pointer;\n}\n#ui .column .ui-controls .generate-tabs .generate-tab:hover {\n  opacity: 1;\n}\n#ui .column .ui-controls .generate-tabs .generate-tab.active {\n  background-color: #f1f1f2;\n  border-bottom-color: #4d4d4d;\n  font-weight: 500;\n  opacity: 1;\n  cursor: default;\n}\n#ui .column .ui-controls .generate-tab-panel {\n  padding: 12px 25px;\n}\n#ui .column .ui-controls .generate-tab-panel.collapsed {\n  display: none;\n}\n#ui .column .ui-controls input.import {\n  padding: 0;\n}\n#ui .column .import-metric {\n  font-size: 85%;\n  opacity: 0.6;\n  color: #3939a5;\n  font-weight: 500;\n}\n#ui .column .n-errors {\n  font-size: 85%;\n  opacity: 0.6;\n  padding: 0 8px 0 6px;\n}\n#ui .column .csv-input {\n  margin-top: 15px;\n}\n#ui .column .csv-input textarea {\n  width: 100%;\n  box-sizing: border-box;\n  margin-top: 10px;\n  padding: 8px;\n  border: 1px solid #d0d2d3;\n  border-radius: 4px;\n}\n#ui .column .csv-input textarea:hover {\n  border-color: #4d4d4d;\n}\n#ui .column .csv-input textarea:focus {\n  outline: none;\n  border-color: #3939a5;\n  box-shadow: 0 0 0 2px rgba(57, 57, 165, 0.15);\n}\n#ui .column .csv-input .code {\n  white-space: pre-line;\n  max-height: 70px;\n  overflow-y: scroll;\n}\n#ui .column .csv-input .submit-custom {\n  margin: 5px 0;\n  background-color: white;\n  padding: 6px 14px;\n  border-radius: 4px;\n  display: inline-block;\n  border: 1px solid #d0d2d3;\n  cursor: pointer;\n  opacity: 0.3;\n}\n#ui .column .csv-input .submit-custom.active {\n  opacity: 1;\n}\n#ui .column .csv-input .submit-custom.active:hover {\n  border-color: #4d4d4d;\n  background-color: #f1f1f2;\n}\n#ui .column .dataset-select {\n  width: 100%;\n}\n#ui .column .instruction {\n  margin-top: 10px;\n  line-height: 1.2em;\n}\n#ui .column .resolution-slider label {\n  display: block;\n}\n#ui .column .resolution-slider .hex-img {\n  width: 1.5em;\n  height: 1.5em;\n  display: inline-block;\n}\n#ui .column .resolution-slider .small-hex {\n  float: left;\n}\n#ui .column .resolution-slider .big-hex {\n  float: right;\n}\n#ui .column .resolution-slider input {\n  width: 100%;\n  cursor: pointer;\n}\n#ui .column .resolution-input label {\n  display: block;\n  width: auto;\n  margin-bottom: 4px;\n}\n#ui .column .resolution-input .estimated-tiles {\n  font-size: 0.9em;\n  opacity: 0.7;\n  white-space: nowrap;\n}\n#ui .column .resolution-input input {\n  min-width: 50%;\n  box-sizing: border-box;\n  border: 1px solid #d0d2d3;\n  border-radius: 4px;\n  padding: 6px 8px;\n  background-color: #fff;\n  font-size: 1.1em;\n  margin: 0 5px 0 0;\n  color: #3939a5;\n}\n#ui .column .resolution-input input:hover {\n  border-color: #4d4d4d;\n}\n#ui .column .resolution-input input:focus {\n  outline: none;\n  border-color: #3939a5;\n  box-shadow: 0 0 0 2px rgba(57, 57, 165, 0.15);\n}\n#ui .column .metrics {\n  padding: 0 25px;\n  overflow: scroll;\n}\n#ui .column .metrics label {\n  padding-left: 5px;\n}\n#ui .column #metrics-header {\n  padding-bottom: 0.5em;\n  cursor: pointer;\n  display: flex;\n  flex-wrap: wrap;\n  align-items: flex-start;\n}\n#ui .column #metrics-header input {\n  flex: none;\n  margin: 0.15em 0 0;\n}\n#ui .column #metrics-header label {\n  flex: 1;\n  line-height: 1.3em;\n}\n#ui .column #metrics-header #warning {\n  flex-basis: 100%;\n}\n#ui .column .metrics-legend {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 2px 12px;\n  font-size: 0.85em;\n  padding-bottom: 0.75em;\n  line-height: 1.3em;\n}\n#ui .column .metrics-legend .hint {\n  flex-basis: 100%;\n  opacity: 0.6;\n}\n#ui .column .deviation.surplus {\n  color: #c0392b;\n  font-weight: 500;\n}\n#ui .column .deviation.deficit {\n  color: #2563eb;\n  font-weight: 500;\n}\n#ui .column #warning {\n  font-size: 0.8em;\n  padding-top: 10px;\n  line-height: 1.2em;\n}\n#ui .column #warning i {\n  padding-right: 0.5em;\n}\n#ui .column .download .instruction {\n  margin: 0 25px;\n  line-height: 1.2em;\n}\n#ui .column .download fieldset {\n  display: block;\n  margin-left: 15px;\n  margin-bottom: 12.5px;\n}\n#ui .column .download a.export {\n  display: block;\n  background-color: #1a1a1a;\n  border-radius: 2px;\n  padding: 0.5em 0.75em;\n  margin: 0.5em 10px;\n  color: white;\n  text-align: center;\n}\n#ui .column .download a.export img {\n  width: 1.2em;\n  height: 1.2em;\n  margin-left: 15px;\n}\n#ui .column .project-management .instruction {\n  margin: 0 25px;\n  line-height: 1.2em;\n}\n#ui .column .project-management fieldset {\n  display: block;\n  margin-left: 15px;\n  margin-bottom: 12.5px;\n}\n#ui .column .project-management .button {\n  display: block;\n  background-color: #1a1a1a;\n  border-radius: 2px;\n  padding: 0.5em 0.75em;\n  margin: 0.5em 10px;\n  color: white;\n  text-align: center;\n  cursor: pointer;\n  border: none;\n  width: calc(100% - 20px);\n  font-family: inherit;\n  font-size: 100%;\n  text-decoration: none;\n}\n#ui .column .project-management .button:hover {\n  opacity: 0.8;\n}\n\n.metrics-wrapper {\n  width: 100%;\n  display: flex;\n  flex-wrap: wrap;\n  justify-content: space-between;\n}\n.metrics-wrapper .metrics-box {\n  text-align: center;\n  flex-basis: 18%;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  font-size: 90%;\n  border: 1px solid #f1f1f2;\n  padding: 3px 0;\n  margin: 3px auto;\n  box-shadow: 1px 1px 2px #f1f1f2;\n}\n.metrics-wrapper .metrics-box div {\n  padding: 2px 0;\n}\n.metrics-wrapper .metrics-box svg polygon {\n  stroke: #d0d2d3;\n}\n.metrics-wrapper .metrics-box.fade {\n  box-shadow: none;\n}\n.metrics-wrapper .metrics-box.fade div:not(:first-child) {\n  opacity: 0.3;\n}\n.metrics-wrapper .metrics-box.disabled {\n  opacity: 0.3;\n  cursor: pointer;\n}\n\n.metrics.hide-null .metrics-box.fade,\n.metrics.hide-null .metrics-box.disabled {\n  display: none;\n}\n\n.congressionalDistrictModal {\n  position: fixed;\n  top: 55px;\n  left: 323px;\n  width: calc(100% - 323px);\n  text-align: center;\n  z-index: 99999;\n  background-color: rgba(255, 255, 255, 0.8);\n  line-height: 3em;\n  font-size: 120%;\n}\n.congressionalDistrictModal.india {\n  font-size: 100%;\n  line-height: 2em;\n}\n\n.modal-edit-warning {\n  position: fixed;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  z-index: 99999;\n  background-color: rgba(0, 0, 0, 0.3);\n  border: 1px solid #4d4d4d;\n}\n.modal-edit-warning .warning-text {\n  position: relative;\n  max-width: 400px;\n  left: 50%;\n  top: 50%;\n  color: #1a1a1a;\n  padding: 25px 25px 12.5px 25px;\n  font-size: 1em;\n  transform: translateX(-50%) translateY(-50%);\n  background-color: #fdfdfd;\n  line-height: 1.2em;\n}\n.modal-edit-warning .warning-text a {\n  padding: 0.3em;\n  margin-top: 0.6em;\n  background-color: black;\n  color: white;\n  border-radius: 2px;\n  min-width: 40%;\n  text-align: center;\n}\n\n.modal-cloud {\n  position: fixed;\n  top: 0;\n  left: 0;\n  width: 100%;\n  height: 100%;\n  z-index: 99999;\n  background-color: rgba(0, 0, 0, 0.3);\n}\n.modal-cloud .modal-content {\n  position: relative;\n  max-width: 500px;\n  left: 50%;\n  top: 50%;\n  color: #1a1a1a;\n  padding: 20px;\n  font-size: 1em;\n  transform: translateX(-50%) translateY(-50%);\n  background-color: #f7f7f7;\n  line-height: 1.2em;\n  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);\n  max-height: 80vh;\n  overflow-y: auto;\n}\n.modal-cloud .modal-content h3 {\n  margin-top: 0;\n  margin-bottom: 1em;\n}\n.modal-cloud .modal-content input[type=text] {\n  width: 100%;\n  padding: 8px;\n  margin-bottom: 1em;\n  border: 1px solid #ccc;\n  border-radius: 4px;\n}\n.modal-cloud .modal-content .project-grid {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 15px;\n  max-height: 400px;\n  overflow-y: auto;\n  border: 1px solid #e0e0e0;\n  padding: 10px;\n}\n.modal-cloud .modal-content .project-card {\n  width: 130px;\n  border: 1px solid #ccc;\n  border-radius: 4px;\n  background: #fff;\n  cursor: pointer;\n  overflow: hidden;\n  display: flex;\n  flex-direction: column;\n}\n.modal-cloud .modal-content .project-card:hover {\n  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);\n}\n.modal-cloud .modal-content .project-card .thumbnail-container {\n  height: 100px;\n  background-color: #eee;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  overflow: hidden;\n  border-bottom: 1px solid #eee;\n}\n.modal-cloud .modal-content .project-card .thumbnail-container img {\n  width: 100%;\n  height: 100%;\n  object-fit: cover;\n}\n.modal-cloud .modal-content .project-card .thumbnail-container .no-thumbnail {\n  color: #999;\n  font-size: 0.8em;\n}\n.modal-cloud .modal-content .project-card .card-footer {\n  padding: 5px;\n  font-size: 0.8em;\n}\n.modal-cloud .modal-content .project-card .card-footer .project-name {\n  font-weight: bold;\n  white-space: nowrap;\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n.modal-cloud .modal-content .project-card .card-footer .project-date {\n  font-size: 0.8em;\n  color: #666;\n  margin-bottom: 5px;\n}\n.modal-cloud .modal-content .project-card .card-footer .delete-btn {\n  color: red;\n  text-align: right;\n  cursor: pointer;\n}\n.modal-cloud .modal-content .project-card .card-footer .delete-btn:hover {\n  text-decoration: underline;\n}\n.modal-cloud .modal-content .buttons {\n  margin-top: 1.5em;\n  display: flex;\n  justify-content: flex-end;\n  gap: 10px;\n}\n.modal-cloud .modal-content .buttons button {\n  padding: 8px 16px;\n  border: none;\n  border-radius: 4px;\n  cursor: pointer;\n  font-size: 0.9em;\n}\n.modal-cloud .modal-content .buttons button.cancel {\n  background-color: #ddd;\n  color: #333;\n}\n.modal-cloud .modal-content .buttons button.save {\n  background-color: #1a1a1a;\n  color: white;\n}\n\n.tooltip {\n  background-color: #fff;\n  padding: 5px;\n  border: 1px solid black;\n  font-size: 12px;\n  max-width: 500px;\n  margin-left: 8px;\n  transform: translateY(-50%);\n}\n\n.tooltip:after, .tooltip:before {\n  right: 100%;\n  top: 50%;\n  border: solid transparent;\n  content: \" \";\n  height: 0;\n  width: 0;\n  position: absolute;\n  pointer-events: none;\n}\n\n.tooltip:after {\n  border-right-color: black;\n  border-width: 7px;\n  margin-top: -7px;\n}\n\n.tooltip:before {\n  border-right-color: black;\n  border-width: 8px;\n  margin-top: -8px;\n}\n\n.mobile-redirect {\n  display: none;\n}\n\nbody.isMobile {\n  overflow-x: hidden;\n  overflow-y: hidden;\n}\nbody.isMobile .mobile-redirect {\n  display: block;\n  position: fixed;\n  width: 100%;\n  height: 100%;\n  z-index: 99;\n  background: url(" + __webpack_require__(389) + ") no-repeat center center fixed;\n  -webkit-background-size: cover;\n  -moz-background-size: cover;\n  -o-background-size: cover;\n  background-size: cover;\n}\nbody.isMobile .mobile-redirect .background {\n  width: 100%;\n  height: 100%;\n  background-color: rgba(0, 0, 0, 0.7);\n}\nbody.isMobile .mobile-redirect .close-mobile {\n  position: absolute;\n  top: 30px;\n  right: 30px;\n  font-size: 30px;\n}\nbody.isMobile .mobile-redirect .tilegrams-logo {\n  width: 2em;\n  height: 2em;\n  margin: 0 0.4em 0 0.2em;\n  transform: translateY(20%);\n}\nbody.isMobile .mobile-redirect .main {\n  position: relative;\n  max-width: 90%;\n  left: 50%;\n  top: 40%;\n  color: #1a1a1a;\n  padding: 25px 25px 12.5px 25px;\n  font-size: 1em;\n  transform: translateX(-50%) translateY(-50%);\n  color: #fdfdfd;\n}\nbody.isMobile .mobile-redirect .main h1 {\n  font-size: 2em;\n  display: inline-block;\n  padding: 0 0 0.5em 0;\n}\nbody.isMobile .mobile-redirect .main h2 {\n  font-size: 1.5em;\n  padding: 0 0 0.5em 0;\n}\nbody.isMobile .mobile-redirect .main h3 {\n  font-size: 1em;\n}", ""]);
 
 	// exports
 
