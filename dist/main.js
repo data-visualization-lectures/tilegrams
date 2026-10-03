@@ -117,11 +117,15 @@
 
 	function resize() {
 	  (0, _constants.updateCanvasSize)();
+	  _GridGeometry2.default.rescaleToCanvas();
 	  _Canvas2.default.resize();
-	  _GridGeometry2.default.resize();
-	  _Canvas2.default.getMap().updatePreProjection();
+	  (0, _TilegramController.handleCanvasResize)();
 	}
-	window.onresize = resize;
+	var resizeTimeout = void 0;
+	window.addEventListener('resize', function () {
+	  clearTimeout(resizeTimeout);
+	  resizeTimeout = setTimeout(resize, 150);
+	});
 	resize();
 
 	// Ignore ctrl-Z altogether
@@ -1294,7 +1298,7 @@
 	      this._canvas.height = _constants.canvasDimensions.height;
 	      this._canvas.style.width = _constants.canvasDimensions.width / _constants.devicePixelRatio + 'px';
 	      if (this._gridGraphic) {
-	        this._gridGraphic.renderBackgroundImage();
+	        this._gridGraphic.onCanvasResize();
 	      }
 	    }
 	  }, {
@@ -1815,6 +1819,14 @@
 	    key: 'resetEdits',
 	    value: function resetEdits() {
 	      this._hasBeenEdited = false;
+	    }
+	  }, {
+	    key: 'onCanvasResize',
+	    value: function onCanvasResize() {
+	      this.renderBackgroundImage();
+	      if (this._tiles) {
+	        this._positionClusterLabels();
+	      }
 	    }
 	  }, {
 	    key: 'renderBackgroundImage',
@@ -3885,7 +3897,25 @@
 	        debugger;
 	      }
 	      this._tileEdge = tileEdge;
+	      this._canvasDimensionsAtTileEdge = {
+	        width: _constants.canvasDimensions.width,
+	        height: _constants.canvasDimensions.height
+	      };
 	      this.resize();
+	    }
+
+	    /** scale the tile edge so the tilegram keeps fitting a resized canvas */
+
+	  }, {
+	    key: 'rescaleToCanvas',
+	    value: function rescaleToCanvas() {
+	      var previous = this._canvasDimensionsAtTileEdge;
+	      if (!previous || !previous.width || !previous.height) {
+	        this.setTileEdge(this._tileEdge);
+	        return;
+	      }
+	      var scale = Math.min(_constants.canvasDimensions.width / previous.width, _constants.canvasDimensions.height / previous.height);
+	      this.setTileEdge(this._tileEdge * scale);
 	    }
 	  }, {
 	    key: 'setTileEdgeFromMax',
@@ -4021,7 +4051,8 @@
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-	var devicePixelRatio = window.devicePixelRatio;
+	// re-read on resize: moving the window to another display can change it
+	var devicePixelRatio = window.devicePixelRatio || 1;
 
 	var canvasDimensions = {
 	  width: 0,
@@ -4031,6 +4062,7 @@
 	   * prevent errors on small screens
 	   */
 	};function updateCanvasSize() {
+	  exports.devicePixelRatio = devicePixelRatio = window.devicePixelRatio || 1;
 	  var canvasContainer = document.getElementById('canvas');
 	  canvasDimensions.width = Math.max(200, canvasContainer.offsetWidth * devicePixelRatio);
 	  canvasDimensions.height = Math.max(200, canvasContainer.offsetHeight * devicePixelRatio);
@@ -51015,6 +51047,7 @@
 	exports.loadTopoJson = loadTopoJson;
 	exports.loadProject = loadProject;
 	exports.selectDataset = selectDataset;
+	exports.handleCanvasResize = handleCanvasResize;
 	exports.selectCustomDataset = selectCustomDataset;
 	exports.selectTilegram = selectTilegram;
 	exports.updateResolution = updateResolution;
@@ -51058,6 +51091,10 @@
 
 	var cartogramComputeRafId = void 0;
 	var importing = false;
+	var cartogramComputing = false;
+	// the cartogram shapes are in canvas pixels; after a resize they must be recomputed
+	var cartogramStale = false;
+	var currentDataset = null;
 
 	function updateUi() {
 	  _Ui2.default.setTiles(_Canvas2.default.getGrid().getTiles());
@@ -51080,6 +51117,7 @@
 
 	function loadImportedTilegramState(readImportedState) {
 	  cancelAnimationFrame(cartogramComputeRafId);
+	  cartogramComputing = false;
 	  importing = true;
 	  applyImportedTilegramState(readImportedState());
 	}
@@ -51109,6 +51147,13 @@
 	  }
 	  importing = false;
 	  _Ui2.default.setSelectedDataset(dataset);
+	  computeCartogram(dataset);
+	}
+
+	function computeCartogram(dataset) {
+	  currentDataset = dataset;
+	  cartogramStale = false;
+	  cartogramComputing = true;
 	  _Canvas2.default.computeCartogram(dataset);
 
 	  var iterateLoop = function iterateLoop() {
@@ -51117,8 +51162,9 @@
 	        iterated = _canvas$iterateCartog2[0];
 
 	    if (iterated) {
-	      requestAnimationFrame(iterateLoop);
+	      cartogramComputeRafId = requestAnimationFrame(iterateLoop);
 	    } else {
+	      cartogramComputing = false;
 	      _Canvas2.default.updateTilesFromMetrics();
 	    }
 	  };
@@ -51126,6 +51172,19 @@
 	  cancelAnimationFrame(cartogramComputeRafId);
 	  _Canvas2.default.progress = 0;
 	  cartogramComputeRafId = requestAnimationFrame(iterateLoop);
+	}
+
+	/** call after the canvas has been resized and the grid rescaled */
+	function handleCanvasResize() {
+	  if (importing || !currentDataset) {
+	    return;
+	  }
+	  if (cartogramComputing) {
+	    // restart so the cartogram is computed in the new canvas size
+	    computeCartogram(currentDataset);
+	  } else {
+	    cartogramStale = true;
+	  }
 	}
 
 	function selectCustomDataset(geography, csv) {
@@ -51145,6 +51204,10 @@
 	  }
 	  _Metrics2.default.metricPerTile = metricPerTile;
 	  _Metrics2.default.sumMetrics = sumMetrics;
+	  if (cartogramStale) {
+	    computeCartogram(currentDataset);
+	    return;
+	  }
 	  _Canvas2.default.updateTilesFromMetrics();
 	}
 
