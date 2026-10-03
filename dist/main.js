@@ -3904,7 +3904,9 @@
 	        debugger;
 	      }
 	      this._tileEdge = tileEdge;
-	      this._canvasDimensionsAtTileEdge = {
+	      // reference for rescaleToCanvas; scaling from it keeps resizes reversible
+	      this._fitTileEdge = tileEdge;
+	      this._fitCanvasDimensions = {
 	        width: _constants.canvasDimensions.width,
 	        height: _constants.canvasDimensions.height
 	      };
@@ -3916,13 +3918,14 @@
 	  }, {
 	    key: 'rescaleToCanvas',
 	    value: function rescaleToCanvas() {
-	      var previous = this._canvasDimensionsAtTileEdge;
-	      if (!previous || !previous.width || !previous.height) {
+	      var fit = this._fitCanvasDimensions;
+	      if (!fit || !fit.width || !fit.height) {
 	        this.setTileEdge(this._tileEdge);
 	        return;
 	      }
-	      var scale = Math.min(_constants.canvasDimensions.width / previous.width, _constants.canvasDimensions.height / previous.height);
-	      this.setTileEdge(this._tileEdge * scale);
+	      var scale = Math.min(_constants.canvasDimensions.width / fit.width, _constants.canvasDimensions.height / fit.height);
+	      this._tileEdge = this._fitTileEdge * scale;
+	      this.resize();
 	    }
 	  }, {
 	    key: 'setTileEdgeFromMax',
@@ -4059,6 +4062,7 @@
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 	// re-read on resize: moving the window to another display can change it
+	// eslint-disable-next-line import/no-mutable-exports
 	var devicePixelRatio = window.devicePixelRatio || 1;
 
 	var canvasDimensions = {
@@ -4104,7 +4108,7 @@
 	}
 
 	/** font stack for canvas/SVG labels, with Japanese fallbacks */
-	var labelFontFamily = "'Fira Sans', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'Noto Sans JP', 'Yu Gothic', sans-serif";
+	var labelFontFamily = "'Fira Sans', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', " + "'Noto Sans JP', 'Yu Gothic', sans-serif";
 
 	var tileEdgeRange = {
 	  default: 20,
@@ -51389,17 +51393,6 @@
 	  }
 	}
 
-	function selectDataset(geography, index, customCsv) {
-	  var dataset = index !== null ? _DatasetResource2.default.getDataset(geography, index) : _DatasetResource2.default.buildDatasetFromCustomCsv(geography, customCsv);
-	  if (!dataset) {
-	    console.error('selectDataset: Dataset not found for', geography);
-	    return;
-	  }
-	  importing = false;
-	  _Ui2.default.setSelectedDataset(dataset);
-	  computeCartogram(dataset);
-	}
-
 	function computeCartogram(dataset) {
 	  currentDataset = dataset;
 	  cartogramStale = false;
@@ -51422,6 +51415,17 @@
 	  cancelAnimationFrame(cartogramComputeRafId);
 	  _Canvas2.default.progress = 0;
 	  cartogramComputeRafId = requestAnimationFrame(iterateLoop);
+	}
+
+	function selectDataset(geography, index, customCsv) {
+	  var dataset = index !== null ? _DatasetResource2.default.getDataset(geography, index) : _DatasetResource2.default.buildDatasetFromCustomCsv(geography, customCsv);
+	  if (!dataset) {
+	    console.error('selectDataset: Dataset not found for', geography);
+	    return;
+	  }
+	  importing = false;
+	  _Ui2.default.setSelectedDataset(dataset);
+	  computeCartogram(dataset);
 	}
 
 	/** call after the canvas has been resized and the grid rescaled */
