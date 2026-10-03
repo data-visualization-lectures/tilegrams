@@ -364,6 +364,13 @@ export default class GridGraphic extends Graphic {
     this._hasBeenEdited = false
   }
 
+  onCanvasResize() {
+    this.renderBackgroundImage()
+    if (this._tiles) {
+      this._positionClusterLabels()
+    }
+  }
+
   renderBackgroundImage() {
     this._backgroundCanvas = document.createElement('canvas')
     this._backgroundCanvas.width = canvasDimensions.width

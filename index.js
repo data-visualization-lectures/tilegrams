@@ -2,6 +2,7 @@ import MobileDetect from 'mobile-detect'
 import canvas from './source/Canvas'
 import ui from './source/Ui'
 import {
+  handleCanvasResize,
   loadProject,
   selectGeography,
 } from './source/TilegramController'
@@ -54,11 +55,15 @@ function init() {
 
 function resize() {
   updateCanvasSize()
+  gridGeometry.rescaleToCanvas()
   canvas.resize()
-  gridGeometry.resize()
-  canvas.getMap().updatePreProjection()
+  handleCanvasResize()
 }
-window.onresize = resize
+let resizeTimeout
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimeout)
+  resizeTimeout = setTimeout(resize, 150)
+})
 resize()
 
 // Ignore ctrl-Z altogether

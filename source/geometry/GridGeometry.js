@@ -23,7 +23,25 @@ class GridGeometry {
       debugger
     }
     this._tileEdge = tileEdge
+    this._canvasDimensionsAtTileEdge = {
+      width: canvasDimensions.width,
+      height: canvasDimensions.height,
+    }
     this.resize()
+  }
+
+  /** scale the tile edge so the tilegram keeps fitting a resized canvas */
+  rescaleToCanvas() {
+    const previous = this._canvasDimensionsAtTileEdge
+    if (!previous || !previous.width || !previous.height) {
+      this.setTileEdge(this._tileEdge)
+      return
+    }
+    const scale = Math.min(
+      canvasDimensions.width / previous.width,
+      canvasDimensions.height / previous.height
+    )
+    this.setTileEdge(this._tileEdge * scale)
   }
 
   setTileEdgeFromMax(maxX, maxY) {

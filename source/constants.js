@@ -1,7 +1,8 @@
 import dat from 'dat-gui'
 import {isDevEnvironment} from './utils'
 
-const devicePixelRatio = window.devicePixelRatio
+// re-read on resize: moving the window to another display can change it
+let devicePixelRatio = window.devicePixelRatio || 1
 
 const canvasDimensions = {
   width: 0,
@@ -12,6 +13,7 @@ const canvasDimensions = {
  * prevent errors on small screens
  */
 function updateCanvasSize() {
+  devicePixelRatio = window.devicePixelRatio || 1
   const canvasContainer = document.getElementById('canvas')
   canvasDimensions.width = Math.max(200, canvasContainer.offsetWidth * devicePixelRatio)
   canvasDimensions.height = Math.max(200, canvasContainer.offsetHeight * devicePixelRatio)

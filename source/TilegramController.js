@@ -10,6 +10,10 @@ import {showErrorToast} from './ToolHeaderMessages'
 
 let cartogramComputeRafId
 let importing = false
+let cartogramComputing = false
+// the cartogram shapes are in canvas pixels; after a resize they must be recomputed
+let cartogramStale = false
+let currentDataset = null
 
 export function updateUi() {
   ui.setTiles(canvas.getGrid().getTiles())
@@ -28,6 +32,7 @@ function applyImportedTilegramState(importedState) {
 
 function loadImportedTilegramState(readImportedState) {
   cancelAnimationFrame(cartogramComputeRafId)
+  cartogramComputing = false
   importing = true
   applyImportedTilegramState(readImportedState())
 }
@@ -55,13 +60,21 @@ export function selectDataset(geography, index, customCsv) {
   }
   importing = false
   ui.setSelectedDataset(dataset)
+  computeCartogram(dataset)
+}
+
+function computeCartogram(dataset) {
+  currentDataset = dataset
+  cartogramStale = false
+  cartogramComputing = true
   canvas.computeCartogram(dataset)
 
   const iterateLoop = () => {
     const [iterated] = canvas.iterateCartogram(dataset.geography)
     if (iterated) {
-      requestAnimationFrame(iterateLoop)
+      cartogramComputeRafId = requestAnimationFrame(iterateLoop)
     } else {
+      cartogramComputing = false
       canvas.updateTilesFromMetrics()
     }
   }
@@ -69,6 +82,19 @@ export function selectDataset(geography, index, customCsv) {
   cancelAnimationFrame(cartogramComputeRafId)
   canvas.progress = 0
   cartogramComputeRafId = requestAnimationFrame(iterateLoop)
+}
+
+/** call after the canvas has been resized and the grid rescaled */
+export function handleCanvasResize() {
+  if (importing || !currentDataset) {
+    return
+  }
+  if (cartogramComputing) {
+    // restart so the cartogram is computed in the new canvas size
+    computeCartogram(currentDataset)
+  } else {
+    cartogramStale = true
+  }
 }
 
 export function selectCustomDataset(geography, csv) {
@@ -88,6 +114,10 @@ export function updateResolution(metricPerTile, sumMetrics) {
   }
   metrics.metricPerTile = metricPerTile
   metrics.sumMetrics = sumMetrics
+  if (cartogramStale) {
+    computeCartogram(currentDataset)
+    return
+  }
   canvas.updateTilesFromMetrics()
 }
 
