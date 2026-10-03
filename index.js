@@ -23,6 +23,7 @@ import {
 import {updateCanvasSize} from './source/constants'
 
 import logo from './source/images/logo.png' // eslint-disable-line no-unused-vars
+import strings from './source/strings'
 
 require('./source/css/main.scss')
 require('font-awesome/scss/font-awesome.scss')
@@ -39,7 +40,7 @@ if (typeof window !== 'undefined') {
 
 function confirmNavigation(e) {
   // most browsers won't let you display custom text but have something like this anyway
-  const message = '本当にこのページから離脱しますか？セーブされていない作業がすべて失われます。'
+  const message = strings.messages.confirmLeave
   e.returnValue = message
   return message
 }

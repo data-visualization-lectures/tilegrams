@@ -1,8 +1,5 @@
 import React from 'react'
-
-const warningText = `地図に手動編集が加えられています。
-新しいタイルグラムを生成したり、既存タイルグラムの解像度を変更すると、
-これらの編集内容は失われます。`
+import strings from '../strings'
 
 export default function EditWarningModal(props) {
   return (
@@ -11,23 +8,23 @@ export default function EditWarningModal(props) {
       onClick={(event) => event.stopPropagation()}
     >
       <div className='warning-text'>
-        {warningText}
+        {strings.editWarning.text}
         <br />
         <br />
-        続行しますか？
+        {strings.editWarning.question}
         <br />
         <br />
         <a
           style={{float: 'left'}}
           onClick={props.startOver}
         >
-          はい、続行する
+          {strings.editWarning.proceed}
         </a>
         <a
           style={{float: 'right'}}
           onClick={props.resumeEditing}
         >
-          編集に戻る
+          {strings.editWarning.resume}
         </a>
         <div style={{clear: 'both'}} />
       </div>

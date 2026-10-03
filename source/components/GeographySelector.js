@@ -1,6 +1,7 @@
 import React from 'react'
 
 import GeographyResource from '../resources/GeographyResource'
+import strings from '../strings'
 
 export default function GeographySelector(props) {
   const selectGeography = (event) => {
@@ -18,7 +19,7 @@ export default function GeographySelector(props) {
   })
   return (
     <div className='geographySelector'>
-      対象地域を選択
+      {strings.geographySelector.label}
       <fieldset>
         <select onChange={selectGeography} value={props.selectedGeography}>
           {options}

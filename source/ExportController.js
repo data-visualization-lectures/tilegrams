@@ -6,6 +6,7 @@ import pngExporter from './file/PngExporter'
 import projectExporter from './file/ProjectExporter'
 import {startDownload} from './utils'
 import {showErrorToast} from './ToolHeaderMessages'
+import strings from './strings'
 
 function getCurrentTiles() {
   return canvas.getGrid().getTiles()
@@ -63,7 +64,7 @@ export function exportSvg(geography) {
 
 export function exportPng() {
   if (!pngExporter.download()) {
-    showErrorToast('画像生成に失敗しました')
+    showErrorToast(strings.messages.pngFailed)
   }
 }
 

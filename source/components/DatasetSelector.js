@@ -1,7 +1,8 @@
 import React from 'react'
 import geographyResource from '../resources/GeographyResource'
+import strings from '../strings'
 
-const CUSTOM_LABEL = 'カスタムCSV（貼り付け）'
+const CUSTOM_LABEL = strings.datasetSelector.customOption
 
 export default class DatasetSelector extends React.Component {
   constructor(props) {
@@ -95,13 +96,12 @@ export default class DatasetSelector extends React.Component {
     return (
       <div className='csv-input'>
         <div className='instruction'>
-          {`CSVはヘッダー行なしで、1列目に地域ID、2列目に値を
-          記入してください。3列目以降は無視されます。サンプルCSV:`}
+          {strings.datasetSelector.csvInstruction}
           {this._generateSampleCsv()}
           {this._isJapaneseGeography() ?
-            '日本の地図では、1列目に都道府県コード（1〜47）のほか、都道府県名（例: 東京都）も使えます。' :
+            strings.datasetSelector.csvJapanNote :
             ''}
-          下の欄にCSVを貼り付けてください:
+          {strings.datasetSelector.csvPastePrompt}
         </div>
         <textarea
           ref={(ref) => { this.csvInput = ref }}
@@ -109,7 +109,7 @@ export default class DatasetSelector extends React.Component {
           onChange={this._onCsvChange}
           value={this.state.csvInputValue || ''}
         />
-        <div className={submitClass} onClick={this._submitCustomCsv}>反映する</div>
+        <div className={submitClass} onClick={this._submitCustomCsv}>{strings.datasetSelector.csvSubmit}</div>
       </div>
     )
   }

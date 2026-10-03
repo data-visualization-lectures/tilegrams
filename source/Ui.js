@@ -18,6 +18,7 @@ import StepHeader from './components/StepHeader'
 import RefineErrorWarning from './components/RefineErrorWarning'
 import tilegramsLogo from './images/tilegrams-logo.svg'
 import GeographySelector from './components/GeographySelector'
+import strings from './strings'
 
 class Ui {
   constructor() {
@@ -253,7 +254,7 @@ class Ui {
     const generateOption = (
       <StepHeader
         open={this._generateOpen}
-        label='1. 開く・作成する'
+        label={strings.steps.generate}
         onClick={this._toggle('generate')}
       />
     )
@@ -268,7 +269,7 @@ class Ui {
     const editOption = (
       <StepHeader
         open={this._editOpen}
-        label='2. タイルを調整する'
+        label={strings.steps.refine}
         onClick={this._toggle('edit')}
       >
         {errorWarning}
@@ -308,15 +309,15 @@ class Ui {
         <div className='column'>
           <div>
             <p className='intro'>
-              データセットに比例して地域の大きさを調整したタイル地図を作成しましょう。
+              {strings.intro.lead}
               <br />
               <br />
-              詳しい情報や手順については
+              {strings.intro.manualBefore}
               <a
                 onClick={this._toggleManual}
                 target='_blank'
                 rel='noopener noreferrer'
-              > マニュアル</a>をご覧ください。
+              >{strings.intro.manualLink}</a>{strings.intro.manualAfter}
             </p>
             <hr />
             {generateOption}
@@ -333,12 +334,12 @@ class Ui {
             </div>
             <hr />
             <div className='geographySelector labelModeSelector'>
-              地名ラベルの表示
+              {strings.labelMode.label}
               <fieldset>
                 <select value={settings.labelMode} onChange={this._changeLabelMode}>
-                  <option value='auto'>自動間引き（重なりを回避）</option>
-                  <option value='all'>すべて表示</option>
-                  <option value='none'>非表示</option>
+                  <option value='auto'>{strings.labelMode.auto}</option>
+                  <option value='all'>{strings.labelMode.all}</option>
+                  <option value='none'>{strings.labelMode.none}</option>
                 </select>
               </fieldset>
             </div>
@@ -364,7 +365,7 @@ class Ui {
         </div>
         <Tooltip
           hidden={this._hideRefineTooltip}
-          text='統計的に正確な形にするには、一部の地域で手動調整が必要です。'
+          text={strings.refineTooltip}
           yPos={this._mouseY}
         />
       </div>,

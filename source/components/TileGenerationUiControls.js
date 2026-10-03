@@ -3,6 +3,7 @@ import React from 'react'
 import DatasetSelector from './DatasetSelector'
 import ResolutionSlider from './ResolutionSlider'
 import ImportControls from './ImportControls'
+import strings from '../strings'
 
 export default class TileGenerationUiControls extends React.Component {
   constructor(props) {
@@ -55,7 +56,7 @@ export default class TileGenerationUiControls extends React.Component {
             className={isImport ? 'generate-tab' : 'generate-tab active'}
             onClick={() => this._changeOption('generate')}
           >
-            地図とデータから<br />新規作成
+            {strings.tabs.generate[0]}<br />{strings.tabs.generate[1]}
           </button>
           <button
             id='load-tilegram'
@@ -63,7 +64,7 @@ export default class TileGenerationUiControls extends React.Component {
             className={isImport ? 'generate-tab active' : 'generate-tab'}
             onClick={() => this._changeOption('import')}
           >
-            完成済み<br />タイルグラムを開く
+            {strings.tabs.import[0]}<br />{strings.tabs.import[1]}
           </button>
         </div>
         <div className={isImport ? 'generate-tab-panel collapsed' : 'generate-tab-panel'}>

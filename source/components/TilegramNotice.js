@@ -1,4 +1,5 @@
 import React from 'react'
+import strings from '../strings'
 
 export default function TilegramNotice(props) {
   const selectedTilegram = props.selectedTilegram
@@ -13,13 +14,13 @@ export default function TilegramNotice(props) {
   ) {
     return (
       <div className='congressionalDistrictModal'>
-        州ごとに分割されたタイルグラムを探していますか？
+        {strings.tilegramNotice.congressionalDistricts}
         <a
           href='./us-congressional-districts-2018.html'
           target='_blank'
           rel='noopener noreferrer'
         >
-          州別のデータはこちらから確認できます。
+          {strings.tilegramNotice.congressionalDistrictsLink}
         </a>
       </div>
     )
@@ -28,7 +29,7 @@ export default function TilegramNotice(props) {
   if (selectedTilegram.includes('インド')) {
     return (
       <div className='congressionalDistrictModal india'>
-        このデータビジュアライゼーションは、インドの伝統的な地図をもとにした地図表現であり、地理的な正確性が100%保証されているわけではありません。
+        {strings.tilegramNotice.india}
       </div>
     )
   }

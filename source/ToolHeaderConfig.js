@@ -1,7 +1,8 @@
 import {showProcessingToast} from './ToolHeaderMessages'
+import strings from './strings'
 
 function showSaveProjectModal(header, dependencies, projectState) {
-  showProcessingToast('保存準備中です')
+  showProcessingToast(strings.messages.preparingSave)
   const geography = dependencies.getGeography()
   const projectData = JSON.parse(dependencies.buildProjectJson(geography))
   header.showSaveModal({
@@ -17,21 +18,21 @@ function buildExportMenuItems(dependencies) {
     {
       label: 'TopoJSON',
       action: () => {
-        showProcessingToast('書き出し中です')
+        showProcessingToast(strings.messages.exporting)
         dependencies.exportTopoJson(dependencies.getGeography())
       },
     },
     {
       label: 'SVG',
       action: () => {
-        showProcessingToast('書き出し中です')
+        showProcessingToast(strings.messages.exporting)
         dependencies.exportSvg(dependencies.getGeography())
       },
     },
     {
       label: 'PNG',
       action: () => {
-        showProcessingToast('書き出し中です')
+        showProcessingToast(strings.messages.exporting)
         dependencies.exportPng()
       },
     },
@@ -60,21 +61,21 @@ export function buildHeaderConfig(header, dependencies, projectState) {
     },
     buttons: [
       {
-        label: 'プロジェクトの保存',
+        label: strings.header.saveProject,
         action: () => {
           showSaveProjectModal(header, dependencies, projectState)
         },
         align: 'right',
       },
       {
-        label: 'プロジェクトの読込',
+        label: strings.header.loadProject,
         action: () => {
           header.showLoadModal()
         },
         align: 'right',
       },
       {
-        label: 'エクスポート',
+        label: strings.header.export,
         align: 'right',
         type: 'dropdown',
         items: buildExportMenuItems(dependencies),

@@ -5,8 +5,9 @@ import {
   showErrorToast,
   showProcessingToast,
 } from '../ToolHeaderMessages'
+import strings from '../strings'
 
-const CUSTOM_LABEL = 'タイルグラムをアップロード'
+const CUSTOM_LABEL = strings.importControls.uploadOption
 
 export default class ImportControls extends React.Component {
   constructor(props) {
@@ -35,7 +36,7 @@ export default class ImportControls extends React.Component {
   _onFileUpload(event) {
     const file = event.target.files[0]
     if (!file) return
-    showProcessingToast('ファイルを読み込み中です')
+    showProcessingToast(strings.messages.readingFile)
     const reader = new FileReader()
     reader.onload = readEvent => {
       let topoJson
@@ -45,7 +46,7 @@ export default class ImportControls extends React.Component {
         topoJson.objects[OBJECT_ID].geometries // eslint-disable-line no-unused-expressions
       } catch (e) {
         // catch non-json and non-tilegram topojson files
-        showErrorToast('タイルグラムファイルを読み込めませんでした。形式を確認してください。')
+        showErrorToast(strings.messages.tilegramLoadFailed)
         this._resetUpload()
         return
       }
@@ -101,7 +102,7 @@ export default class ImportControls extends React.Component {
       <fieldset>
         <span className='import-metric'>
           <span className='gray'>* </span>
-          {commaNumber(this.props.metricPerTile)} タイルあたり
+          {commaNumber(this.props.metricPerTile)} {strings.resolution.perTile}
         </span>
       </fieldset>
     )
@@ -131,7 +132,7 @@ export default class ImportControls extends React.Component {
       importControls = (
         <div>
           <fieldset>
-            <span>{this.state.uploadedFilename} を使用中</span>
+            <span>{strings.importControls.usingFile(this.state.uploadedFilename)}</span>
             <a onClick={this._resetUpload}>&times;</a>
           </fieldset>
           {resolution}

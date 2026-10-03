@@ -1,3 +1,5 @@
+import strings from './strings'
+
 function showHeaderMessage(message, type = 'info', duration = 5000) {
   const header = document.querySelector('dataviz-tool-header')
   if (header && typeof header.showMessage === 'function') {
@@ -8,17 +10,17 @@ function showHeaderMessage(message, type = 'info', duration = 5000) {
 }
 
 function showProcessingToast(message) {
-  showHeaderMessage(message || '処理中です', 'info', 5000)
+  showHeaderMessage(message || strings.messages.processing, 'info', 5000)
 }
 
 function showErrorToast(message) {
-  if (!showHeaderMessage(message || '処理に失敗しました', 'error', 8000)) {
+  if (!showHeaderMessage(message || strings.messages.failed, 'error', 8000)) {
     console.error(message)
   }
 }
 
 function showWarningToast(message) {
-  if (!showHeaderMessage(message || '確認が必要です', 'warning', 8000)) {
+  if (!showHeaderMessage(message || strings.messages.needsAttention, 'warning', 8000)) {
     console.warn(message)
   }
 }
@@ -38,7 +40,7 @@ function installHeaderProcessingToasts(header) {
   if (typeof header.showLoadModal === 'function') {
     const originalShowLoadModal = header.showLoadModal.bind(header)
     header.showLoadModal = (...args) => {
-      showProcessingToast('プロジェクト一覧を読み込み中です')
+      showProcessingToast(strings.messages.loadingProjectList)
       return originalShowLoadModal(...args)
     }
   }
@@ -46,7 +48,7 @@ function installHeaderProcessingToasts(header) {
   if (typeof header.loadProject === 'function') {
     const originalLoadProject = header.loadProject.bind(header)
     header.loadProject = (...args) => {
-      showProcessingToast('プロジェクトを読み込み中です')
+      showProcessingToast(strings.messages.loadingProject)
       return originalLoadProject(...args)
     }
   }
@@ -54,7 +56,7 @@ function installHeaderProcessingToasts(header) {
   if (typeof header.saveProject === 'function') {
     const originalSaveProject = header.saveProject.bind(header)
     header.saveProject = (...args) => {
-      showProcessingToast('プロジェクトを保存中です')
+      showProcessingToast(strings.messages.savingProject)
       return originalSaveProject(...args)
     }
   }

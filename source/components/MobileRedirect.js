@@ -1,4 +1,5 @@
 import React from 'react'
+import strings from '../strings'
 
 export default function MobileRedirect(props) {
   return (
@@ -11,8 +12,8 @@ export default function MobileRedirect(props) {
           >&#215;</div>
           <h1>TILEGRAMS</h1>
           <img src={props.tilegramsLogo} className='tilegrams-logo' alt='Tilegrams' />
-          <h2>データセットに比例して地域の大きさを調整したタイル地図を作成しましょう。</h2>
-          <h3>最適な体験のためには、ノートパソコンまたはデスクトップコンピューターでご利用ください。</h3>
+          <h2>{strings.mobile.lead}</h2>
+          <h3>{strings.mobile.desktopOnly}</h3>
         </div>
       </div>
     </div>

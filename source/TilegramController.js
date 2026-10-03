@@ -7,6 +7,7 @@ import datasetResource from './resources/DatasetResource'
 import geographyResource from './resources/GeographyResource'
 import tilegramResource from './resources/TilegramResource'
 import {showErrorToast} from './ToolHeaderMessages'
+import strings from './strings'
 
 let cartogramComputeRafId
 let importing = false
@@ -46,7 +47,7 @@ export function loadProject(projectJson) {
     loadImportedTilegramState(() => projectImporter.import(projectJson))
   } catch (e) {
     console.error('loadProject error:', e)
-    showErrorToast('プロジェクトファイルを読み込めませんでした')
+    showErrorToast(strings.messages.projectLoadFailed)
   }
 }
 

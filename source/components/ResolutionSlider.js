@@ -3,6 +3,7 @@ import {scaleLog} from 'd3-scale'
 
 import smallHex from '../images/small-hex.svg'
 import bigHex from '../images/big-hex.svg'
+import strings from '../strings'
 
 export default class ResolutionSlider extends React.Component {
   constructor(props) {
@@ -96,7 +97,7 @@ export default class ResolutionSlider extends React.Component {
     return (
       <div>
         <fieldset className='resolution-slider'>
-          <label htmlFor='resolutionSlider'>解像度</label>
+          <label htmlFor='resolutionSlider'>{strings.resolution.label}</label>
           <img src={smallHex} className='small-hex hex-img' alt='smaller hexagons' />
           <img src={bigHex} className='big-hex hex-img' alt='bigger hexagons' />
           <input
@@ -117,7 +118,7 @@ export default class ResolutionSlider extends React.Component {
             onBlur={this._triggerChangeFromText}
             onKeyUp={(event) => this._checkForEnter(event)}
           />
-          タイルあたり
+          {strings.resolution.perTile}
         </fieldset>
       </div>
     )

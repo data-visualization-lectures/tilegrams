@@ -3,6 +3,7 @@ import {nest} from 'd3-collection'
 import geographyResource from '../resources/GeographyResource'
 
 import {fipsColor, hashFromData} from '../utils'
+import strings from '../strings'
 
 export default class HexMetrics extends React.Component {
   constructor(props) {
@@ -143,9 +144,9 @@ export default class HexMetrics extends React.Component {
     return (
       <div id='warning'>
         <i className='fa fa-exclamation-triangle' />
-        このデータの解像度では、いくつかの
-        {geographyResource.getUnitName(this.props.geography)}
-        が表示されません。より低い解像度を検討してください。
+        {strings.hexMetrics.resolutionWarning(
+          geographyResource.getUnitName(this.props.geography)
+        )}
       </div>
     )
   }
@@ -175,7 +176,7 @@ export default class HexMetrics extends React.Component {
             style={{cursor: 'pointer'}}
             onMouseDown={count.disable ? () => {} : this._mouseDown}
           >
-            {count.disable ? 'データなし' : this._drawHexagon(count.key)}
+            {count.disable ? strings.hexMetrics.noData : this._drawHexagon(count.key)}
           </div>
           <div>{keyString.name_short || count.key}</div>
           <div>{adjustString}</div>
@@ -211,9 +212,9 @@ export default class HexMetrics extends React.Component {
             onClick={this._toggleHide}
           />
           <label htmlFor='toggleNull'>
-            余剰または不足のある
-            {geographyResource.getUnitName(this.props.geography)}
-            のみを表示
+            {strings.hexMetrics.showOnlyMismatched(
+              geographyResource.getUnitName(this.props.geography)
+            )}
           </label>
           {this._renderWarning(metrics.shouldWarn)}
         </div>
