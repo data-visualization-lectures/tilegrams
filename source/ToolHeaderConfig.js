@@ -16,21 +16,21 @@ function showSaveProjectModal(header, dependencies, projectState) {
 function buildExportMenuItems(dependencies) {
   return [
     {
-      label: 'TopoJSON',
+      label: strings.header.exportTopoJson,
       action: () => {
         showProcessingToast(strings.messages.exporting)
         dependencies.exportTopoJson(dependencies.getGeography())
       },
     },
     {
-      label: 'SVG',
+      label: strings.header.exportSvg,
       action: () => {
         showProcessingToast(strings.messages.exporting)
         dependencies.exportSvg(dependencies.getGeography())
       },
     },
     {
-      label: 'PNG',
+      label: strings.header.exportPng,
       action: () => {
         showProcessingToast(strings.messages.exporting)
         dependencies.exportPng()

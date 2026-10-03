@@ -10,7 +10,7 @@ export default function MobileRedirect(props) {
             className='close-mobile'
             onClick={props.onClose}
           >&#215;</div>
-          <h1>TILEGRAMS</h1>
+          <h1>{strings.mobile.title}</h1>
           <img src={props.tilegramsLogo} className='tilegrams-logo' alt='Tilegrams' />
           <h2>{strings.mobile.lead}</h2>
           <h3>{strings.mobile.desktopOnly}</h3>

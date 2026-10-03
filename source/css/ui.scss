@@ -67,13 +67,17 @@ code {
   font-size: 1.15em;
   padding: 15px $ui-margin;
   line-height: 1.25em;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
 
   .arrow {
+    flex: none;
     width: 1em;
     height: 1em;
+    margin-left: auto;
     background: url(../images/caret.svg) no-repeat center center;
     background-size: 1em 1em;
-    float: right;
     transition: transform 500ms ease-in-out;
   }
 
@@ -95,15 +99,18 @@ code {
   }
 }
 
+// sidebar scrolls on its own; the map stays in place
 #ui {
-  position: absolute;
+  position: fixed;
   top: 96px;
-  min-height: calc(100% - 96px);
+  bottom: 0;
+  left: 0;
   border-right: 2px solid $light-gray;
 }
 
 #ui .column {
   width: $sidebar-width;
+  height: 100%;
   background-color: $ui-background-color;
   overflow-x: hidden;
   overflow-y: auto;
@@ -213,7 +220,7 @@ code {
   .n-errors {
     font-size: 85%;
     opacity: 0.6;
-    padding-left: 3px;
+    padding: 0 8px 0 6px;
   }
 
   .csv-input {
@@ -300,6 +307,18 @@ code {
   }
 
   .resolution-input {
+    label {
+      display: block;
+      width: auto;
+      margin-bottom: 4px;
+    }
+
+    .estimated-tiles {
+      font-size: 0.9em;
+      opacity: 0.7;
+      white-space: nowrap;
+    }
+
     input {
       min-width: 50%;
       box-sizing: border-box;
@@ -335,6 +354,47 @@ code {
   #metrics-header {
     padding-bottom: 0.5em;
     cursor: pointer;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+
+    input {
+      flex: none;
+      margin: 0.15em 0 0;
+    }
+
+    label {
+      flex: 1;
+      line-height: 1.3em;
+    }
+
+    #warning {
+      flex-basis: 100%;
+    }
+  }
+
+  .metrics-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px 12px;
+    font-size: 0.85em;
+    padding-bottom: 0.75em;
+    line-height: 1.3em;
+
+    .hint {
+      flex-basis: 100%;
+      opacity: 0.6;
+    }
+  }
+
+  .deviation.surplus {
+    color: $surplus-color;
+    font-weight: 500;
+  }
+
+  .deviation.deficit {
+    color: $deficit-color;
+    font-weight: 500;
   }
 
   #warning {

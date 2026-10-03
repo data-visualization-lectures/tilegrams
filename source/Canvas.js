@@ -127,20 +127,20 @@ class Canvas {
       const fullBarWidth = Math.min(400, canvasDimensions.width / 3)
       const barX = (canvasDimensions.width / 2) - (fullBarWidth / 2);
       const progressBarWidth = this._progress * fullBarWidth
-      const barHeight = 30
+      const barHeight = 8 * devicePixelRatio
       const barY = (canvasDimensions.height / 2) - (barHeight / 2);
-      this._ctx.fillStyle = '#fff';
-      this._ctx.fillRect(barX, barY, fullBarWidth, barHeight);
-      this._ctx.fillStyle = '#666';
+      // translucent track + solid white fill reads clearly on the dark overlay
+      this._ctx.fillStyle = 'rgba(255, 255, 255, 0.25)'
+      this._ctx.fillRect(barX, barY, fullBarWidth, barHeight)
+      this._ctx.fillStyle = '#fff'
       this._ctx.fillRect(barX, barY, progressBarWidth, barHeight)
-      this._ctx.fillStyle = '#fff';
 
       this._ctx.textAlign = 'center'
       this._ctx.textBaseline = 'middle'
       this._ctx.font = `${16.0 * devicePixelRatio}px ${labelFontFamily}`
 
-      const label = strings.canvas.computing
-      this._ctx.fillText(label, canvasDimensions.width / 2, barY - 16)
+      const label = `${strings.canvas.computing} ${Math.round(this._progress * 100)}%`
+      this._ctx.fillText(label, canvasDimensions.width / 2, barY - (16 * devicePixelRatio))
     }
     this._stats.end()
   }

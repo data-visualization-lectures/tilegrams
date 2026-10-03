@@ -56,7 +56,7 @@ export default class TileGenerationUiControls extends React.Component {
             className={isImport ? 'generate-tab' : 'generate-tab active'}
             onClick={() => this._changeOption('generate')}
           >
-            {strings.tabs.generate[0]}<br />{strings.tabs.generate[1]}
+            {strings.tabs.generate}
           </button>
           <button
             id='load-tilegram'
@@ -64,7 +64,7 @@ export default class TileGenerationUiControls extends React.Component {
             className={isImport ? 'generate-tab active' : 'generate-tab'}
             onClick={() => this._changeOption('import')}
           >
-            {strings.tabs.import[0]}<br />{strings.tabs.import[1]}
+            {strings.tabs.import}
           </button>
         </div>
         <div className={isImport ? 'generate-tab-panel collapsed' : 'generate-tab-panel'}>
@@ -77,6 +77,7 @@ export default class TileGenerationUiControls extends React.Component {
           <ResolutionSlider
             defaultResolution={this.props.defaultResolution}
             metricDomain={this.props.metricDomain}
+            datasetSum={this.props.datasetSum}
             onChange={value => this.props.changeResolution(value, this.props.datasetSum)}
           />
         </div>

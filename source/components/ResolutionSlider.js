@@ -1,5 +1,6 @@
 import React from 'react'
 import {scaleLog} from 'd3-scale'
+import commaNumber from 'comma-number'
 
 import smallHex from '../images/small-hex.svg'
 import bigHex from '../images/big-hex.svg'
@@ -89,6 +90,23 @@ export default class ResolutionSlider extends React.Component {
     this.typedInput.blur()
   }
 
+  _formatTypedValue(typedValue) {
+    return typeof typedValue === 'number' ? commaNumber(typedValue) : typedValue
+  }
+
+  _renderEstimatedTiles() {
+    const value = typeof this.state.typedValue === 'number' ?
+      this.state.typedValue :
+      parseFloat(String(this.state.typedValue).replace(/,/g, ''))
+    if (!this.props.datasetSum || !(value > 0)) return null
+    const count = Math.round(this.props.datasetSum / value)
+    return (
+      <span className='estimated-tiles'>
+        {strings.resolution.estimatedTiles(commaNumber(count))}
+      </span>
+    )
+  }
+
   _setStateFromText(typedValue) {
     this.setState({typedValue})
   }
@@ -98,8 +116,18 @@ export default class ResolutionSlider extends React.Component {
       <div>
         <fieldset className='resolution-slider'>
           <label htmlFor='resolutionSlider'>{strings.resolution.label}</label>
-          <img src={smallHex} className='small-hex hex-img' alt='smaller hexagons' />
-          <img src={bigHex} className='big-hex hex-img' alt='bigger hexagons' />
+          <img
+            src={smallHex}
+            className='small-hex hex-img'
+            alt={strings.resolution.finer}
+            title={strings.resolution.finer}
+          />
+          <img
+            src={bigHex}
+            className='big-hex hex-img'
+            alt={strings.resolution.coarser}
+            title={strings.resolution.coarser}
+          />
           <input
             type='range'
             min={1}
@@ -109,16 +137,18 @@ export default class ResolutionSlider extends React.Component {
           />
         </fieldset>
         <fieldset className='resolution-input'>
+          <label htmlFor='resolutionInput'>{strings.resolution.perTileLabel}</label>
           <input
+            id='resolutionInput'
             ref={(ref) => { this.typedInput = ref }}
             type='text'
             size='10'
-            value={this.state.typedValue}
+            value={this._formatTypedValue(this.state.typedValue)}
             onChange={(event) => this._setStateFromText(event.target.value)}
             onBlur={this._triggerChangeFromText}
             onKeyUp={(event) => this._checkForEnter(event)}
           />
-          {strings.resolution.perTile}
+          {this._renderEstimatedTiles()}
         </fieldset>
       </div>
     )
@@ -126,6 +156,7 @@ export default class ResolutionSlider extends React.Component {
 }
 ResolutionSlider.propTypes = {
   defaultResolution: React.PropTypes.number,
+  datasetSum: React.PropTypes.number,
   metricDomain: React.PropTypes.array,
   onChange: React.PropTypes.func,
 }

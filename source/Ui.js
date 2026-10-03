@@ -197,10 +197,13 @@ class Ui {
 
   _toggle(toggleOpt) {
     return () => {
+      // accordion: opening one step closes the other
       if (toggleOpt === 'generate') {
         this._generateOpen = !this._generateOpen
+        if (this._generateOpen) { this._editOpen = false }
       } else if (toggleOpt === 'edit') {
         this._editOpen = !this._editOpen
+        if (this._editOpen) { this._generateOpen = false }
       }
       this.render()
     }

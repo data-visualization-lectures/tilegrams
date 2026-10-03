@@ -17,8 +17,8 @@ const strings = {
     label: '対象地域を選択',
   },
   tabs: {
-    generate: ['地図とデータから', '新規作成'],
-    import: ['完成済み', 'タイルグラムを開く'],
+    generate: 'データから作成',
+    import: '完成済みを開く',
   },
   datasetSelector: {
     customOption: 'カスタムCSV（貼り付け）',
@@ -31,6 +31,10 @@ const strings = {
   resolution: {
     label: '解像度',
     perTile: 'タイルあたり',
+    perTileLabel: '1タイルあたりの値',
+    finer: 'タイルを細かく（数を増やす）',
+    coarser: 'タイルを粗く（数を減らす）',
+    estimatedTiles: count => `合計 約${count}タイル`,
   },
   importControls: {
     uploadOption: 'タイルグラムをアップロード',
@@ -45,10 +49,15 @@ const strings = {
   hexMetrics: {
     noData: 'データなし',
     showOnlyMismatched: unitName => `余剰または不足のある${unitName}のみを表示`,
+    legendSurplus: '+n：多すぎる（n枚減らす）',
+    legendDeficit: '−n：足りない（n枚増やす）',
+    legendHint: '各カードの六角形を地図へドラッグするとタイルを追加できます',
     resolutionWarning: unitName =>
       `このデータの解像度では、いくつかの${unitName}が表示されません。より低い解像度を検討してください。`,
   },
   refineTooltip: '統計的に正確な形にするには、一部の地域で手動調整が必要です。',
+  refineWarning: count => `要調整 ${count}`,
+  refineWarningTitle: (count, unitName) => `${count}${unitName}でタイル数が目標とずれています`,
   editWarning: {
     text: `地図に手動編集が加えられています。
 新しいタイルグラムを生成したり、既存タイルグラムの解像度を変更すると、
@@ -63,6 +72,7 @@ const strings = {
     india: 'このデータビジュアライゼーションは、インドの伝統的な地図をもとにした地図表現であり、地理的な正確性が100%保証されているわけではありません。',
   },
   mobile: {
+    title: 'タイルグラム',
     lead: 'データセットに比例して地域の大きさを調整したタイル地図を作成しましょう。',
     desktopOnly: '最適な体験のためには、ノートパソコンまたはデスクトップコンピューターでご利用ください。',
   },
@@ -73,6 +83,10 @@ const strings = {
     saveProject: 'プロジェクトの保存',
     loadProject: 'プロジェクトの読込',
     export: 'エクスポート',
+    // the header dropdown has a fixed width, so keep these short
+    exportTopoJson: 'TopoJSON',
+    exportSvg: 'SVG',
+    exportPng: 'PNG',
   },
   messages: {
     processing: '処理中です',

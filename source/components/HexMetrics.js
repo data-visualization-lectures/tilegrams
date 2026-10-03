@@ -151,6 +151,12 @@ export default class HexMetrics extends React.Component {
     )
   }
 
+  _deviationClass(deviation) {
+    if (deviation > 0) return 'deviation surplus'
+    if (deviation < 0) return 'deviation deficit'
+    return 'deviation'
+  }
+
   _renderHexCount(metrics) {
     if (!metrics.length) return null
     const boxes = metrics.map((count) => {
@@ -179,7 +185,7 @@ export default class HexMetrics extends React.Component {
             {count.disable ? strings.hexMetrics.noData : this._drawHexagon(count.key)}
           </div>
           <div>{keyString.name_short || count.key}</div>
-          <div>{adjustString}</div>
+          <div className={this._deviationClass(count.deviation)}>{adjustString}</div>
         </div>
       )
     })
@@ -197,7 +203,7 @@ export default class HexMetrics extends React.Component {
       ? this._drawHexagon(this.state.draggingHex, true)
       : null
     return (
-      <div className={hexClass}>
+      <div className={hexClass} onMouseLeave={this.props.onMetricMouseOut}>
         <div
           className='dragging-hex'
           style={{top: this.state.mouseY, left: this.state.mouseX}}
@@ -217,6 +223,11 @@ export default class HexMetrics extends React.Component {
             )}
           </label>
           {this._renderWarning(metrics.shouldWarn)}
+        </div>
+        <div className='metrics-legend'>
+          <span className='deviation surplus'>{strings.hexMetrics.legendSurplus}</span>
+          <span className='deviation deficit'>{strings.hexMetrics.legendDeficit}</span>
+          <span className='hint'>{strings.hexMetrics.legendHint}</span>
         </div>
         {this._renderHexCount(metrics.stats)}
       </div>
